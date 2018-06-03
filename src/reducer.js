@@ -25,7 +25,8 @@ const INITIAL_STATE = {
       emoji: "🐙",
       hand: [standard(1), standard(2), standard(3)],
       deck: [standard(4), standard(5), standard(6)],
-      field: []
+      field: [],
+      fatigue: 1
     },
     them: {
       mana: 0,
@@ -34,7 +35,8 @@ const INITIAL_STATE = {
       emoji: "🐒",
       hand: [standard(2), standard(5), standard(7)],
       deck: [standard(4), standard(5), standard(6)],
-      field: []
+      field: [],
+      fatigue: 1
     }
   }
 };
@@ -66,7 +68,17 @@ export default function reducer(state = INITIAL_STATE, action) {
     const player = state.players[action.playerId];
     const card = player.deck[0];
     if (!card) {
-      return state;
+      return {
+        ...state,
+        players: {
+          ...state.players,
+          [action.playerId]: {
+            ...player,
+            fatigue: player.fatigue + 1,
+            health: player.health - player.fatigue
+          }
+        }
+      };
     }
     return {
       ...state,
