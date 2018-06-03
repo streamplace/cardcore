@@ -15,13 +15,17 @@ const INITIAL_STATE = {
   players: ["me", "them"],
   sides: {
     me: {
-      mana: 0,
+      mana: 1,
+      health: 30,
+      emoji: "🐙",
       hand: [standard(1), standard(2), standard(3)],
       deck: [standard(4), standard(5), standard(6)],
       field: []
     },
     them: {
       mana: 0,
+      health: 30,
+      emoji: "🐒",
       hand: [standard(2), standard(5), standard(7)],
       deck: [standard(4), standard(5), standard(6)],
       field: []
