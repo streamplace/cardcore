@@ -12,6 +12,17 @@ export const CardBox = styled.div`
   position: relative;
   overflow: hidden;
   width: 130px;
+
+  ${props => props.canPlay && cardGlow("5px", "blue")};
+  ${props => props.canPlay && "cursor: pointer"};
+`;
+
+export const cardGlow = (size, color) => `
+  box-shadow:
+    ${size} ${size} ${size} ${color},
+    -${size} -${size} ${size} ${color},
+    ${size} -${size} ${size} ${color},
+    -${size} ${size} ${size} ${color}
 `;
 
 const Name = styled.div`
@@ -57,23 +68,26 @@ const EmojiText = styled.span`
 
 export class Card extends React.Component {
   render() {
+    const { card } = this.props;
     return (
-      <CardBox>
+      <CardBox canPlay={this.props.canPlay} onClick={this.props.onClick}>
         <Type>👾</Type>
         <Name>
-          <NameText>{this.props.card.name}</NameText>
+          <NameText>{card.name}</NameText>
         </Name>
         <Emoji>
-          <EmojiText>{this.props.card.emoji}</EmojiText>
+          <EmojiText>{card.emoji}</EmojiText>
         </Emoji>
-        <Attack>{this.props.card.attack}⚔️</Attack>
-        <Health>{this.props.card.health}♥️</Health>
-        <Cost>{this.props.card.cost}💎</Cost>
+        <Attack>{card.attack}⚔️</Attack>
+        <Health>{card.health}♥️</Health>
+        <Cost>{card.cost}💎</Cost>
       </CardBox>
     );
   }
 }
 
-const mapStateToProps = (state, props) => {};
+const mapStateToProps = (state, props) => {
+  return {};
+};
 
 export default connect(mapStateToProps)(Card);

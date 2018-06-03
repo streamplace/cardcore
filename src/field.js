@@ -31,7 +31,7 @@ export class Field extends React.Component {
     const text = this.props.myTurn ? "End Turn" : "Their Turn";
     return (
       <FieldBox>
-        <FieldSide player={this.props.players[1]} />
+        <FieldSide playerId={this.props.players[1]} />
         <Middle>
           <EndTurn
             myTurn={this.props.myTurn}
@@ -42,7 +42,7 @@ export class Field extends React.Component {
             {text}
           </EndTurn>
         </Middle>
-        <FieldSide player={this.props.players[0]} />
+        <FieldSide playerId={this.props.players[0]} />
       </FieldBox>
     );
   }

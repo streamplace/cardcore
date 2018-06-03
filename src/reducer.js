@@ -62,5 +62,24 @@ export default function reducer(state = INITIAL_STATE, action) {
     };
   }
 
+  if (action.type === actions.DRAW_CARD) {
+    const player = state.players[action.playerId];
+    const card = player.deck[0];
+    if (!card) {
+      return state;
+    }
+    return {
+      ...state,
+      players: {
+        ...state.players,
+        [action.playerId]: {
+          ...player,
+          hand: [...player.hand, { ...card }],
+          deck: player.deck.slice(1)
+        }
+      }
+    };
+  }
+
   return state;
 }
