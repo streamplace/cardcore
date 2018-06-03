@@ -26,7 +26,7 @@ const INITIAL_STATE = {
       hand: [standard(1), standard(2), standard(3)],
       deck: [standard(4), standard(5), standard(6)],
       field: [],
-      fatigue: 0
+      fatigue: 1
     },
     them: {
       mana: 0,
@@ -36,7 +36,7 @@ const INITIAL_STATE = {
       hand: [standard(2), standard(5), standard(7)],
       deck: [standard(4), standard(5), standard(6)],
       field: [],
-      fatigue: 0
+      fatigue: 1
     }
   }
 };
