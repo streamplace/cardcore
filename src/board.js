@@ -12,21 +12,21 @@ const BoardWrapper = styled.div`
 
 export class Board extends React.Component {
   render() {
-    if (!this.props.players) {
+    if (!this.props.playerOrder) {
       return <div />;
     }
     return (
       <BoardWrapper>
-        <Sidebar player={this.props.players[1]} />
+        <Sidebar playerId={this.props.playerOrder[1]} />
         <Field />
-        <Sidebar player={this.props.players[0]} />
+        <Sidebar playerId={this.props.playerOrder[0]} />
       </BoardWrapper>
     );
   }
 }
 
 const mapStateToProps = (state, props) => {
-  return { players: state.players };
+  return { playerOrder: state.playerOrder };
 };
 
 export default connect(mapStateToProps)(Board);

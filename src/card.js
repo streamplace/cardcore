@@ -74,8 +74,6 @@ export class Card extends React.Component {
   }
 }
 
-const mapStateToProps = (state, props) => {
-  return { side: state.sides[props.player] };
-};
+const mapStateToProps = (state, props) => {};
 
 export default connect(mapStateToProps)(Card);

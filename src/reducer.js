@@ -1,3 +1,5 @@
+import * as actions from "./actions";
+
 const standard = cost => {
   const emoji = emojis[cost] || emojis[emojis.length - 1];
   return {
@@ -12,8 +14,10 @@ const standard = cost => {
 const emojis = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "☺️", "😊"];
 
 const INITIAL_STATE = {
-  players: ["me", "them"],
-  sides: {
+  playerOrder: ["me", "them"],
+  currentPlayer: "me",
+  turn: "me",
+  players: {
     me: {
       mana: 1,
       availableMana: 1,
@@ -36,5 +40,27 @@ const INITIAL_STATE = {
 };
 
 export default function reducer(state = INITIAL_STATE, action) {
+  if (action.type === actions.END_TURN) {
+    const playerIdx =
+      (state.playerOrder.indexOf(state.turn) + 1) % state.playerOrder.length;
+    const player = state.playerOrder[playerIdx];
+    let newMana = state.players[player].mana + 1;
+    if (newMana > 10) {
+      newMana = 10;
+    }
+    return {
+      ...state,
+      turn: player,
+      players: {
+        ...state.players,
+        [player]: {
+          ...state.players[player],
+          mana: newMana,
+          availableMana: newMana
+        }
+      }
+    };
+  }
+
   return state;
 }
