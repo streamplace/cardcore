@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 
-const CardBox = styled.div`
+export const CardBox = styled.div`
   background-color: white;
   border: 1px solid #555;
   user-select: none;
@@ -23,7 +23,7 @@ const Name = styled.div`
 const NameText = styled.span`
   font-style: italic;
 `;
-const Number = styled.span`
+export const Number = styled.span`
   position: absolute;
   font-size: 2em;
   font-weight: bold;
