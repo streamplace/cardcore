@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { cardDrop } from "./client-actions";
 import { connect } from "react-redux";
 
 export const CardBox = styled.div`
@@ -67,10 +68,19 @@ const EmojiText = styled.span`
 `;
 
 export class Card extends React.Component {
+  onDragEnd(e) {
+    this.props.dispatch(cardDrop(e, this.props.card));
+  }
+
   render() {
     const { card } = this.props;
     return (
-      <CardBox canPlay={this.props.canPlay} onClick={this.props.onClick}>
+      <CardBox
+        canPlay={this.props.canPlay}
+        draggable={this.props.canPlay}
+        onClick={this.props.onClick}
+        onDragEnd={e => this.onDragEnd(e)}
+      >
         <Type>👾</Type>
         <Name>
           <NameText>{card.name}</NameText>

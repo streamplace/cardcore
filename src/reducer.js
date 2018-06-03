@@ -81,5 +81,22 @@ export default function reducer(state = INITIAL_STATE, action) {
     };
   }
 
+  if (action.type === actions.PLAY_CREATURE) {
+    const player = state.players[state.turn];
+    const card = action.card;
+    return {
+      ...state,
+      players: {
+        ...state.players,
+        [state.turn]: {
+          ...player,
+          availableMana: player.availableMana - card.cost,
+          hand: player.hand.filter(c => c !== card),
+          field: [...player.field, { ...card }]
+        }
+      }
+    };
+  }
+
   return state;
 }

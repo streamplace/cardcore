@@ -10,3 +10,11 @@ export const endTurn = () => (dispatch, getState) => {
     playerId
   });
 };
+
+export const PLAY_CREATURE = "PLAY_CREATURE";
+export const playCreature = card => {
+  return {
+    type: PLAY_CREATURE,
+    card
+  };
+};
