@@ -7,7 +7,8 @@ import Face from "./face";
 
 const SidebarVert = styled.div`
   display: flex;
-  flex-grow: 2;
+  flex-grow: 1;
+  flex-basis: 0;
   flex-direction: column;
 `;
 
@@ -33,14 +34,8 @@ const HandBox = styled.div`
 
 export class Sidebar extends React.Component {
   render() {
-    let jewels = "";
-    for (let i = 0; i < this.props.side.mana; i += 1) {
-      jewels += "💎";
-    }
-    const mana = <ManaBox>{jewels}</ManaBox>;
     return (
       <SidebarVert>
-        {this.props.top && mana}
         <SidebarBox>
           <Face player={this.props.player} />
           <HandBox>
@@ -50,7 +45,6 @@ export class Sidebar extends React.Component {
           </HandBox>
           <Deck player={this.props.player} />
         </SidebarBox>
-        {!this.props.top && mana}
       </SidebarVert>
     );
   }

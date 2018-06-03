@@ -2,6 +2,19 @@ import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 
+const FaceVert = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
+  justify-content: space-around;
+  align-items: center;
+`;
+
+const ManaBox = styled.div`
+  font-size: 30px;
+  font-weight: bold;
+`;
+
 const FaceBox = styled.div`
   width: 100px;
   background-color: #444;
@@ -22,10 +35,15 @@ const Health = styled.span`
 export class Face extends React.Component {
   render() {
     return (
-      <FaceBox>
-        <Emoji>{this.props.side.emoji}</Emoji>
-        <Health>{this.props.side.health} ❤️</Health>
-      </FaceBox>
+      <FaceVert>
+        <FaceBox>
+          <Emoji>{this.props.side.emoji}</Emoji>
+          <Health>{this.props.side.health} ❤️</Health>
+        </FaceBox>
+        <ManaBox>
+          💎 {this.props.side.availableMana}/{this.props.side.mana}
+        </ManaBox>
+      </FaceVert>
     );
   }
 }

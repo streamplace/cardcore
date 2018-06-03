@@ -4,7 +4,8 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 
 const FieldBox = styled.div`
-  flex-grow: 5;
+  flex-grow: 2;
+  flex-basis: 0;
   display: flex;
   flex-direction: column;
 `;

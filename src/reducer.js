@@ -16,6 +16,7 @@ const INITIAL_STATE = {
   sides: {
     me: {
       mana: 1,
+      availableMana: 1,
       health: 30,
       emoji: "🐙",
       hand: [standard(1), standard(2), standard(3)],
@@ -24,6 +25,7 @@ const INITIAL_STATE = {
     },
     them: {
       mana: 0,
+      availableMana: 0,
       health: 30,
       emoji: "🐒",
       hand: [standard(2), standard(5), standard(7)],
