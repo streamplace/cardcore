@@ -29,9 +29,12 @@ const EndTurn = styled.button`
 export class Field extends React.Component {
   render() {
     const text = this.props.myTurn ? "End Turn" : "Their Turn";
+    const notMe = this.props.playerOrder.filter(
+      x => x !== this.props.currentPlayer
+    )[0];
     return (
       <FieldBox>
-        <FieldSide playerId={this.props.players[1]} />
+        <FieldSide playerId={notMe} />
         <Middle>
           <EndTurn
             myTurn={this.props.myTurn}
@@ -42,7 +45,7 @@ export class Field extends React.Component {
             {text}
           </EndTurn>
         </Middle>
-        <FieldSide playerId={this.props.players[0]} />
+        <FieldSide playerId={this.props.currentPlayer} />
       </FieldBox>
     );
   }
@@ -51,7 +54,9 @@ export class Field extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     players: state.playerOrder,
-    myTurn: state.currentPlayer === state.turn
+    myTurn: state.currentPlayer === state.turn,
+    playerOrder: state.playerOrder,
+    currentPlayer: state.currentPlayer
   };
 };
 

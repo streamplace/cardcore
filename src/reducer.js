@@ -1,66 +1,66 @@
 import * as actions from "./actions";
 
-const standard = cost => {
-  const emoji = emojis[cost] || emojis[emojis.length - 1];
-  return {
-    cost: cost,
-    emoji: emoji,
-    attack: cost,
-    health: cost,
-    name: `Standard ${cost}-${cost}`
-  };
+const INITIAL_STATE = {
+  params: {
+    startDraw: 3
+  },
+  started: false,
+  players: {}
 };
 
-const emojis = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "☺️", "😊"];
-
-const INITIAL_STATE = {
-  playerOrder: ["me", "them"],
-  currentPlayer: "me",
-  turn: "me",
-  players: {
-    me: {
-      mana: 1,
-      availableMana: 1,
-      health: 30,
-      emoji: "🐙",
-      hand: [standard(1), standard(2), standard(3)],
-      deck: [standard(4), standard(5), standard(6)],
-      field: [],
-      fatigue: 1
-    },
-    them: {
-      mana: 0,
-      availableMana: 0,
-      health: 30,
-      emoji: "🐒",
-      hand: [standard(2), standard(5), standard(7)],
-      deck: [standard(4), standard(5), standard(6)],
-      field: [],
-      fatigue: 1
-    }
-  }
+const INITIAL_PLAYER = {
+  mana: 0,
+  availableMana: 0,
+  health: 30,
+  hand: [],
+  deck: [],
+  field: [],
+  fatigue: 1
 };
 
 export default function reducer(state = INITIAL_STATE, action) {
-  if (action.type === actions.END_TURN) {
-    const playerIdx =
-      (state.playerOrder.indexOf(state.turn) + 1) % state.playerOrder.length;
-    const player = state.playerOrder[playerIdx];
-    let newMana = state.players[player].mana + 1;
+  if (action.type === actions.START_GAME) {
+    const players = {};
+    for (const [playerId, player] of Object.entries(action.players)) {
+      players[playerId] = {
+        ...INITIAL_PLAYER,
+        ...player
+      };
+    }
+    return {
+      ...state,
+      playerOrder: action.playerOrder,
+      turn: action.playerOrder[0],
+      currentPlayer: action.currentPlayer,
+      players
+    };
+  }
+
+  if (action.type === actions.START_TURN) {
+    let newMana = state.players[state.turn].mana + 1;
     if (newMana > 10) {
       newMana = 10;
     }
     return {
       ...state,
-      turn: player,
       players: {
         ...state.players,
-        [player]: {
-          ...state.players[player],
+        [state.turn]: {
+          ...state.players[state.turn],
           mana: newMana,
           availableMana: newMana
         }
       }
+    };
+  }
+
+  if (action.type === actions.END_TURN) {
+    const playerIdx =
+      (state.playerOrder.indexOf(state.turn) + 1) % state.playerOrder.length;
+    const playerId = state.playerOrder[playerIdx];
+    return {
+      ...state,
+      turn: playerId
     };
   }
 
