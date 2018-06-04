@@ -8,6 +8,7 @@ import Board from "./board";
 injectGlobal`
   body {
     margin: 0;
+    user-select: none;
   }
   html, body, #root {
     height: 100%;
