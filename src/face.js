@@ -27,7 +27,7 @@ const Emoji = styled.span`
   font-size: 70px;
 `;
 
-const Health = styled.span`
+const Health = styled.div`
   font-size: 30px;
   color: white;
 `;
