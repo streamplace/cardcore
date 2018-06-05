@@ -9,7 +9,7 @@ const DROP_TARGET_CLASS = "hack-drop-target";
  * it was dropped on and fire some actions. The right way to do this would be to keep track of the
  * locations of every droppable thing on componentDidMount and window resize.
  */
-export const cardDrop = (e, card) => dispatch => {
+export const cardDrop = (e, card, location) => dispatch => {
   document.querySelectorAll(`.${DROP_TARGET_CLASS}`).forEach(elem => {
     const { left, right, top, bottom } = elem.getClientRects()[0];
     if (
@@ -20,6 +20,7 @@ export const cardDrop = (e, card) => dispatch => {
     ) {
       const e = new Event(DROP_TARGET_CLASS);
       e.card = card;
+      e.location = location;
       elem.dispatchEvent(e);
     }
   });
@@ -37,7 +38,7 @@ export const registerDropTarget = cb => ref => {
     ref.removeEventListener(DROP_TARGET_CLASS, refs.get(ref));
   }
   refs.set(ref, e => {
-    cb(e.card);
+    cb({ card: e.card, location: e.location });
   });
   ref.addEventListener(DROP_TARGET_CLASS, refs.get(ref));
 };

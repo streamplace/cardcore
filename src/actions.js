@@ -57,3 +57,12 @@ export const playCreature = card => {
     card
   };
 };
+
+export const ATTACK = "ATTACK";
+export const attack = (attacker, defender) => {
+  return {
+    type: ATTACK,
+    attacker,
+    defender
+  };
+};

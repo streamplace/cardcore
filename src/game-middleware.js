@@ -32,8 +32,6 @@ const gameMiddleware = store => {
         ...action,
         _sender: me.id
       });
-    } else {
-      console.log("not broadcasting remote action");
     }
     next(action);
   };

@@ -12,15 +12,26 @@ const FieldSideBox = styled.div`
 `;
 
 export class FieldSide extends React.Component {
-  handleDrop(card) {
-    this.props.dispatch(playCreature(card));
+  handleDrop({ card, location }) {
+    if (location === "hand") {
+      this.props.dispatch(playCreature(card));
+    }
   }
   render() {
     return (
-      <FieldSideBox
-        innerRef={registerDropTarget(card => this.handleDrop(card))}
-      >
-        {this.props.player.field.map((card, i) => <Card key={i} card={card} />)}
+      <FieldSideBox innerRef={registerDropTarget(e => this.handleDrop(e))}>
+        {this.props.player.field.map((card, i) => {
+          return (
+            <Card
+              key={i}
+              card={card}
+              canPlay={
+                this.props.turn === this.props.playerId && card.canAttack
+              }
+              location="field"
+            />
+          );
+        })}
       </FieldSideBox>
     );
   }
@@ -29,6 +40,7 @@ export class FieldSide extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     player: state.players[props.playerId],
+    turn: state.turn,
     myTurn: state.currentPlayer === state.turn
   };
 };

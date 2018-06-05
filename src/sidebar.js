@@ -46,7 +46,9 @@ export class Sidebar extends React.Component {
               } else if (card.cost <= this.props.availableMana) {
                 canPlay = true;
               }
-              return <Card canPlay={canPlay} card={card} key={i} />;
+              return (
+                <Card canPlay={canPlay} card={card} key={i} location="hand" />
+              );
             })}
           </HandBox>
           <Deck playerId={this.props.playerId} />

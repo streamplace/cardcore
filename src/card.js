@@ -1,7 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import { cardDrop } from "./client-actions";
+import { attack } from "./actions";
 import { connect } from "react-redux";
+import { registerDropTarget } from "./client-actions";
 
 export const CardBox = styled.div`
   background-color: white;
@@ -69,13 +71,20 @@ const EmojiText = styled.span`
 
 export class Card extends React.Component {
   onDragEnd(e) {
-    this.props.dispatch(cardDrop(e, this.props.card));
+    this.props.dispatch(cardDrop(e, this.props.card, this.props.location));
+  }
+
+  handleDrop({ card, location }) {
+    if (location === "field" && this.props.location === "field") {
+      this.props.dispatch(attack({ type: "creature", unit: card }));
+    }
   }
 
   render() {
     const { card } = this.props;
     return (
       <CardBox
+        innerRef={registerDropTarget(e => this.handleDrop(e))}
         canPlay={this.props.canPlay}
         draggable={this.props.canPlay}
         onClick={this.props.onClick}

@@ -37,7 +37,9 @@ export default function reducer(state = INITIAL_STATE, action) {
   }
 
   if (action.type === actions.START_TURN) {
-    let newMana = state.players[state.turn].mana + 1;
+    const player = state.players[state.turn];
+    let newMana = player.mana + 1;
+
     if (newMana > 10) {
       newMana = 10;
     }
@@ -46,9 +48,10 @@ export default function reducer(state = INITIAL_STATE, action) {
       players: {
         ...state.players,
         [state.turn]: {
-          ...state.players[state.turn],
+          ...player,
           mana: newMana,
-          availableMana: newMana
+          availableMana: newMana,
+          field: player.field.map(card => ({ ...card, canAttack: true }))
         }
       }
     };
@@ -104,7 +107,13 @@ export default function reducer(state = INITIAL_STATE, action) {
           ...player,
           availableMana: player.availableMana - card.cost,
           hand: player.hand.filter(c => c !== card),
-          field: [...player.field, { ...card }]
+          field: [
+            ...player.field,
+            {
+              ...card,
+              canAttack: false
+            }
+          ]
         }
       }
     };
