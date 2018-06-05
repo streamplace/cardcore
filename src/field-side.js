@@ -9,6 +9,7 @@ const FieldSideBox = styled.div`
   flex-grow: 1;
   display: flex;
   justify-content: center;
+  padding: 5px;
 `;
 
 export class FieldSide extends React.Component {
