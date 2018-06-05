@@ -5,7 +5,7 @@ export const REMOTE_ACTION = Symbol("REMOTE_ACTION");
 
 const me = ssbKeys.generate();
 
-const gameMiddleware = store => {
+export const gameMiddleware = store => {
   const server = `${document.location.protocol}//${
     document.location.hostname
   }:3001`;
@@ -36,5 +36,3 @@ const gameMiddleware = store => {
     next(action);
   };
 };
-
-export default gameMiddleware;
