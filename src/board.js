@@ -12,10 +12,14 @@ const BoardWrapper = styled.div`
   flex-direction: column;
 `;
 
+const HugeButton = styled.button`
+  font-size: 50px;
+  margin: auto;
+`;
+
 export class Board extends React.Component {
-  constructor(props) {
-    super();
-    props.dispatch(
+  startGame() {
+    this.props.dispatch(
       startGame({
         currentPlayer: "me",
         players: {
@@ -45,9 +49,14 @@ export class Board extends React.Component {
       })
     );
   }
+
   render() {
     if (!this.props.playerOrder) {
-      return <div />;
+      return (
+        <BoardWrapper>
+          <HugeButton onClick={() => this.startGame()}>Start Game</HugeButton>
+        </BoardWrapper>
+      );
     }
     const notMe = this.props.playerOrder.filter(
       x => x !== this.props.currentPlayer

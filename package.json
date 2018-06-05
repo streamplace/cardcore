@@ -8,16 +8,21 @@
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
     "redux-thunk": "^2.3.0",
+    "signalhub": "^4.9.0",
+    "ssb-keys": "^7.0.16",
     "styled-components": "^3.3.0",
     "uuid": "^3.2.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "run-p start:react start:signalhub",
+    "start:react": "react-scripts start | cat",
+    "start:signalhub": "signalhub listen -p 3001",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "npm-run-all": "^4.1.3",
     "react-scripts": "^1.1.4"
   }
 }
