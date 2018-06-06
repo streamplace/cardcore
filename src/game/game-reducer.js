@@ -14,6 +14,7 @@ const INITIAL_PLAYER = {
   availableMana: 0,
   hand: [],
   field: [],
+  graveyard: [],
   fatigue: 1
 };
 
@@ -165,6 +166,44 @@ export default function reducer(state = INITIAL_STATE, action) {
           canAttack: false
         }
       }
+    };
+  }
+
+  if (action.type === actions.ATTACK) {
+    const { attackingUnitId, defendingUnitId } = action;
+    const attackingUnit = state.units[attackingUnitId];
+    const defendingUnit = state.units[defendingUnitId];
+    return {
+      ...state,
+      units: {
+        ...state.units,
+        [attackingUnitId]: {
+          ...attackingUnit,
+          health: attackingUnit.health - defendingUnit.attack,
+          canAttack: false
+        },
+        [defendingUnitId]: {
+          ...defendingUnit,
+          health: defendingUnit.health - attackingUnit.attack
+        }
+      }
+    };
+  }
+
+  if (action.type === actions.CHECK_DEATH) {
+    const newPlayers = {};
+    Object.entries(state.players).forEach(([playerId, player]) => {
+      newPlayers[playerId] = {
+        ...player,
+        field: player.field.filter(unitId => state.units[unitId].health > 0),
+        graveyard: player.field.concat(
+          player.field.filter(unitId => state.units[unitId].health <= 0)
+        )
+      };
+    });
+    return {
+      ...state,
+      players: newPlayers
     };
   }
 

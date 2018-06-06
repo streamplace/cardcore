@@ -74,10 +74,14 @@ export class Card extends React.Component {
     this.props.dispatch(cardDrop(e, this.props.unitId, this.props.location));
   }
 
-  handleDrop({ card, location }) {
-    if (location === "field" && this.props.location === "field") {
-      this.props.dispatch(attack({ type: "creature", unit: card }));
+  handleDrop({ unitId, location }) {
+    if (location !== "field" || this.props.location !== "field") {
+      return;
     }
+    if (unitId === this.props.unitId) {
+      return;
+    }
+    this.props.dispatch(attack(unitId, this.props.unitId));
   }
 
   render() {

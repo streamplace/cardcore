@@ -58,11 +58,19 @@ export const playCreature = unitId => {
   };
 };
 
-export const ATTACK = "ATTACK";
-export const attack = (attacker, defender) => {
+export const CHECK_DEATH = "CHECK_DEATH";
+export const checkDeath = () => {
   return {
-    type: ATTACK,
-    attacker,
-    defender
+    type: CHECK_DEATH
   };
+};
+
+export const ATTACK = "ATTACK";
+export const attack = (attackingUnitId, defendingUnitId) => dispatch => {
+  dispatch({
+    type: ATTACK,
+    attackingUnitId,
+    defendingUnitId
+  });
+  dispatch(checkDeath());
 };

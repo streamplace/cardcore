@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
+import { registerDropTarget } from "./client-actions";
+import { attack } from "./game";
 
 const FaceVert = styled.div`
   display: flex;
@@ -33,9 +35,15 @@ const Health = styled.div`
 `;
 
 export class Face extends React.Component {
+  handleDrop({ unitId, location }) {
+    if (location === "field") {
+      this.props.dispatch(attack(unitId, this.props.unitId));
+    }
+  }
+
   render() {
     return (
-      <FaceVert>
+      <FaceVert innerRef={registerDropTarget(e => this.handleDrop(e))}>
         <FaceBox>
           <Emoji>{this.props.unit.emoji}</Emoji>
           <Health>{this.props.unit.health} ❤️</Health>
@@ -51,6 +59,7 @@ export class Face extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     player: state.game.players[props.playerId],
+    unitId: state.game.players[props.playerId].unitId,
     unit: state.game.units[state.game.players[props.playerId].unitId]
   };
 };
