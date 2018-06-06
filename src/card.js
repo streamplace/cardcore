@@ -71,7 +71,7 @@ const EmojiText = styled.span`
 
 export class Card extends React.Component {
   onDragEnd(e) {
-    this.props.dispatch(cardDrop(e, this.props.card, this.props.location));
+    this.props.dispatch(cardDrop(e, this.props.unitId, this.props.location));
   }
 
   handleDrop({ card, location }) {
@@ -106,7 +106,9 @@ export class Card extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-  return {};
+  return {
+    card: state.game.units[props.unitId]
+  };
 };
 
 export default connect(mapStateToProps)(Card);

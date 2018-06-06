@@ -51,10 +51,10 @@ export const endTurn = () => (dispatch, getState) => {
 };
 
 export const PLAY_CREATURE = "PLAY_CREATURE";
-export const playCreature = card => {
+export const playCreature = unitId => {
   return {
     type: PLAY_CREATURE,
-    card
+    unitId
   };
 };
 

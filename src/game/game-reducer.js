@@ -5,7 +5,8 @@ const INITIAL_STATE = {
     startDraw: 3
   },
   started: false,
-  players: {}
+  players: {},
+  units: {}
 };
 
 const INITIAL_PLAYER = {
@@ -13,22 +14,43 @@ const INITIAL_PLAYER = {
   availableMana: 0,
   health: 30,
   hand: [],
-  deck: [],
   field: [],
   fatigue: 1
+};
+
+/**
+ * id-generation function that assumes that all users will execute it in the _exact_ same order.
+ * this is.... hopefully reasonable.
+ */
+let cur = 0;
+const uid = () => {
+  let res = `id-${cur}`;
+  cur += 1;
+  return res;
 };
 
 export default function reducer(state = INITIAL_STATE, action) {
   if (action.type === actions.START_GAME) {
     const players = {};
+    const newUnits = {};
     for (const [playerId, player] of Object.entries(action.players)) {
       players[playerId] = {
         ...INITIAL_PLAYER,
-        ...player
+        emoji: player.emoji,
+        deck: []
       };
+      for (const card of player.deck) {
+        const id = uid();
+        newUnits[id] = { ...card };
+        players[playerId].deck.push(id);
+      }
     }
     return {
       ...state,
+      units: {
+        ...state.units,
+        ...newUnits
+      },
       playerOrder: action.playerOrder,
       turn: action.playerOrder[0],
       currentPlayer: action.currentPlayer,
@@ -43,15 +65,25 @@ export default function reducer(state = INITIAL_STATE, action) {
     if (newMana > 10) {
       newMana = 10;
     }
+    const newUnits = {};
+    player.field.forEach(unitId => {
+      newUnits[unitId] = {
+        ...state.units[unitId],
+        canAttack: true
+      };
+    });
     return {
       ...state,
+      units: {
+        ...state.units,
+        ...newUnits
+      },
       players: {
         ...state.players,
         [state.turn]: {
           ...player,
           mana: newMana,
-          availableMana: newMana,
-          field: player.field.map(card => ({ ...card, canAttack: true }))
+          availableMana: newMana
         }
       }
     };
@@ -69,8 +101,8 @@ export default function reducer(state = INITIAL_STATE, action) {
 
   if (action.type === actions.DRAW_CARD) {
     const player = state.players[action.playerId];
-    const card = player.deck[0];
-    if (!card) {
+    const unitId = player.deck[0];
+    if (!unitId) {
       return {
         ...state,
         players: {
@@ -83,13 +115,14 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       };
     }
+
     return {
       ...state,
       players: {
         ...state.players,
         [action.playerId]: {
           ...player,
-          hand: [...player.hand, { ...card }],
+          hand: [...player.hand, unitId],
           deck: player.deck.slice(1)
         }
       }
@@ -97,8 +130,10 @@ export default function reducer(state = INITIAL_STATE, action) {
   }
 
   if (action.type === actions.PLAY_CREATURE) {
+    console.log(action);
     const player = state.players[state.turn];
-    const card = action.card;
+    const unitId = action.unitId;
+    const card = state.units[unitId];
     return {
       ...state,
       players: {
@@ -106,14 +141,15 @@ export default function reducer(state = INITIAL_STATE, action) {
         [state.turn]: {
           ...player,
           availableMana: player.availableMana - card.cost,
-          hand: player.hand.filter(c => c !== card),
-          field: [
-            ...player.field,
-            {
-              ...card,
-              canAttack: false
-            }
-          ]
+          hand: player.hand.filter(u => u !== unitId),
+          field: [...player.field, unitId]
+        }
+      },
+      units: {
+        ...state.units,
+        [unitId]: {
+          ...card,
+          canAttack: false
         }
       }
     };

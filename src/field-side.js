@@ -13,19 +13,21 @@ const FieldSideBox = styled.div`
 `;
 
 export class FieldSide extends React.Component {
-  handleDrop({ card, location }) {
+  handleDrop({ unitId, location }) {
     if (location === "hand") {
-      this.props.dispatch(playCreature(card));
+      this.props.dispatch(playCreature(unitId));
     }
   }
   render() {
     return (
       <FieldSideBox innerRef={registerDropTarget(e => this.handleDrop(e))}>
-        {this.props.player.field.map((card, i) => {
+        {this.props.player.field.map((unitId, i) => {
+          const card = this.props.units[unitId];
+          console.log(this.props.player);
           return (
             <Card
               key={i}
-              card={card}
+              unitId={unitId}
               canPlay={
                 this.props.turn === this.props.playerId && card.canAttack
               }
@@ -42,7 +44,8 @@ const mapStateToProps = (state, props) => {
   return {
     player: state.game.players[props.playerId],
     turn: state.game.turn,
-    myTurn: state.game.currentPlayer === state.turn
+    myTurn: state.game.currentPlayer === state.turn,
+    units: state.game.units
   };
 };
 
