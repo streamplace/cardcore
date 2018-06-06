@@ -37,8 +37,8 @@ export class Face extends React.Component {
     return (
       <FaceVert>
         <FaceBox>
-          <Emoji>{this.props.player.emoji}</Emoji>
-          <Health>{this.props.player.health} ❤️</Health>
+          <Emoji>{this.props.unit.emoji}</Emoji>
+          <Health>{this.props.unit.health} ❤️</Health>
         </FaceBox>
         <ManaBox>
           💎 {this.props.player.availableMana}/{this.props.player.mana}
@@ -49,7 +49,10 @@ export class Face extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-  return { player: state.game.players[props.playerId] };
+  return {
+    player: state.game.players[props.playerId],
+    unit: state.game.units[state.game.players[props.playerId].unitId]
+  };
 };
 
 export default connect(mapStateToProps)(Face);

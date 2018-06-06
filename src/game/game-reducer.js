@@ -12,7 +12,6 @@ const INITIAL_STATE = {
 const INITIAL_PLAYER = {
   mana: 0,
   availableMana: 0,
-  health: 30,
   hand: [],
   field: [],
   fatigue: 1
@@ -34,9 +33,16 @@ export default function reducer(state = INITIAL_STATE, action) {
     const players = {};
     const newUnits = {};
     for (const [playerId, player] of Object.entries(action.players)) {
+      const playerUnitId = uid();
+      newUnits[playerUnitId] = {
+        emoji: player.emoji,
+        health: 30,
+        attack: 0,
+        mana: 0
+      };
       players[playerId] = {
         ...INITIAL_PLAYER,
-        emoji: player.emoji,
+        unitId: playerUnitId,
         deck: []
       };
       for (const card of player.deck) {
@@ -103,14 +109,21 @@ export default function reducer(state = INITIAL_STATE, action) {
     const player = state.players[action.playerId];
     const unitId = player.deck[0];
     if (!unitId) {
+      // fatigue
       return {
         ...state,
+        units: {
+          ...state.units,
+          [player.unitId]: {
+            ...state.units[player.unitId],
+            health: state.units[player.unitId].health - player.fatigue
+          }
+        },
         players: {
           ...state.players,
           [action.playerId]: {
             ...player,
-            fatigue: player.fatigue + 1,
-            health: player.health - player.fatigue
+            fatigue: player.fatigue + 1
           }
         }
       };
