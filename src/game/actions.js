@@ -74,3 +74,19 @@ export const attack = (attackingUnitId, defendingUnitId) => dispatch => {
   });
   dispatch(checkDeath());
 };
+
+export const CHANGE_ALL_ATTACKS = "CHANGE_ALL_ATTACKS";
+export const changeAllAttacks = value => {
+  return {
+    type: CHANGE_ALL_ATTACKS,
+    value
+  };
+};
+
+export const CHANGE_ALL_HEALTH = "CHANGE_ALL_HEALTH";
+export const changeAllHealth = value => {
+  return {
+    type: CHANGE_ALL_HEALTH,
+    value
+  };
+};

@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { startGame } from "./game/actions";
 import standard from "./standard";
+import { standard, battlecry } from "./standard";
 
 const BoardWrapper = styled.div`
   height: 100%;
@@ -30,7 +31,8 @@ export class Board extends React.Component {
               standard(3),
               standard(4),
               standard(5),
-              standard(6)
+              standard(6),
+              battlecry(3)
             ],
             emoji: "🐒"
           },
@@ -41,7 +43,8 @@ export class Board extends React.Component {
               standard(1),
               standard(1),
               standard(1),
-              standard(1)
+              standard(1),
+              battlecry(3)
             ],
             emoji: "🐙"
           }
