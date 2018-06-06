@@ -6,9 +6,7 @@ export const REMOTE_ACTION = Symbol("REMOTE_ACTION");
 const me = ssbKeys.generate();
 
 export const gameMiddleware = store => {
-  const server = `${document.location.protocol}//${
-    document.location.hostname
-  }:3001`;
+  const server = `${document.location.protocol}//${document.location.host}`;
   const hub = signalhub("game", [server]);
   hub.subscribe("default-game").on("data", action => {
     if (action._sender === me.id) {

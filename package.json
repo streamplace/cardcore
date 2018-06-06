@@ -1,5 +1,5 @@
 {
-  "name": "plane-card",
+  "name": "streamplace-card",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -14,15 +14,20 @@
     "uuid": "^3.2.1"
   },
   "scripts": {
-    "start": "run-p start:react start:signalhub",
-    "start:react": "react-scripts start | cat",
+    "start": "run-p start:proxy start:react start:signalhub start:opn",
+    "start:proxy": "node proxy.js",
+    "start:react": "PORT=3002 BROWSER=none react-scripts start | cat",
     "start:signalhub": "signalhub listen -p 3001",
+    "start:opn": "sleep 3; opn http://localhost:3000",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "express": "^4.16.3",
+    "http-proxy-middleware": "^0.18.0",
     "npm-run-all": "^4.1.3",
+    "opn-cli": "^3.1.0",
     "react-scripts": "^1.1.4"
   }
 }
