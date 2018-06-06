@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { cardDrop } from "./client-actions";
-import { attack } from "./actions";
+import { attack } from "./game/actions";
 import { connect } from "react-redux";
 import { registerDropTarget } from "./client-actions";
 

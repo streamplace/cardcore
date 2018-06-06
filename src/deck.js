@@ -32,7 +32,7 @@ export class Deck extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-  return { count: state.players[props.playerId].deck.length };
+  return { count: state.game.players[props.playerId].deck.length };
 };
 
 export default connect(mapStateToProps)(Deck);

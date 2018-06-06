@@ -3,7 +3,7 @@ import Sidebar from "./sidebar";
 import Field from "./field";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { startGame } from "./actions";
+import { startGame } from "./game/actions";
 import standard from "./standard";
 
 const BoardWrapper = styled.div`
@@ -72,7 +72,10 @@ export class Board extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-  return { playerOrder: state.playerOrder, currentPlayer: state.currentPlayer };
+  return {
+    playerOrder: state.game.playerOrder,
+    currentPlayer: state.game.currentPlayer
+  };
 };
 
 export default connect(mapStateToProps)(Board);

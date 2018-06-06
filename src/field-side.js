@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Card from "./card";
 import { registerDropTarget } from "./client-actions";
-import { playCreature } from "./actions";
+import { playCreature } from "./game/actions";
 import { connect } from "react-redux";
 
 const FieldSideBox = styled.div`
@@ -40,9 +40,9 @@ export class FieldSide extends React.Component {
 
 const mapStateToProps = (state, props) => {
   return {
-    player: state.players[props.playerId],
-    turn: state.turn,
-    myTurn: state.currentPlayer === state.turn
+    player: state.game.players[props.playerId],
+    turn: state.game.turn,
+    myTurn: state.game.currentPlayer === state.turn
   };
 };
 

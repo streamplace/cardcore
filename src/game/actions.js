@@ -1,4 +1,4 @@
-import { shuffled } from "./util";
+import { shuffled } from "../util";
 export const START_GAME = "START_GAME";
 /**
  * Start the game!
@@ -7,7 +7,7 @@ export const startGame = ({ players, currentPlayer }) => (
   dispatch,
   getState
 ) => {
-  const { started } = getState();
+  const { started } = getState().game;
   if (started) {
     // idk why this is happening, hack hack hack
     return;
@@ -25,7 +25,7 @@ export const startGame = ({ players, currentPlayer }) => (
     currentPlayer,
     playerOrder: shuffled(Object.keys(players))
   });
-  const { params, playerOrder } = getState();
+  const { params, playerOrder } = getState().game;
   for (const playerId of playerOrder) {
     for (let i = 0; i < params.startDraw; i += 1) {
       dispatch({ type: DRAW_CARD, playerId });
@@ -36,7 +36,7 @@ export const startGame = ({ players, currentPlayer }) => (
 
 export const START_TURN = "START_TURN";
 export const startTurn = () => (dispatch, getState) => {
-  const playerId = getState().turn;
+  const playerId = getState().game.turn;
   dispatch({ type: START_TURN });
   dispatch({ type: DRAW_CARD, playerId });
 };

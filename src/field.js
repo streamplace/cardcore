@@ -2,7 +2,7 @@ import React from "react";
 import FieldSide from "./field-side";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import { endTurn } from "./actions";
+import { endTurn } from "./game/actions";
 
 const FieldBox = styled.div`
   flex-grow: 2;
@@ -53,10 +53,10 @@ export class Field extends React.Component {
 
 const mapStateToProps = (state, props) => {
   return {
-    players: state.playerOrder,
-    myTurn: state.currentPlayer === state.turn,
-    playerOrder: state.playerOrder,
-    currentPlayer: state.currentPlayer
+    players: state.game.playerOrder,
+    myTurn: state.game.currentPlayer === state.game.turn,
+    playerOrder: state.game.playerOrder,
+    currentPlayer: state.game.currentPlayer
   };
 };
 

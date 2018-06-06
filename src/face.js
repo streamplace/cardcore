@@ -49,7 +49,7 @@ export class Face extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-  return { player: state.players[props.playerId] };
+  return { player: state.game.players[props.playerId] };
 };
 
 export default connect(mapStateToProps)(Face);

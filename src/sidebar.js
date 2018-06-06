@@ -60,9 +60,9 @@ export class Sidebar extends React.Component {
 
 const mapStateToProps = (state, props) => {
   return {
-    player: state.players[props.playerId],
-    myTurn: state.turn === props.playerId,
-    availableMana: state.players[props.playerId].availableMana
+    player: state.game.players[props.playerId],
+    myTurn: state.game.turn === props.playerId,
+    availableMana: state.game.players[props.playerId].availableMana
   };
 };
 
