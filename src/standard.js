@@ -1,3 +1,4 @@
+// emoji, attack, health, name, text, onSummon
 export function standard(cost) {
   const emoji = emojis[cost] || emojis[emojis.length - 1];
   return {
@@ -9,7 +10,7 @@ export function standard(cost) {
     text: ""
   };
 }
-
+//need action to change health or attack of a creature already made by game
 export function battlecry(cost) {
   const emoji = emojis[cost] || emojis[emojis.length - 1];
   return {

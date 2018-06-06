@@ -4,7 +4,6 @@ import Field from "./field";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { startGame } from "./game/actions";
-import standard from "./standard";
 import { standard, battlecry } from "./standard";
 
 const BoardWrapper = styled.div`

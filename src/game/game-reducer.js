@@ -1,4 +1,5 @@
 import * as actions from "./actions";
+//import * as standard from "../standard";
 
 const INITIAL_STATE = {
   params: {
@@ -206,6 +207,29 @@ export default function reducer(state = INITIAL_STATE, action) {
       players: newPlayers
     };
   }
-
+  if (action.type === actions.CHANGE_ALL_ATTACKS) {
+    const player1 = state.players[0];
+    const player2 = state.players[1];
+    const newUnits = {};
+    player1.field.forEach(unitId => {
+      newUnits[unitId] = {
+        ...state.units[unitId],
+        attack: action.value
+      };
+    });
+    player2.field.forEach(unitId => {
+      newUnits[unitId] = {
+        ...state.units[unitId],
+        attack: action.value
+      };
+    });
+    console.log(newUnits);
+    return {
+      ...state,
+      units: {
+        ...state.units
+      }
+    };
+  }
   return state;
 }
