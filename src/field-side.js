@@ -23,7 +23,6 @@ export class FieldSide extends React.Component {
       <FieldSideBox innerRef={registerDropTarget(e => this.handleDrop(e))}>
         {this.props.player.field.map((unitId, i) => {
           const card = this.props.units[unitId];
-          console.log(this.props.player);
           return (
             <Card
               key={i}
