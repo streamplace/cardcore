@@ -13,7 +13,7 @@ export default function reducer(state = INITIAL_STATE, action) {
     };
   }
 
-  if (action.types === action.DESYNC) {
+  if (action.type === actions.DESYNC) {
     return {
       ...state,
       sync: false,

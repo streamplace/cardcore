@@ -2,7 +2,7 @@ import signalhub from "signalhub";
 import ssbKeys from "ssb-keys";
 import stringify from "json-stable-stringify";
 import { sha256 } from "crypto-hash";
-import { desync } from "./actions";
+import { desync, DESYNC } from "./actions";
 
 export const REMOTE_ACTION = Symbol("REMOTE_ACTION");
 
@@ -43,16 +43,21 @@ export const gameMiddleware = store => {
       if (queue.length === 0) {
         return;
       }
-      running = true;
       const action = queue.shift();
+      if (!sync && action.type !== DESYNC) {
+        // if we lost sync, the only thing we accept is desync reports
+        running = false;
+        return;
+      }
+      running = true;
       next(action);
       const hash = await getHash();
       if (action[REMOTE_ACTION]) {
         // we just completed a remote action, assert states match
-        if (hash !== action._hash) {
+        if (sync && hash !== action._hash) {
           // very bad and extremely fatal for now - perhaps someday we recover
           sync = false;
-          store.dispatch(me.id, store.getState());
+          store.dispatch(desync(me.id, store.getState().game));
         }
       } else {
         // tell everyone else the action happened and the resulting hash

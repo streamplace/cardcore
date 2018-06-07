@@ -41,7 +41,9 @@ export const DESYNC = "DESYNC";
  */
 export const desync = (user, state) => {
   return {
-    type: DESYNC
+    type: DESYNC,
+    user: user,
+    state: state
   };
 };
 
