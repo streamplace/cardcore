@@ -33,9 +33,14 @@ const Name = styled.div`
   width: 100%;
   text-align: center;
   top: 35px;
+  display: flex;
+  flex-direction: column;
 `;
 const NameText = styled.span`
   font-style: italic;
+`;
+const CardText = styled.span`
+  font-size: 0.7em;
 `;
 export const Number = styled.span`
   position: absolute;
@@ -97,6 +102,7 @@ export class Card extends React.Component {
         <Type>👾</Type>
         <Name>
           <NameText>{card.name}</NameText>
+          <CardText>{card.text}</CardText>
         </Name>
         <Emoji>
           <EmojiText>{card.emoji}</EmojiText>

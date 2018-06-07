@@ -1,4 +1,5 @@
 import * as actions from "./actions";
+//import * as standard from "../standard";
 
 const INITIAL_STATE = {
   params: {
@@ -144,7 +145,7 @@ export default function reducer(state = INITIAL_STATE, action) {
   }
 
   if (action.type === actions.PLAY_CREATURE) {
-    console.log(action);
+    //console.log(action);
     const player = state.players[state.turn];
     const unitId = action.unitId;
     const card = state.units[unitId];
@@ -207,5 +208,44 @@ export default function reducer(state = INITIAL_STATE, action) {
     };
   }
 
+  if (action.type === actions.CHANGE_ALL_ATTACKS) {
+    const newField = {};
+    Object.entries(state.players).forEach(([playerId, player]) => {
+      player.field.forEach(unitId => {
+        const fieldUnit = state.units[unitId];
+        newField[unitId] = {
+          ...state.units[unitId],
+          attack: action.value
+        };
+      });
+    });
+    return {
+      ...state,
+      units: {
+        ...state.units,
+        ...newField
+      }
+    };
+  }
+
+  if (action.type === actions.CHANGE_ALL_HEALTH) {
+    const newUnits = {};
+    Object.entries(state.players).forEach(([playerId, player]) => {
+      player.field.forEach(unitId => {
+        const fieldUnit = state.units[unitId];
+        newUnits[unitId] = {
+          ...state.units[unitId],
+          health: action.value
+        };
+      });
+    });
+    return {
+      ...state,
+      units: {
+        ...state.units,
+        ...newUnits
+      }
+    };
+  }
   return state;
 }

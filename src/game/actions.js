@@ -51,11 +51,21 @@ export const endTurn = () => (dispatch, getState) => {
 };
 
 export const PLAY_CREATURE = "PLAY_CREATURE";
-export const playCreature = unitId => {
-  return {
+export const playCreature = unitId => (dispatch, getState) => {
+  const card = getState().game.units[unitId];
+  dispatch({
     type: PLAY_CREATURE,
     unitId
-  };
+  });
+  if (card.onSummon) {
+    let i;
+    for (i = 0; i <= card.onSummon.length - 1; i++) {
+      dispatch({
+        type: card.onSummon[i].type,
+        value: card.onSummon[i].value
+      });
+    }
+  }
 };
 
 export const CHECK_DEATH = "CHECK_DEATH";
@@ -74,3 +84,6 @@ export const attack = (attackingUnitId, defendingUnitId) => dispatch => {
   });
   dispatch(checkDeath());
 };
+
+export const CHANGE_ALL_ATTACKS = "CHANGE_ALL_ATTACKS";
+export const CHANGE_ALL_HEALTH = "CHANGE_ALL_HEALTH";
