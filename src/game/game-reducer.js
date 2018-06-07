@@ -61,7 +61,6 @@ export default function reducer(state = INITIAL_STATE, action) {
       },
       playerOrder: action.playerOrder,
       turn: action.playerOrder[0],
-      currentPlayer: action.currentPlayer,
       players
     };
   }
@@ -145,7 +144,6 @@ export default function reducer(state = INITIAL_STATE, action) {
   }
 
   if (action.type === actions.PLAY_CREATURE) {
-    //console.log(action);
     const player = state.players[state.turn];
     const unitId = action.unitId;
     const card = state.units[unitId];

@@ -53,6 +53,18 @@ export class Board extends React.Component {
   }
 
   render() {
+    console.log(this.props);
+    if (!this.props.sync) {
+      return (
+        <BoardWrapper>
+          <p>fatal error: desync</p>
+          <p>if you wanna help, send someone this blob of data:</p>
+          <p>
+            <pre>{JSON.stringify(this.props.desyncStates, null, 2)}</pre>
+          </p>
+        </BoardWrapper>
+      );
+    }
     if (!this.props.playerOrder) {
       return (
         <BoardWrapper>
@@ -76,7 +88,9 @@ export class Board extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     playerOrder: state.game.playerOrder,
-    currentPlayer: state.game.currentPlayer
+    currentPlayer: state.client.currentPlayer,
+    sync: state.client.sync,
+    desyncStates: state.client.desyncStates
   };
 };
 
