@@ -61,7 +61,6 @@ export default function reducer(state = INITIAL_STATE, action) {
       },
       playerOrder: action.playerOrder,
       turn: action.playerOrder[0],
-      currentPlayer: action.currentPlayer,
       players
     };
   }
@@ -166,7 +165,8 @@ export default function reducer(state = INITIAL_STATE, action) {
           ...card,
           canAttack: false
         }
-      }
+      },
+      desync: Math.random()
     };
   }
 

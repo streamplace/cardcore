@@ -76,7 +76,9 @@ export class Board extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     playerOrder: state.game.playerOrder,
-    currentPlayer: state.game.currentPlayer
+    currentPlayer: state.client.currentPlayer,
+    sync: state.client.sync,
+    desyncStates: state.client.desyncStates
   };
 };
 
