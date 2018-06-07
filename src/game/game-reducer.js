@@ -145,7 +145,7 @@ export default function reducer(state = INITIAL_STATE, action) {
   }
 
   if (action.type === actions.PLAY_CREATURE) {
-    console.log(action);
+    //console.log(action);
     const player = state.players[state.turn];
     const unitId = action.unitId;
     const card = state.units[unitId];
@@ -208,26 +208,21 @@ export default function reducer(state = INITIAL_STATE, action) {
     };
   }
   if (action.type === actions.CHANGE_ALL_ATTACKS) {
-    const player1 = state.players[0];
-    const player2 = state.players[1];
-    const newUnits = {};
-    player1.field.forEach(unitId => {
-      newUnits[unitId] = {
-        ...state.units[unitId],
-        attack: action.value
-      };
+    const newField = {};
+    Object.entries(state.players).forEach(([playerId, player]) => {
+      player.field.forEach(unitId => {
+        const fieldUnit = state.units[unitId];
+        newField[unitId] = {
+          ...state.units[unitId],
+          attack: action.value
+        };
+      });
     });
-    player2.field.forEach(unitId => {
-      newUnits[unitId] = {
-        ...state.units[unitId],
-        attack: action.value
-      };
-    });
-    console.log(newUnits);
     return {
       ...state,
       units: {
-        ...state.units
+        ...state.units,
+        ...newField
       }
     };
   }
