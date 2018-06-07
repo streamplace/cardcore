@@ -64,7 +64,7 @@ export const endTurn = () => (dispatch, getState) => {
 };
 
 export const PLAY_CREATURE = "PLAY_CREATURE";
-export const playCreature = unitId => (dispatch, getState) => {
+export const playCreature = (unitId, playerId) => (dispatch, getState) => {
   const card = getState().game.units[unitId];
   dispatch({
     type: PLAY_CREATURE,
@@ -75,7 +75,9 @@ export const playCreature = unitId => (dispatch, getState) => {
     for (i = 0; i <= card.onSummon.length - 1; i++) {
       dispatch({
         type: card.onSummon[i].type,
-        value: card.onSummon[i].value
+        value: card.onSummon[i].value,
+        unitId,
+        playerId
       });
     }
   }

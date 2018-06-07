@@ -15,7 +15,7 @@ const FieldSideBox = styled.div`
 export class FieldSide extends React.Component {
   handleDrop({ unitId, location }) {
     if (location === "hand") {
-      this.props.dispatch(playCreature(unitId));
+      this.props.dispatch(playCreature(unitId, this.props.playerId));
     }
   }
   render() {

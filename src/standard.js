@@ -1,4 +1,5 @@
 // emoji, attack, health, name, text, onSummon
+const emojis = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "☺️", "😊"];
 export function standard(cost) {
   const emoji = emojis[cost] || emojis[emojis.length - 1];
   return {
@@ -11,7 +12,7 @@ export function standard(cost) {
   };
 }
 
-export function battlecry(cost) {
+export function threeMaster(cost) {
   const emoji = emojis[cost] || emojis[emojis.length - 1];
   return {
     cost: cost,
@@ -33,4 +34,20 @@ export function battlecry(cost) {
   };
 }
 
-const emojis = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "☺️", "😊"];
+export function cardDraw(cost) {
+  const emoji = emojis[cost] || emojis[emojis.length - 1];
+  return {
+    cost: cost,
+    // emoji: emoji,
+    attack: cost,
+    health: cost,
+    name: "Card Drawer",
+    text: `On summon: draw a card`,
+    onSummon: [
+      {
+        type: "DRAW_CARD",
+        value: 1
+      }
+    ]
+  };
+}
