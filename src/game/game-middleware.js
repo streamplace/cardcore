@@ -1,7 +1,7 @@
 import signalhub from "signalhub";
 import ssbKeys from "ssb-keys";
 import stringify from "json-stable-stringify";
-import { sha256 } from "crypto-hash";
+import sha256 from "./sha256";
 import { desync, DESYNC } from "./actions";
 import * as gameActions from "./actions";
 
@@ -12,8 +12,10 @@ const me = ssbKeys.generate();
 export const gameMiddleware = store => {
   const server = `${document.location.protocol}//${document.location.host}`;
   const hub = signalhub("game", [server]);
-  const getHash = async () => {
-    return await sha256(stringify(store.getState().game));
+  const getHash = () => {
+    return new Promise((resolve, reject) => {
+      resolve(sha256(stringify(store.getState().game)));
+    });
   };
   hub.subscribe("default-game").on("data", async action => {
     if (action._sender === me.id) {
