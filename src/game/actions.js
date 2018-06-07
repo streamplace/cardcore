@@ -3,7 +3,7 @@ export const START_GAME = "START_GAME";
 /**
  * Start the game!
  */
-export const startGame = ({ players, currentPlayer }) => (
+export const startGame = ({ players, currentPlayer }) => async (
   dispatch,
   getState
 ) => {
@@ -19,7 +19,7 @@ export const startGame = ({ players, currentPlayer }) => (
       deck: shuffled(player.deck)
     };
   }
-  dispatch({
+  await dispatch({
     type: START_GAME,
     players: shuffledPlayers,
     currentPlayer,
@@ -31,7 +31,7 @@ export const startGame = ({ players, currentPlayer }) => (
       dispatch({ type: DRAW_CARD, playerId });
     }
   }
-  dispatch(startTurn());
+  await dispatch(startTurn());
 };
 
 export const DESYNC = "DESYNC";

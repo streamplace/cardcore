@@ -31,6 +31,8 @@ export const gameMiddleware = store => {
     store.dispatch(action);
   });
 
+  const promises = new WeakMap();
+
   return next => {
     const queue = [];
     let running = false;
@@ -50,7 +52,7 @@ export const gameMiddleware = store => {
         return;
       }
       running = true;
-      next(action);
+      const ret = next(action);
       const hash = await getHash();
       if (action[REMOTE_ACTION]) {
         // we just completed a remote action, assert states match
@@ -67,13 +69,19 @@ export const gameMiddleware = store => {
           _hash: hash
         });
       }
+      const [resolve, reject] = promises.get(action);
+      resolve(ret);
       running = false;
       runNext();
     };
 
-    return async action => {
+    return action => {
       queue.push(action);
-      runNext();
+      const prom = new Promise((resolve, reject) => {
+        promises.set(action, [resolve, reject]);
+      });
+      setTimeout(runNext, 0);
+      return prom;
     };
   };
 };
