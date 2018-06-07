@@ -3,6 +3,7 @@ import ssbKeys from "ssb-keys";
 import stringify from "json-stable-stringify";
 import { sha256 } from "crypto-hash";
 import { desync, DESYNC } from "./actions";
+import * as gameActions from "./actions";
 
 export const REMOTE_ACTION = Symbol("REMOTE_ACTION");
 
@@ -61,7 +62,7 @@ export const gameMiddleware = store => {
           sync = false;
           store.dispatch(desync(me.id, store.getState().game));
         }
-      } else {
+      } else if (gameActions[action.type]) {
         // tell everyone else the action happened and the resulting hash
         hub.broadcast("default-game", {
           ...action,
