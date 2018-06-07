@@ -58,16 +58,13 @@ export const playCreature = unitId => (dispatch, getState) => {
     unitId
   });
   if (card.onSummon) {
-    console.log(
-      "onSummon effect: " +
-        card.onSummon[0].type +
-        "with value of:" +
-        card.onSummon[0].value
-    );
-    dispatch({
-      type: card.onSummon[0].type,
-      value: card.onSummon[0].value
-    });
+    let i;
+    for (i = 0; i <= card.onSummon.length - 1; i++) {
+      dispatch({
+        type: card.onSummon[i].type,
+        value: card.onSummon[i].value
+      });
+    }
   }
 };
 

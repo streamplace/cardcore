@@ -207,6 +207,7 @@ export default function reducer(state = INITIAL_STATE, action) {
       players: newPlayers
     };
   }
+
   if (action.type === actions.CHANGE_ALL_ATTACKS) {
     const newField = {};
     Object.entries(state.players).forEach(([playerId, player]) => {
@@ -223,6 +224,26 @@ export default function reducer(state = INITIAL_STATE, action) {
       units: {
         ...state.units,
         ...newField
+      }
+    };
+  }
+
+  if (action.type === actions.CHANGE_ALL_HEALTH) {
+    const newUnits = {};
+    Object.entries(state.players).forEach(([playerId, player]) => {
+      player.field.forEach(unitId => {
+        const fieldUnit = state.units[unitId];
+        newUnits[unitId] = {
+          ...state.units[unitId],
+          health: action.value
+        };
+      });
+    });
+    return {
+      ...state,
+      units: {
+        ...state.units,
+        ...newUnits
       }
     };
   }

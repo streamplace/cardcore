@@ -10,7 +10,7 @@ export function standard(cost) {
     text: ""
   };
 }
-//need action to change health or attack of a creature already made by game
+
 export function battlecry(cost) {
   const emoji = emojis[cost] || emojis[emojis.length - 1];
   return {
@@ -18,8 +18,8 @@ export function battlecry(cost) {
     // emoji: emoji,
     attack: cost,
     health: cost,
-    name: "Sunkeeper Tarim",
-    text: `Battlecry: Set all other minions' Attack and Health to 3`,
+    name: "Three Master",
+    text: `On summon: Set all other creatures' Attack and Health to 3`,
     onSummon: [
       {
         type: "CHANGE_ALL_ATTACKS",
