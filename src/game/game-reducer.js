@@ -195,8 +195,8 @@ export default function reducer(state = INITIAL_STATE, action) {
       units: {
         ...state.units,
         [action.target.unitId]: {
-          ...action.target,
-          health: action.target.unitId - action.value
+          ...state.units[action.target.unitId],
+          health: state.units[action.target.unitId].health - action.value
         }
       }
     };

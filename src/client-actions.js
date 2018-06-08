@@ -62,13 +62,14 @@ export const clientPlayCreature = (unitId, playerId) => (
 export const clientStartTarget = (unit, unitId) => (dispatch, getState) => {
   dispatch({ type: CLIENT_START_TARGET, unit, unitId });
 };
-export const clientPickTarget = unitId => (dispatch, getState) => {
-  dispatch({ type: CLIENT_PICK_TARGET, unitId });
+export const clientPickTarget = unitId => async (dispatch, getState) => {
+  await dispatch({ type: CLIENT_PICK_TARGET, unitId });
   const timeToPlay =
     getState().client.targets.length ===
     getState().client.targettingUnit.onSummon.length;
+  console.log(timeToPlay);
   if (timeToPlay) {
-    dispatch(
+    await dispatch(
       playCreature(
         getState().client.targettingUnitId,
         getState().client.targets
