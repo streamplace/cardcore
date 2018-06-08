@@ -31,6 +31,18 @@ export const onDeathCreature = {
   ]
 };
 
+export const onSummonSummon = {
+  ...standard(2),
+  emoji: "",
+  name: "Summon Dude",
+  text: "onSummon: summon a 1/1 creature",
+  onSummon: [
+    {
+      type: "SUMMON_CREATURE",
+      value: 1
+    }
+  ]
+};
 export function threeMaster(cost) {
   const emoji = emojis[cost] || emojis[emojis.length - 1];
   return {

@@ -86,10 +86,18 @@ export const playCreature = (unitId, targets = []) => async (
 };
 
 export const CHECK_DEATH = "CHECK_DEATH";
-export const checkDeath = () => async dispatch => {
-  return await dispatch({
+export const checkDeath = () => async (dispatch, getState) => {
+  //const card = getState().game.units[unitId];
+  await dispatch({
     type: CHECK_DEATH
   });
+  // for (let i = 0; i < card.onDeath.length; i++) {
+  //   await dispatch ({
+  //   ...card.onDeath[i],
+  //   playerId: getState().game.turn,
+  //   unitId:
+  //   })
+  // }
 };
 
 export const ATTACK = "ATTACK";
@@ -105,3 +113,4 @@ export const attack = (attackingUnitId, defendingUnitId) => async dispatch => {
 export const CHANGE_ALL_ATTACKS = "CHANGE_ALL_ATTACKS";
 export const CHANGE_ALL_HEALTH = "CHANGE_ALL_HEALTH";
 export const DAMAGE = "DAMAGE";
+export const SUMMON_CREATURE = "SUMMON_CREATURE";
