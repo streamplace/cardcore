@@ -4,7 +4,7 @@ import Field from "./field";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { startGame } from "./game/actions";
-import { standard, threeMaster, cardDraw } from "./standard";
+import { standard, threeMaster, cardDraw, damageCreature } from "./standard";
 
 const BoardWrapper = styled.div`
   height: 100%;
@@ -32,7 +32,8 @@ export class Board extends React.Component {
               standard(5),
               standard(6),
               threeMaster(3),
-              cardDraw(2)
+              cardDraw(2),
+              damageCreature(4)
             ],
             emoji: "🐒"
           },
@@ -45,7 +46,8 @@ export class Board extends React.Component {
               standard(1),
               standard(1),
               threeMaster(3),
-              cardDraw(2)
+              cardDraw(2),
+              damageCreature(4)
             ],
             emoji: "🐙"
           }
@@ -55,7 +57,7 @@ export class Board extends React.Component {
   }
 
   render() {
-    console.log(this.props);
+    //console.log(this.props);
     if (!this.props.sync) {
       return (
         <BoardWrapper>

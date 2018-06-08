@@ -1,6 +1,6 @@
 import * as actions from "./actions";
 //import * as standard from "../standard";
-
+import targetUnits from "../targetting";
 const INITIAL_STATE = {
   params: {
     startDraw: 3
@@ -184,6 +184,19 @@ export default function reducer(state = INITIAL_STATE, action) {
         [defendingUnitId]: {
           ...defendingUnit,
           health: defendingUnit.health - attackingUnit.attack
+        }
+      }
+    };
+  }
+
+  if (action.type === actions.DAMAGE) {
+    return {
+      ...state,
+      units: {
+        ...state.units,
+        [action.target.unitId]: {
+          ...action.target,
+          health: action.target.unitId - action.value
         }
       }
     };

@@ -64,22 +64,21 @@ export const endTurn = () => (dispatch, getState) => {
 };
 
 export const PLAY_CREATURE = "PLAY_CREATURE";
-export const playCreature = (unitId, playerId) => (dispatch, getState) => {
+export const playCreature = (unitId, targets = []) => (dispatch, getState) => {
   const card = getState().game.units[unitId];
   dispatch({
     type: PLAY_CREATURE,
     unitId
   });
-  if (card.onSummon) {
-    let i;
-    for (i = 0; i <= card.onSummon.length - 1; i++) {
-      dispatch({
-        type: card.onSummon[i].type,
-        value: card.onSummon[i].value,
-        unitId,
-        playerId
-      });
-    }
+  let i;
+  for (i = 0; i < card.onSummon.length; i++) {
+    dispatch({
+      ...card.onSummon[i],
+      playerId: getState().game.turn,
+      target: { ...card.onSummon[i].target, unitId: targets[i] },
+      unitId
+    });
+    dispatch(checkDeath());
   }
 };
 
@@ -102,3 +101,4 @@ export const attack = (attackingUnitId, defendingUnitId) => dispatch => {
 
 export const CHANGE_ALL_ATTACKS = "CHANGE_ALL_ATTACKS";
 export const CHANGE_ALL_HEALTH = "CHANGE_ALL_HEALTH";
+export const DAMAGE = "DAMAGE";

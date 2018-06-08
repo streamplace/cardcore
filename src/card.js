@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { cardDrop } from "./client-actions";
 import { attack } from "./game/actions";
 import { connect } from "react-redux";
-import { registerDropTarget } from "./client-actions";
+import { registerDropTarget, clientPickTarget } from "./client-actions";
 
 export const CardBox = styled.div`
   background-color: white;
@@ -88,15 +88,44 @@ export class Card extends React.Component {
     }
     this.props.dispatch(attack(unitId, this.props.unitId));
   }
-
+  handleClick(e) {
+    if (this.props.targettingUnit && this.shouldLightUp()) {
+      this.props.dispatch(clientPickTarget(this.props.unitId));
+    }
+  }
+  shouldLightUp() {
+    const onSummon = this.props.targettingUnit.onSummon[
+      this.props.targets.length
+    ];
+    if (!onSummon) {
+      return false;
+    }
+    const target = onSummon.target;
+    if (this.props.location !== target.location) {
+      return false;
+    } else if (this.props.card.type !== target.type) {
+      return false;
+    } else {
+      return true;
+    }
+  }
   render() {
     const { card } = this.props;
+    let shouldLightUp;
+    if (this.props.targettingUnit) {
+      if (this.shouldLightUp()) {
+        shouldLightUp = true;
+      }
+    } else {
+      shouldLightUp = this.props.canPlay;
+    }
+
     return (
       <CardBox
         innerRef={registerDropTarget(e => this.handleDrop(e))}
-        canPlay={this.props.canPlay}
+        canPlay={shouldLightUp}
         draggable={this.props.canPlay}
-        onClick={this.props.onClick}
+        onClick={e => this.handleClick(e)}
         onDragEnd={e => this.onDragEnd(e)}
       >
         <Type>👾</Type>
@@ -117,7 +146,9 @@ export class Card extends React.Component {
 
 const mapStateToProps = (state, props) => {
   return {
-    card: state.game.units[props.unitId]
+    card: state.game.units[props.unitId],
+    targettingUnit: state.client.targettingUnit,
+    targets: state.client.targets
   };
 };
 

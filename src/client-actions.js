@@ -1,3 +1,4 @@
+import { playCreature } from "./game/actions";
 /**
  * This file should contain web-specific actions extranious to the game state
  */
@@ -42,3 +43,39 @@ export const registerDropTarget = cb => ref => {
   });
   ref.addEventListener(DROP_TARGET_CLASS, refs.get(ref));
 };
+
+export const clientPlayCreature = (unitId, playerId) => (
+  dispatch,
+  getState
+) => {
+  const unit = getState().game.units[unitId];
+  let i;
+  for (i = 0; i < unit.onSummon.length; i++) {
+    let count = unit.onSummon[i].target.count;
+    if (count && count >= 1) {
+      return dispatch(clientStartTarget(unit, unitId));
+    }
+  }
+  dispatch(playCreature(unitId));
+};
+
+export const clientStartTarget = (unit, unitId) => (dispatch, getState) => {
+  dispatch({ type: CLIENT_START_TARGET, unit, unitId });
+};
+export const clientPickTarget = unitId => (dispatch, getState) => {
+  dispatch({ type: CLIENT_PICK_TARGET, unitId });
+  const timeToPlay =
+    getState().client.targets.length ===
+    getState().client.targettingUnit.onSummon.length;
+  if (timeToPlay) {
+    dispatch(
+      playCreature(
+        getState().client.targettingUnitId,
+        getState().client.targets
+      )
+    );
+  }
+};
+
+export const CLIENT_START_TARGET = "CLIENT_START_TARGET";
+export const CLIENT_PICK_TARGET = "CLIENT_PICK_TARGET";
