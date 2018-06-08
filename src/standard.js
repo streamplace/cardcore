@@ -39,7 +39,8 @@ export const onSummonSummon = {
   onSummon: [
     {
       type: "SUMMON_CREATURE",
-      value: 1
+      value: 1,
+      target: { playerId: "SELF" }
     }
   ]
 };

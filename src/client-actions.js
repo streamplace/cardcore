@@ -49,12 +49,11 @@ export const clientPlayCreature = (unitId, playerId) => (
   getState
 ) => {
   const unit = getState().game.units[unitId];
-  if (unit.onSummon.target) {
-    for (let i = 0; i < unit.onSummon.length; i++) {
-      let count = unit.onSummon[i].target.count;
-      if (count && count >= 1) {
-        return dispatch(clientStartTarget(unit, unitId));
-      }
+
+  for (let i = 0; i < unit.onSummon.length; i++) {
+    let count = unit.onSummon[i].target.count;
+    if (count && count >= 1) {
+      return dispatch(clientStartTarget(unit, unitId));
     }
   }
 
