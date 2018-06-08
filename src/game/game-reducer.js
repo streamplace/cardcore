@@ -189,6 +189,19 @@ export default function reducer(state = INITIAL_STATE, action) {
     };
   }
 
+  if (action.type === actions.DAMAGE) {
+    return {
+      ...state,
+      units: {
+        ...state.units,
+        [action.target.unitId]: {
+          ...state.units[action.target.unitId],
+          health: state.units[action.target.unitId].health - action.value
+        }
+      }
+    };
+  }
+
   if (action.type === actions.CHECK_DEATH) {
     const newPlayers = {};
     Object.entries(state.players).forEach(([playerId, player]) => {
@@ -245,5 +258,6 @@ export default function reducer(state = INITIAL_STATE, action) {
       }
     };
   }
+
   return state;
 }

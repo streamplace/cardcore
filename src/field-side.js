@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Card from "./card";
-import { registerDropTarget } from "./client-actions";
+import { registerDropTarget, clientPlayCreature } from "./client-actions";
 import { playCreature } from "./game/actions";
 import { connect } from "react-redux";
 
@@ -15,7 +15,7 @@ const FieldSideBox = styled.div`
 export class FieldSide extends React.Component {
   handleDrop({ unitId, location }) {
     if (location === "hand") {
-      this.props.dispatch(playCreature(unitId));
+      this.props.dispatch(clientPlayCreature(unitId));
     }
   }
   render() {
