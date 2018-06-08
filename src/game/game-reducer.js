@@ -1,5 +1,4 @@
 import * as actions from "./actions";
-import * as creature from "../standard";
 
 const INITIAL_STATE = {
   params: {
@@ -265,7 +264,7 @@ export default function reducer(state = INITIAL_STATE, action) {
     const player = state.players[state.turn];
     const unitId = action.unitId;
     const card = state.units[unitId];
-    newUnit[playerUnitId] = creature.standard(action.value);
+    newUnit[playerUnitId] = { ...action.unit };
     return {
       ...state,
       players: {

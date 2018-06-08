@@ -19,18 +19,6 @@ export function standard(cost) {
   };
 }
 
-export const onDeathCreature = {
-  ...standard(2),
-  name: "Death Drawer",
-  text: "onDeath: draw a card",
-  onDeath: [
-    {
-      type: "DRAW_CARD",
-      value: 1
-    }
-  ]
-};
-
 export const onSummonSummon = {
   ...standard(2),
   emoji: "",
@@ -39,7 +27,7 @@ export const onSummonSummon = {
   onSummon: [
     {
       type: "SUMMON_CREATURE",
-      value: 1,
+      unit: standard(1),
       target: { playerId: "SELF" }
     }
   ]
