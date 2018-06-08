@@ -1,5 +1,4 @@
 import * as actions from "./actions";
-//import * as standard from "../standard";
 
 const INITIAL_STATE = {
   params: {
@@ -255,6 +254,29 @@ export default function reducer(state = INITIAL_STATE, action) {
       units: {
         ...state.units,
         ...newUnits
+      }
+    };
+  }
+
+  if (action.type === actions.SUMMON_CREATURE) {
+    const playerUnitId = uid();
+    const newUnit = {};
+    const player = state.players[state.turn];
+    const unitId = action.unitId;
+    const card = state.units[unitId];
+    newUnit[playerUnitId] = { ...action.unit };
+    return {
+      ...state,
+      players: {
+        ...state.players,
+        [state.turn]: {
+          ...player,
+          field: [...player.field, playerUnitId]
+        }
+      },
+      units: {
+        ...state.units,
+        ...newUnit
       }
     };
   }

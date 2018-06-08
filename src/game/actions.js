@@ -48,23 +48,26 @@ export const desync = (user, state) => {
 };
 
 export const START_TURN = "START_TURN";
-export const startTurn = () => (dispatch, getState) => {
+export const startTurn = () => async (dispatch, getState) => {
   const playerId = getState().game.turn;
-  dispatch({ type: START_TURN });
-  dispatch({ type: DRAW_CARD, playerId });
+  await dispatch({ type: START_TURN });
+  await dispatch({ type: DRAW_CARD, playerId });
 };
 
 export const DRAW_CARD = "DRAW_CARD";
 export const END_TURN = "END_TURN";
-export const endTurn = () => (dispatch, getState) => {
-  dispatch({
+export const endTurn = () => async (dispatch, getState) => {
+  await dispatch({
     type: END_TURN
   });
   dispatch(startTurn());
 };
 
 export const PLAY_CREATURE = "PLAY_CREATURE";
-export const playCreature = (unitId, targets = []) => (dispatch, getState) => {
+export const playCreature = (unitId, targets = []) => async (
+  dispatch,
+  getState
+) => {
   const card = getState().game.units[unitId];
   dispatch({
     type: PLAY_CREATURE,
@@ -72,26 +75,26 @@ export const playCreature = (unitId, targets = []) => (dispatch, getState) => {
   });
 
   for (let i = 0; i < card.onSummon.length; i++) {
-    dispatch({
+    await dispatch({
       ...card.onSummon[i],
       playerId: getState().game.turn,
       target: { ...card.onSummon[i].target, unitId: targets[i] },
       unitId
     });
-    dispatch(checkDeath());
+    await dispatch(checkDeath());
   }
 };
 
 export const CHECK_DEATH = "CHECK_DEATH";
-export const checkDeath = () => {
-  return {
+export const checkDeath = () => async (dispatch, getState) => {
+  await dispatch({
     type: CHECK_DEATH
-  };
+  });
 };
 
 export const ATTACK = "ATTACK";
-export const attack = (attackingUnitId, defendingUnitId) => dispatch => {
-  dispatch({
+export const attack = (attackingUnitId, defendingUnitId) => async dispatch => {
+  await dispatch({
     type: ATTACK,
     attackingUnitId,
     defendingUnitId
@@ -102,3 +105,4 @@ export const attack = (attackingUnitId, defendingUnitId) => dispatch => {
 export const CHANGE_ALL_ATTACKS = "CHANGE_ALL_ATTACKS";
 export const CHANGE_ALL_HEALTH = "CHANGE_ALL_HEALTH";
 export const DAMAGE = "DAMAGE";
+export const SUMMON_CREATURE = "SUMMON_CREATURE";

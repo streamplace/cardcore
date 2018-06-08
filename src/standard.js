@@ -10,10 +10,28 @@ export function standard(cost) {
     type: "creature",
     name: `Standard ${cost}-${cost}`,
     text: "",
-    onSummon: []
+    onSummon: [],
+    onDeath: [],
+    onEndOfTurn: [],
+    onStartOfTurn: [],
+    onSpellCast: [],
+    onCreatureEntersField: []
   };
 }
 
+export const onSummonSummon = {
+  ...standard(2),
+  emoji: "",
+  name: "Summon Dude",
+  text: "onSummon: summon a 1/1 creature",
+  onSummon: [
+    {
+      type: "SUMMON_CREATURE",
+      unit: standard(1),
+      target: { playerId: "SELF" }
+    }
+  ]
+};
 export function threeMaster(cost) {
   const emoji = emojis[cost] || emojis[emojis.length - 1];
   return {
@@ -23,7 +41,7 @@ export function threeMaster(cost) {
     health: cost,
     type: "creature",
     name: "Three Master",
-    text: `On summon: Set all other creatures' Attack and Health to 3`,
+    text: `onSummon: Set all other creatures' Attack and Health to 3`,
     onSummon: [
       {
         type: "CHANGE_ALL_ATTACKS",
@@ -48,7 +66,7 @@ export function cardDraw(cost) {
     health: cost,
     type: "creature",
     name: "Card Drawer",
-    text: `On summon: draw a card`,
+    text: `onSummon: draw a card`,
     onSummon: [
       {
         type: "DRAW_CARD",
@@ -68,7 +86,7 @@ export function damageCreature(cost) {
     health: cost,
     type: "creature",
     name: "Creature Damager",
-    text: `On summon: deal 1 to three target creatures`,
+    text: `onSummon: deal 1 to three target creatures`,
     onSummon: [
       {
         type: "DAMAGE",
