@@ -89,12 +89,12 @@ export class Card extends React.Component {
     this.props.dispatch(attack(unitId, this.props.unitId));
   }
   handleClick(e) {
-    if (this.props.targettingUnit && this.shouldLightUp()) {
+    if (this.props.targetingUnit && this.shouldLightUp()) {
       this.props.dispatch(clientPickTarget(this.props.unitId));
     }
   }
   shouldLightUp() {
-    const onSummon = this.props.targettingUnit.onSummon[
+    const onSummon = this.props.targetingUnit.onSummon[
       this.props.targets.length
     ];
     if (!onSummon) {
@@ -112,7 +112,7 @@ export class Card extends React.Component {
   render() {
     const { card } = this.props;
     let shouldLightUp;
-    if (this.props.targettingUnit) {
+    if (this.props.targetingUnit) {
       if (this.shouldLightUp()) {
         shouldLightUp = true;
       }
@@ -147,7 +147,7 @@ export class Card extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     card: state.game.units[props.unitId],
-    targettingUnit: state.client.targettingUnit,
+    targetingUnit: state.client.targetingUnit,
     targets: state.client.targets
   };
 };

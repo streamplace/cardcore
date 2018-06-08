@@ -1,6 +1,6 @@
 import * as actions from "./actions";
 //import * as standard from "../standard";
-import targetUnits from "../targetting";
+
 const INITIAL_STATE = {
   params: {
     startDraw: 3

@@ -70,8 +70,8 @@ export const playCreature = (unitId, targets = []) => (dispatch, getState) => {
     type: PLAY_CREATURE,
     unitId
   });
-  let i;
-  for (i = 0; i < card.onSummon.length; i++) {
+
+  for (let i = 0; i < card.onSummon.length; i++) {
     dispatch({
       ...card.onSummon[i],
       playerId: getState().game.turn,

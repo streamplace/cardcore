@@ -53,7 +53,7 @@ export function cardDraw(cost) {
       {
         type: "DRAW_CARD",
         value: 1,
-        target: { type: "player" }
+        target: { type: "face" }
       }
     ]
   };
@@ -68,7 +68,7 @@ export function damageCreature(cost) {
     health: cost,
     type: "creature",
     name: "Creature Damager",
-    text: `On summon: deal damage to target creature`,
+    text: `On summon: deal 1 to three target creatures`,
     onSummon: [
       {
         type: "DAMAGE",

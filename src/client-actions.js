@@ -66,14 +66,10 @@ export const clientPickTarget = unitId => async (dispatch, getState) => {
   await dispatch({ type: CLIENT_PICK_TARGET, unitId });
   const timeToPlay =
     getState().client.targets.length ===
-    getState().client.targettingUnit.onSummon.length;
-  console.log(timeToPlay);
+    getState().client.targetingUnit.onSummon.length;
   if (timeToPlay) {
     await dispatch(
-      playCreature(
-        getState().client.targettingUnitId,
-        getState().client.targets
-      )
+      playCreature(getState().client.targetingUnitId, getState().client.targets)
     );
   }
 };

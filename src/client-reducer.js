@@ -4,8 +4,8 @@ import * as clientActions from "./client-actions";
 const INITIAL_STATE = {
   sync: true,
   desyncStates: {},
-  targettingUnit: null,
-  targettingUnitId: null,
+  targetingUnit: null,
+  targetingUnitId: null,
   targets: []
 };
 
@@ -30,15 +30,15 @@ export default function reducer(state = INITIAL_STATE, action) {
   if (action.type === clientActions.CLIENT_START_TARGET) {
     return {
       ...state,
-      targettingUnit: action.unit,
-      targettingUnitId: action.unitId
+      targetingUnit: action.unit,
+      targetingUnitId: action.unitId
     };
   }
   if (action.type === actions.PLAY_CREATURE) {
     return {
       ...state,
-      targettingUnit: null,
-      targettingUnitId: null,
+      targetingUnit: null,
+      targetingUnitId: null,
       targets: []
     };
   }
