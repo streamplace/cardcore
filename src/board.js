@@ -4,7 +4,13 @@ import Field from "./field";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { startGame } from "./game/actions";
-import { standard, threeMaster, cardDraw, damageCreature } from "./standard";
+import {
+  standard,
+  threeMaster,
+  cardDraw,
+  damageCreature,
+  onDeathCreature
+} from "./standard";
 
 const BoardWrapper = styled.div`
   height: 100%;
@@ -33,7 +39,8 @@ export class Board extends React.Component {
               standard(6),
               threeMaster(3),
               cardDraw(2),
-              damageCreature(4)
+              damageCreature(4),
+              onDeathCreature
             ],
             emoji: "🐒"
           },
@@ -47,7 +54,8 @@ export class Board extends React.Component {
               standard(1),
               threeMaster(3),
               cardDraw(2),
-              damageCreature(4)
+              damageCreature(4),
+              onDeathCreature
             ],
             emoji: "🐙"
           }
