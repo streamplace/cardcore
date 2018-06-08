@@ -1,4 +1,7 @@
 import { shuffled } from "../util";
+
+export const DO_NEXT_ACTION = "DO_NEXT_ACTION";
+
 export const START_GAME = "START_GAME";
 /**
  * Start the game!
@@ -28,7 +31,7 @@ export const startGame = ({ players, currentPlayer }) => async (
   const { params, playerOrder } = getState().game;
   for (const playerId of playerOrder) {
     for (let i = 0; i < params.startDraw; i += 1) {
-      dispatch({ type: DRAW_CARD, playerId });
+      dispatch({ type: DRAW_CARD, target: { playerId } });
     }
   }
   await dispatch(startTurn());
@@ -51,7 +54,7 @@ export const START_TURN = "START_TURN";
 export const startTurn = () => async (dispatch, getState) => {
   const playerId = getState().game.turn;
   await dispatch({ type: START_TURN });
-  await dispatch({ type: DRAW_CARD, playerId });
+  await dispatch({ type: DRAW_CARD, target: { playerId } });
 };
 
 export const DRAW_CARD = "DRAW_CARD";
@@ -69,11 +72,13 @@ export const playCreature = (unitId, targets = []) => async (
   getState
 ) => {
   const card = getState().game.units[unitId];
-  dispatch({
+  await dispatch({
     type: PLAY_CREATURE,
-    unitId
+    unitId,
+    targets
   });
 
+<<<<<<< HEAD
   for (let i = 0; i < card.onSummon.length; i++) {
     await dispatch({
       ...card.onSummon[i],
@@ -83,6 +88,27 @@ export const playCreature = (unitId, targets = []) => async (
     });
     await dispatch(checkDeath());
   }
+||||||| merged common ancestors
+  for (let i = 0; i < card.onSummon.length; i++) {
+    dispatch({
+      ...card.onSummon[i],
+      playerId: getState().game.turn,
+      target: { ...card.onSummon[i].target, unitId: targets[i] },
+      unitId
+    });
+    dispatch(checkDeath());
+  }
+=======
+  // for (let i = 0; i < card.onSummon.length; i++) {
+  //   dispatch({
+  //     ...card.onSummon[i],
+  //     playerId: getState().game.turn,
+  //     target: { ...card.onSummon[i].target, unitId: targets[i] },
+  //     unitId
+  //   });
+  //   dispatch(checkDeath());
+  // }
+>>>>>>> implement nextAction queue
 };
 
 export const CHECK_DEATH = "CHECK_DEATH";
