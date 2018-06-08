@@ -55,7 +55,7 @@ export const gameMiddleware = store => {
         return;
       }
       running = true;
-      const ret = next(action);
+      const ret = await next(action);
       const hash = await getHash();
       if (action[REMOTE_ACTION]) {
         // we just completed a remote action, assert states match
@@ -73,8 +73,18 @@ export const gameMiddleware = store => {
         });
       }
       const [resolve, reject] = promises.get(action);
-      resolve(ret);
       running = false;
+      const nextActions = store.getState().game.nextActions;
+      if (nextActions.length > 0) {
+        const { playerId, action } = nextActions[nextActions.length - 1];
+        if (playerId === store.getState().client.currentPlayer) {
+          await store.dispatch({
+            ...action,
+            _fromQueue: true
+          });
+        }
+      }
+      resolve(ret);
       runNext();
     };
 

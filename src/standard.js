@@ -71,7 +71,7 @@ export function cardDraw(cost) {
       {
         type: "DRAW_CARD",
         value: 1,
-        target: { type: "face" }
+        target: { owner: "SELF" }
       }
     ]
   };

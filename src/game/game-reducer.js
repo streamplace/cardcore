@@ -1,6 +1,7 @@
 import * as actions from "./actions";
 
 const INITIAL_STATE = {
+  nextActions: [],
   params: {
     startDraw: 3
   },
@@ -30,6 +31,13 @@ const uid = () => {
 };
 
 export default function reducer(state = INITIAL_STATE, action) {
+  // special logic to clean out the queue if we're executing a queued action
+  if (action._fromQueue) {
+    state = {
+      ...state,
+      nextActions: state.nextActions.slice(0, -1)
+    };
+  }
   if (action.type === actions.START_GAME) {
     const players = {};
     const newUnits = {};
@@ -106,40 +114,51 @@ export default function reducer(state = INITIAL_STATE, action) {
   }
 
   if (action.type === actions.DRAW_CARD) {
-    const player = state.players[action.playerId];
-    const unitId = player.deck[0];
-    if (!unitId) {
-      // fatigue
-      return {
-        ...state,
-        units: {
-          ...state.units,
-          [player.unitId]: {
-            ...state.units[player.unitId],
-            health: state.units[player.unitId].health - player.fatigue
-          }
-        },
-        players: {
-          ...state.players,
-          [action.playerId]: {
-            ...player,
-            fatigue: player.fatigue + 1
-          }
-        }
-      };
+    let players = state.playerOrder;
+    if (action.target.playerId === "SELF") {
+      players = [state.turn];
+    } else if (action.target.playerId === "ENEMY") {
+      players = state.playerOrder.filter(x => x !== state.turn);
+    } else if (action.target.playerId) {
+      players = [action.target.playerId];
     }
-
-    return {
-      ...state,
-      players: {
-        ...state.players,
-        [action.playerId]: {
-          ...player,
-          hand: [...player.hand, unitId],
-          deck: player.deck.slice(1)
-        }
+    for (const playerId of players) {
+      const player = state.players[playerId];
+      const unitId = player.deck[0];
+      if (!unitId) {
+        // fatigue
+        state = {
+          ...state,
+          units: {
+            ...state.units,
+            [player.unitId]: {
+              ...state.units[player.unitId],
+              health: state.units[player.unitId].health - player.fatigue
+            }
+          },
+          players: {
+            ...state.players,
+            [playerId]: {
+              ...player,
+              fatigue: player.fatigue + 1
+            }
+          }
+        };
+      } else {
+        state = {
+          ...state,
+          players: {
+            ...state.players,
+            [playerId]: {
+              ...player,
+              hand: [...player.hand, unitId],
+              deck: player.deck.slice(1)
+            }
+          }
+        };
       }
-    };
+    }
+    return state;
   }
 
   if (action.type === actions.PLAY_CREATURE) {
@@ -163,7 +182,22 @@ export default function reducer(state = INITIAL_STATE, action) {
           ...card,
           canAttack: false
         }
-      }
+      },
+      nextActions: state.nextActions.concat(
+        card.onSummon.map((onSummon, i) => {
+          return {
+            playerId: state.turn,
+            action: {
+              ...onSummon,
+              target: {
+                ...onSummon.target,
+                unitId: action.targets[i]
+              },
+              unitId: action.unitId
+            }
+          };
+        })
+      )
     };
   }
 
