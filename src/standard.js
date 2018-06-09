@@ -44,14 +44,14 @@ export function threeMaster(cost) {
     text: `onSummon: Set all other creatures' Attack and Health to 3`,
     onSummon: [
       {
-        type: "CHANGE_ALL_ATTACKS",
+        type: "CHANGE_ATTACK",
         value: 3,
-        target: { type: "creature", location: "FIELD" }
+        target: { type: "creature", location: "field" }
       },
       {
-        type: "CHANGE_ALL_HEALTH",
+        type: "CHANGE_HEALTH",
         value: 3,
-        target: { type: "creature", location: "FIELD" }
+        target: { type: "creature", location: "field" }
       }
     ]
   };
