@@ -32,6 +32,21 @@ export const onSummonSummon = {
     }
   ]
 };
+
+export const onSummonHandBuff = {
+  ...standard(3),
+  emoji: "",
+  name: "Hand Buffer",
+  text: "onSummon: git +1 to health and attack of all creatures in your hand",
+  onSummon: [
+    {
+      type: "BUFF",
+      attack: 1,
+      health: 1,
+      target: { type: "creature", location: "hand", player: "self" }
+    }
+  ]
+};
 export function threeMaster(cost) {
   const emoji = emojis[cost] || emojis[emojis.length - 1];
   return {
