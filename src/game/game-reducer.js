@@ -309,5 +309,20 @@ export default function reducer(state = INITIAL_STATE, action) {
     };
   }
 
+  if (action.type === actions.BUFF_HAND) {
+    return {
+      ...state,
+      units: {
+        ...state.units,
+        ...target(state, action.target, unit => {
+          return {
+            ...unit,
+            attack: unit.attack + action.buff,
+            health: unit.health + action.buff
+          };
+        })
+      }
+    };
+  }
   return state;
 }
