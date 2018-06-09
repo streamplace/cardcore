@@ -77,38 +77,6 @@ export const playCreature = (unitId, targets = []) => async (
     unitId,
     targets
   });
-
-<<<<<<< HEAD
-  for (let i = 0; i < card.onSummon.length; i++) {
-    await dispatch({
-      ...card.onSummon[i],
-      playerId: getState().game.turn,
-      target: { ...card.onSummon[i].target, unitId: targets[i] },
-      unitId
-    });
-    await dispatch(checkDeath());
-  }
-||||||| merged common ancestors
-  for (let i = 0; i < card.onSummon.length; i++) {
-    dispatch({
-      ...card.onSummon[i],
-      playerId: getState().game.turn,
-      target: { ...card.onSummon[i].target, unitId: targets[i] },
-      unitId
-    });
-    dispatch(checkDeath());
-  }
-=======
-  // for (let i = 0; i < card.onSummon.length; i++) {
-  //   dispatch({
-  //     ...card.onSummon[i],
-  //     playerId: getState().game.turn,
-  //     target: { ...card.onSummon[i].target, unitId: targets[i] },
-  //     unitId
-  //   });
-  //   dispatch(checkDeath());
-  // }
->>>>>>> implement nextAction queue
 };
 
 export const CHECK_DEATH = "CHECK_DEATH";
