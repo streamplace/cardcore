@@ -40,8 +40,9 @@ export const onSummonHandBuff = {
   text: "onSummon: git +1 to health and attack of all creatures in your hand",
   onSummon: [
     {
-      type: "BUFF_HAND",
-      buff: 1,
+      type: "BUFF",
+      attack: 1,
+      health: 1,
       target: { type: "creature", location: "hand", player: "self" }
     }
   ]

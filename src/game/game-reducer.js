@@ -309,7 +309,7 @@ export default function reducer(state = INITIAL_STATE, action) {
     };
   }
 
-  if (action.type === actions.BUFF_HAND) {
+  if (action.type === actions.BUFF) {
     return {
       ...state,
       units: {
@@ -317,8 +317,8 @@ export default function reducer(state = INITIAL_STATE, action) {
         ...target(state, action.target, unit => {
           return {
             ...unit,
-            attack: unit.attack + action.buff,
-            health: unit.health + action.buff
+            attack: unit.attack + action.attack,
+            health: unit.health + action.health
           };
         })
       }
