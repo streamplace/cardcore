@@ -31,7 +31,7 @@ export const startGame = ({ players, currentPlayer }) => async (
   const { params, playerOrder } = getState().game;
   for (const playerId of playerOrder) {
     for (let i = 0; i < params.startDraw; i += 1) {
-      dispatch({ type: DRAW_CARD, target: { playerId } });
+      dispatch({ type: DRAW_CARD, target: { player: playerId } });
     }
   }
   await dispatch(startTurn());
@@ -96,7 +96,7 @@ export const attack = (attackingUnitId, defendingUnitId) => async dispatch => {
   dispatch(checkDeath());
 };
 
-export const CHANGE_ALL_ATTACKS = "CHANGE_ALL_ATTACKS";
-export const CHANGE_ALL_HEALTH = "CHANGE_ALL_HEALTH";
+export const CHANGE_ATTACK = "CHANGE_ATTACK";
+export const CHANGE_HEALTH = "CHANGE_HEALTH";
 export const DAMAGE = "DAMAGE";
 export const SUMMON_CREATURE = "SUMMON_CREATURE";

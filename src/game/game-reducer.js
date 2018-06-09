@@ -1,4 +1,5 @@
 import * as actions from "./actions";
+import target from "./target-helper";
 
 const INITIAL_STATE = {
   nextActions: [],
@@ -115,12 +116,12 @@ export default function reducer(state = INITIAL_STATE, action) {
 
   if (action.type === actions.DRAW_CARD) {
     let players = state.playerOrder;
-    if (action.target.playerId === "SELF") {
+    if (action.target.player === "self") {
       players = [state.turn];
-    } else if (action.target.playerId === "ENEMY") {
+    } else if (action.target.player === "enemy") {
       players = state.playerOrder.filter(x => x !== state.turn);
-    } else if (action.target.playerId) {
-      players = [action.target.playerId];
+    } else if (action.target.player) {
+      players = [action.target.player];
     }
     for (const playerId of players) {
       const player = state.players[playerId];
@@ -183,8 +184,9 @@ export default function reducer(state = INITIAL_STATE, action) {
           canAttack: false
         }
       },
-      nextActions: state.nextActions.concat(
-        card.onSummon.map((onSummon, i) => {
+      nextActions: state.nextActions.concat([
+        { playerId: state.turn, action: { type: actions.CHECK_DEATH } },
+        ...card.onSummon.map((onSummon, i) => {
           return {
             playerId: state.turn,
             action: {
@@ -197,7 +199,7 @@ export default function reducer(state = INITIAL_STATE, action) {
             }
           };
         })
-      )
+      ])
     };
   }
 
@@ -227,10 +229,12 @@ export default function reducer(state = INITIAL_STATE, action) {
       ...state,
       units: {
         ...state.units,
-        [action.target.unitId]: {
-          ...state.units[action.target.unitId],
-          health: state.units[action.target.unitId].health - action.value
-        }
+        ...target(state, action.target, unit => {
+          return {
+            ...unit,
+            health: unit.health - action.value
+          };
+        })
       }
     };
   }
@@ -252,42 +256,32 @@ export default function reducer(state = INITIAL_STATE, action) {
     };
   }
 
-  if (action.type === actions.CHANGE_ALL_ATTACKS) {
-    const newField = {};
-    Object.entries(state.players).forEach(([playerId, player]) => {
-      player.field.forEach(unitId => {
-        const fieldUnit = state.units[unitId];
-        newField[unitId] = {
-          ...state.units[unitId],
-          attack: action.value
-        };
-      });
-    });
+  if (action.type === actions.CHANGE_ATTACK) {
     return {
       ...state,
       units: {
         ...state.units,
-        ...newField
+        ...target(state, action.target, unit => {
+          return {
+            ...unit,
+            attack: action.value
+          };
+        })
       }
     };
   }
 
-  if (action.type === actions.CHANGE_ALL_HEALTH) {
-    const newUnits = {};
-    Object.entries(state.players).forEach(([playerId, player]) => {
-      player.field.forEach(unitId => {
-        const fieldUnit = state.units[unitId];
-        newUnits[unitId] = {
-          ...state.units[unitId],
-          health: action.value
-        };
-      });
-    });
+  if (action.type === actions.CHANGE_HEALTH) {
     return {
       ...state,
       units: {
         ...state.units,
-        ...newUnits
+        ...target(state, action.target, unit => {
+          return {
+            ...unit,
+            health: action.value
+          };
+        })
       }
     };
   }

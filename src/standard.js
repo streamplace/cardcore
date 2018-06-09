@@ -46,12 +46,12 @@ export function threeMaster(cost) {
       {
         type: "CHANGE_ALL_ATTACKS",
         value: 3,
-        target: { type: "creature", location: "field" }
+        target: { type: "creature", location: "FIELD" }
       },
       {
         type: "CHANGE_ALL_HEALTH",
         value: 3,
-        target: { type: "creature", location: "field" }
+        target: { type: "creature", location: "FIELD" }
       }
     ]
   };
@@ -71,7 +71,7 @@ export function cardDraw(cost) {
       {
         type: "DRAW_CARD",
         value: 1,
-        target: { owner: "SELF" }
+        target: { player: "self" }
       }
     ]
   };
