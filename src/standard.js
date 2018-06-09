@@ -60,12 +60,12 @@ export function threeMaster(cost) {
       {
         type: "CHANGE_ATTACK",
         value: 3,
-        target: { type: "creature", location: "FIELD" }
+        target: { type: "creature", location: "field" }
       },
       {
         type: "CHANGE_HEALTH",
         value: 3,
-        target: { type: "creature", location: "FIELD" }
+        target: { type: "creature", location: "field" }
       }
     ]
   };
