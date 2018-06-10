@@ -47,6 +47,19 @@ export const onSummonHandBuff = {
     }
   ]
 };
+
+export const onSummonBounce = {
+  ...standard(1),
+  emoji: "",
+  name: "Bouncer",
+  text: "onSummon: choose a friendly creature to return to your hand",
+  onSummon: [
+    {
+      type: "BOUNCE",
+      target: { type: "creature", count: 1, location: "field", player: "self" }
+    }
+  ]
+};
 export function threeMaster(cost) {
   const emoji = emojis[cost] || emojis[emojis.length - 1];
   return {

@@ -101,3 +101,4 @@ export const CHANGE_HEALTH = "CHANGE_HEALTH";
 export const DAMAGE = "DAMAGE";
 export const SUMMON_CREATURE = "SUMMON_CREATURE";
 export const BUFF = "BUFF";
+export const BOUNCE = "BOUNCE";

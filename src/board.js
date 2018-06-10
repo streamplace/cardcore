@@ -11,7 +11,8 @@ import {
   damageCreature,
   onDeathCreature,
   onSummonSummon,
-  onSummonHandBuff
+  onSummonHandBuff,
+  onSummonBounce
 } from "./standard";
 
 const BoardWrapper = styled.div`
@@ -43,7 +44,8 @@ export class Board extends React.Component {
               cardDraw(2),
               damageCreature(4),
               onSummonSummon,
-              onSummonHandBuff
+              onSummonHandBuff,
+              onSummonBounce
             ],
             emoji: "🐒"
           },
@@ -59,7 +61,8 @@ export class Board extends React.Component {
               cardDraw(2),
               damageCreature(4),
               onSummonSummon,
-              onSummonHandBuff
+              onSummonHandBuff,
+              onSummonBounce
             ],
             emoji: "🐙"
           }

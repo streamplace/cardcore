@@ -324,5 +324,31 @@ export default function reducer(state = INITIAL_STATE, action) {
       }
     };
   }
+
+  if (action.type === actions.BOUNCE) {
+    const player = state.players[state.turn];
+    const targets = target(state, action.target, unit => {
+      return {
+        ...unit
+      };
+    });
+
+    const unitIds = Object.keys(targets);
+    console.log("unit: " + unitIds);
+    return {
+      ...state,
+      players: {
+        ...state.players,
+        [state.turn]: {
+          ...player,
+          hand: [...player.hand, unitIds],
+          field: player.field.filter(
+            unitId => state.units[unitId] !== state.units[unitIds]
+          )
+        }
+      }
+    };
+  }
+
   return state;
 }
