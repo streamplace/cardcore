@@ -334,7 +334,6 @@ export default function reducer(state = INITIAL_STATE, action) {
     });
 
     const unitIds = Object.keys(targets);
-    console.log("unit: " + unitIds);
     return {
       ...state,
       players: {
