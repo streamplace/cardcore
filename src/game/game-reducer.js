@@ -324,5 +324,23 @@ export default function reducer(state = INITIAL_STATE, action) {
       }
     };
   }
+
+  if (action.type === actions.BOUNCE) {
+    const player = state.players[state.turn];
+    const targets = target(state, action.target);
+    const unitIds = Object.keys(targets);
+    return {
+      ...state,
+      players: {
+        ...state.players,
+        [state.turn]: {
+          ...player,
+          hand: [...player.hand, unitIds],
+          field: player.field.filter(unitId => !unitIds.includes(unitId))
+        }
+      }
+    };
+  }
+
   return state;
 }
