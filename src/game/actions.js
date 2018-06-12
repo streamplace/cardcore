@@ -1,4 +1,5 @@
 import { shuffled } from "../util";
+import ssbKeys from "ssb-keys";
 
 export const DO_NEXT_ACTION = "DO_NEXT_ACTION";
 
@@ -102,3 +103,13 @@ export const DAMAGE = "DAMAGE";
 export const SUMMON_CREATURE = "SUMMON_CREATURE";
 export const BUFF = "BUFF";
 export const BOUNCE = "BOUNCE";
+
+export const JOIN_GAME = "JOIN_GAME";
+export const joinGame = ({ deck, emoji }) => {
+  return {
+    type: "JOIN_GAME",
+    keys: ssbKeys.generate(),
+    deck: deck,
+    emoji: emoji
+  };
+};

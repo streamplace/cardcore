@@ -39,6 +39,20 @@ export default function reducer(state = INITIAL_STATE, action) {
       nextActions: state.nextActions.slice(0, -1)
     };
   }
+
+  if (action.type === actions.JOIN_GAME) {
+    return {
+      ...state,
+      players: {
+        ...state.players,
+        [action.keys.id]: {
+          ...INITIAL_PLAYER,
+          startingDeck: action.deck
+        }
+      }
+    };
+  }
+
   if (action.type === actions.START_GAME) {
     const players = {};
     const newUnits = {};

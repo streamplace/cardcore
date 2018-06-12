@@ -3,7 +3,9 @@ import Sidebar from "./sidebar";
 import Field from "./field";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { startGame } from "./game/actions";
+import { clientGenerateIdentity } from "./client-actions";
+import { joinGame } from "./game/actions";
+import { shuffled } from "./util";
 import {
   standard,
   threeMaster,
@@ -26,47 +28,33 @@ const HugeButton = styled.button`
   margin: auto;
 `;
 
+const CentralText = styled.p`
+  text-align: center;
+  margin: auto;
+`;
+
+const RANDOM_EMOJI = ["🐒", "🐙", "🐷", "😈", "👾", "🐝", "🌞"];
+
 export class Board extends React.Component {
-  startGame() {
-    this.props.dispatch(
-      startGame({
-        currentPlayer: "me",
-        players: {
-          me: {
-            deck: [
-              standard(1),
-              standard(2),
-              standard(3),
-              standard(4),
-              standard(5),
-              standard(6),
-              threeMaster(3),
-              cardDraw(2),
-              damageCreature(4),
-              onSummonSummon,
-              onSummonHandBuff,
-              onSummonBounce
-            ],
-            emoji: "🐒"
-          },
-          them: {
-            deck: [
-              standard(1),
-              standard(1),
-              standard(1),
-              standard(1),
-              standard(1),
-              standard(1),
-              threeMaster(3),
-              cardDraw(2),
-              damageCreature(4),
-              onSummonSummon,
-              onSummonHandBuff,
-              onSummonBounce
-            ],
-            emoji: "🐙"
-          }
-        }
+  async joinGame() {
+    await this.props.dispatch(clientGenerateIdentity());
+    await this.props.dispatch(
+      joinGame({
+        deck: [
+          standard(1),
+          standard(2),
+          standard(3),
+          standard(4),
+          standard(5),
+          standard(6),
+          threeMaster(3),
+          cardDraw(2),
+          damageCreature(4),
+          onSummonSummon,
+          onSummonHandBuff,
+          onSummonBounce
+        ],
+        emoji: shuffled(RANDOM_EMOJI)[0]
       })
     );
   }
@@ -83,10 +71,17 @@ export class Board extends React.Component {
         </BoardWrapper>
       );
     }
+    if (!this.props.currentPlayer) {
+      return (
+        <BoardWrapper>
+          <HugeButton onClick={() => this.joinGame()}>Join Game</HugeButton>
+        </BoardWrapper>
+      );
+    }
     if (!this.props.playerOrder) {
       return (
         <BoardWrapper>
-          <HugeButton onClick={() => this.startGame()}>Start Game</HugeButton>
+          <CentralText>waiting for someone to join...</CentralText>
         </BoardWrapper>
       );
     }
@@ -106,7 +101,7 @@ export class Board extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     playerOrder: state.game.playerOrder,
-    currentPlayer: state.client.currentPlayer,
+    currentPlayer: state.client.keys.id,
     sync: state.client.sync,
     desyncStates: state.client.desyncStates
   };

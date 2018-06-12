@@ -6,15 +6,13 @@ const INITIAL_STATE = {
   desyncStates: {},
   targetingUnit: null,
   targetingUnitId: null,
-  targets: []
+  targets: [],
+  keys: {}
 };
 
 export default function reducer(state = INITIAL_STATE, action) {
-  if (action.type === actions.START_GAME) {
-    return {
-      ...state,
-      currentPlayer: action.currentPlayer
-    };
+  if (action.type === clientActions.CLIENT_GENERATE_IDENTITY) {
+    return { ...state, keys: action.keys };
   }
 
   if (action.type === actions.DESYNC) {
