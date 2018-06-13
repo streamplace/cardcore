@@ -2,6 +2,7 @@ import * as actions from "./actions";
 import target from "./target-helper";
 import { getStandardDeck, getStandardEmoji } from "../standard";
 import RandomUtil from "../random-util";
+import { range } from "../util";
 
 const INITIAL_STATE = {
   nextActions: [],
@@ -131,7 +132,7 @@ export default function reducer(state = INITIAL_STATE, action) {
       turn: playerOrder[0],
       nextActions: [
         ...state.nextActions,
-        ...[1, 2, 3].map(() => ({
+        ...range(state.params.startDraw).map(() => ({
           playerId: action._sender,
           action: {
             type: actions.DRAW_CARD,
