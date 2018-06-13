@@ -142,35 +142,6 @@ export default function reducer(state = INITIAL_STATE, action) {
         }))
       ]
     };
-    // for (const [playerId, player] of Object.entries(action.players)) {
-    //   const playerUnitId = uid();
-    //   newUnits[playerUnitId] = {
-    //     emoji: player.emoji,
-    //     health: 30,
-    //     attack: 0,
-    //     mana: 0
-    //   };
-    //   players[playerId] = {
-    //     ...INITIAL_PLAYER,
-    //     unitId: playerUnitId,
-    //     deck: []
-    //   };
-    //   for (const card of player.deck) {
-    //     const id = uid();
-    //     newUnits[id] = { ...card };
-    //     players[playerId].deck.push(id);
-    //   }
-    // }
-    // return {
-    //   ...state,
-    //   units: {
-    //     ...state.units,
-    //     ...newUnits
-    //   },
-    //   playerOrder: action.playerOrder,
-    //   turn: action.playerOrder[0],
-    //   players
-    // };
   }
 
   if (action.type === actions.START_TURN) {
