@@ -108,8 +108,15 @@ export const seedRngReducer = (state, action) => {
 
   if (action.type === SEED_RNG_DECRYPT) {
     const orderedPlayers = Object.keys(state.game.players).sort();
+    const randoSeed = state.game.randoSeeds[action._sender];
+    let newSecret = state.secret;
+    if (state.secret[randoSeed.id]) {
+      newSecret = { ...state.secret };
+      delete newSecret[randoSeed.id];
+    }
     state = {
       ...state,
+      secret: newSecret,
       game: {
         ...state.game,
         randoSeeds: {
@@ -121,6 +128,7 @@ export const seedRngReducer = (state, action) => {
         }
       }
     };
+    // if we're done, clear out randoSeeds
     if (
       !Object.values(state.game.randoSeeds).every(
         val => typeof val === "string"
