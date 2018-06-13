@@ -62,7 +62,6 @@ export default function reducer(state = INITIAL_STATE, action) {
 
   if (action.type === actions.JOIN_GAME_ACCEPT) {
     const playerOrder = [...Object.keys(state.players), action._sender].sort();
-    console.log(playerOrder);
     return {
       ...state,
       players: {
