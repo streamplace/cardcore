@@ -1,10 +1,8 @@
 import signalhub from "signalhub";
-import ssbKeys from "ssb-keys";
+import { hash } from "ssb-keys";
 import stringify from "json-stable-stringify";
-import sha256 from "./sha256";
 import { desync, DESYNC } from "./actions";
 import * as gameActions from "./actions";
-import * as clientActions from "../client-actions";
 
 export const REMOTE_ACTION = Symbol("REMOTE_ACTION");
 
@@ -13,7 +11,7 @@ export const gameMiddleware = store => {
   const hub = signalhub("game", [server]);
   const getHash = () => {
     return new Promise((resolve, reject) => {
-      resolve(sha256(stringify(store.getState().game)));
+      resolve(hash(stringify(store.getState().game)));
     });
   };
   hub.subscribe("default-game").on("data", async action => {
