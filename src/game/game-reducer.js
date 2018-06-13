@@ -1,6 +1,7 @@
 import * as actions from "./actions";
 import target from "./target-helper";
 import { getStandardDeck, getStandardEmoji } from "../standard";
+import RandomUtil from "../random-util";
 
 const INITIAL_STATE = {
   nextActions: [],
@@ -33,6 +34,9 @@ const uid = () => {
   return res;
 };
 
+// same deal but for random numbers
+const rando = new RandomUtil();
+
 export default function reducer(state = INITIAL_STATE, action) {
   // special logic to clean out the queue if we're executing a queued action
   if (action._fromQueue) {
@@ -61,9 +65,12 @@ export default function reducer(state = INITIAL_STATE, action) {
   }
 
   if (action.type === actions.JOIN_GAME_ACCEPT) {
-    const playerOrder = [...Object.keys(state.players), action._sender].sort();
+    let playerOrder = [...Object.keys(state.players), action._sender].sort();
+    rando.setSeed(playerOrder.join(""));
+    playerOrder = rando.shuffle(playerOrder);
     return {
       ...state,
+      playerOrder,
       players: {
         ...state.players,
         [action._sender]: {}
@@ -91,7 +98,7 @@ export default function reducer(state = INITIAL_STATE, action) {
   // }
 
   if (action.type === actions.START_GAME) {
-    const playerOrder = Object.keys(state.players).sort();
+    const playerOrder = state.playerOrder;
     const newUnits = {};
     const playerUnitId = uid();
     const deck = [];
@@ -118,7 +125,7 @@ export default function reducer(state = INITIAL_STATE, action) {
         [action._sender]: {
           ...INITIAL_PLAYER,
           unitId: playerUnitId,
-          deck: deck
+          deck: rando.shuffle(deck)
         }
       },
       turn: playerOrder[0],
