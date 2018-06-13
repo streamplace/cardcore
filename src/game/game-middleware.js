@@ -71,7 +71,8 @@ export const gameMiddleware = store => {
       const [resolve, reject] = promises.get(action);
       running = false;
       const nextActions = store.getState().game.nextActions;
-      if (nextActions.length > 0) {
+      // only dequeue if a game action just happened - client actions don't count
+      if (nextActions.length > 0 && gameActions[action.type]) {
         const { playerId, notPlayerId, action } = nextActions[
           nextActions.length - 1
         ];
@@ -81,7 +82,9 @@ export const gameMiddleware = store => {
         ) {
           await store.dispatch({
             ...action,
-            _fromQueue: true
+            _fromQueue: true,
+            _needsCreator: true,
+            _sender: me.id
           });
         }
       }

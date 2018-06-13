@@ -12,7 +12,8 @@ const INITIAL_STATE = {
   },
   started: false,
   players: {},
-  units: {}
+  units: {},
+  randoSeeds: {}
 };
 
 const INITIAL_PLAYER = {
@@ -66,16 +67,37 @@ export default function reducer(state = INITIAL_STATE, action) {
   }
 
   if (action.type === actions.JOIN_GAME_ACCEPT) {
-    let playerOrder = [...Object.keys(state.players), action._sender].sort();
-    rando.setSeed(playerOrder.join(""));
-    playerOrder = rando.shuffle(playerOrder);
+    let lexicalPlayers = [...Object.keys(state.players), action._sender].sort();
     return {
       ...state,
-      playerOrder,
       players: {
         ...state.players,
         [action._sender]: {}
       },
+      nextActions: [
+        {
+          playerId: lexicalPlayers[0],
+          action: {
+            type: actions.ORDER_PLAYERS
+          }
+        },
+        {
+          playerId: lexicalPlayers[0],
+          action: {
+            type: actions.SEED_RNG
+          }
+        }
+      ]
+    };
+  }
+
+  if (action.type === actions.ORDER_PLAYERS) {
+    rando.setSeed(state.randoSeed);
+    const playerOrder = rando.shuffle(Object.keys(state.players).sort());
+    return {
+      ...state,
+      playerOrder: playerOrder,
+      turn: playerOrder[0],
       nextActions: [
         ...state.nextActions,
         {
@@ -91,12 +113,6 @@ export default function reducer(state = INITIAL_STATE, action) {
       ]
     };
   }
-
-  // [action._sender]: {
-  //   ...INITIAL_PLAYER,
-  //   deck: getStandardDeck(),
-  //   emoji: getStandardEmoji()[1]
-  // }
 
   if (action.type === actions.START_GAME) {
     const playerOrder = state.playerOrder;
@@ -116,7 +132,6 @@ export default function reducer(state = INITIAL_STATE, action) {
     }
     return {
       ...state,
-      playerOrder,
       units: {
         ...state.units,
         ...newUnits
@@ -129,7 +144,6 @@ export default function reducer(state = INITIAL_STATE, action) {
           deck: rando.shuffle(deck)
         }
       },
-      turn: playerOrder[0],
       nextActions: [
         ...state.nextActions,
         ...range(state.params.startDraw).map(() => ({

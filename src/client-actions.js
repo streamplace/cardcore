@@ -85,3 +85,11 @@ export const clientGenerateIdentity = () => {
     keys: ssbKeys.generate()
   };
 };
+
+export const CLIENT_GENERATE_KEY = "CLIENT_GENERATE_KEY";
+export const clientGenerateKey = () => {
+  return {
+    type: CLIENT_GENERATE_KEY,
+    keys: ssbKeys.generate()
+  };
+};
