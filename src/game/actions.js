@@ -68,11 +68,10 @@ export const BUFF = "BUFF";
 export const BOUNCE = "BOUNCE";
 
 export const JOIN_GAME_START = "JOIN_GAME_START";
-export const joinGameStart = () => (dispatch, getState) => {
-  dispatch({
-    type: JOIN_GAME_START,
-    playerId: getState().client.keys.id
-  });
+export const joinGameStart = () => {
+  return {
+    type: JOIN_GAME_START
+  };
 };
 
 export const JOIN_GAME_ACCEPT = "JOIN_GAME_ACCEPT";
