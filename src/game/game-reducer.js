@@ -1,8 +1,12 @@
 import * as actions from "./actions";
 import target from "./target-helper";
+import { getStandardDeck, getStandardEmoji } from "../standard";
+import RandomUtil from "../random-util";
+import { range } from "../util";
 
 const INITIAL_STATE = {
   nextActions: [],
+  playerOrder: [],
   params: {
     startDraw: 3
   },
@@ -31,6 +35,9 @@ const uid = () => {
   return res;
 };
 
+// same deal but for random numbers
+const rando = new RandomUtil();
+
 export default function reducer(state = INITIAL_STATE, action) {
   // special logic to clean out the queue if we're executing a queued action
   if (action._fromQueue) {
@@ -39,37 +46,102 @@ export default function reducer(state = INITIAL_STATE, action) {
       nextActions: state.nextActions.slice(0, -1)
     };
   }
+
+  if (action.type === actions.JOIN_GAME_START) {
+    // On this one, clear out both the nextActions queue and the players list... this is the first
+    // person joining. Everyone else joins with JOIN_GAME_ACCEPT
+    return {
+      ...state,
+      players: {
+        [action._sender]: {}
+      },
+      nextActions: [
+        {
+          action: { type: actions.JOIN_GAME_ACCEPT },
+          // lol lol lol hack hack hack
+          notPlayerId: action._sender
+        }
+      ]
+    };
+  }
+
+  if (action.type === actions.JOIN_GAME_ACCEPT) {
+    let playerOrder = [...Object.keys(state.players), action._sender].sort();
+    rando.setSeed(playerOrder.join(""));
+    playerOrder = rando.shuffle(playerOrder);
+    return {
+      ...state,
+      playerOrder,
+      players: {
+        ...state.players,
+        [action._sender]: {}
+      },
+      nextActions: [
+        ...state.nextActions,
+        {
+          playerId: playerOrder[0],
+          action: {
+            type: actions.START_TURN
+          }
+        },
+        ...playerOrder.map(playerId => ({
+          playerId,
+          action: { type: actions.START_GAME }
+        }))
+      ]
+    };
+  }
+
+  // [action._sender]: {
+  //   ...INITIAL_PLAYER,
+  //   deck: getStandardDeck(),
+  //   emoji: getStandardEmoji()[1]
+  // }
+
   if (action.type === actions.START_GAME) {
-    const players = {};
+    const playerOrder = state.playerOrder;
     const newUnits = {};
-    for (const [playerId, player] of Object.entries(action.players)) {
-      const playerUnitId = uid();
-      newUnits[playerUnitId] = {
-        emoji: player.emoji,
-        health: 30,
-        attack: 0,
-        mana: 0
-      };
-      players[playerId] = {
-        ...INITIAL_PLAYER,
-        unitId: playerUnitId,
-        deck: []
-      };
-      for (const card of player.deck) {
-        const id = uid();
-        newUnits[id] = { ...card };
-        players[playerId].deck.push(id);
-      }
+    const playerUnitId = uid();
+    const deck = [];
+    newUnits[playerUnitId] = {
+      emoji: getStandardEmoji()[playerOrder.indexOf(action._sender)],
+      health: 30,
+      attack: 0,
+      mana: 0
+    };
+    for (const card of getStandardDeck()) {
+      const id = uid();
+      newUnits[id] = { ...card };
+      deck.push(id);
     }
     return {
       ...state,
+      playerOrder,
       units: {
         ...state.units,
         ...newUnits
       },
-      playerOrder: action.playerOrder,
-      turn: action.playerOrder[0],
-      players
+      players: {
+        ...state.players,
+        [action._sender]: {
+          ...INITIAL_PLAYER,
+          unitId: playerUnitId,
+          deck: rando.shuffle(deck)
+        }
+      },
+      turn: playerOrder[0],
+      nextActions: [
+        ...state.nextActions,
+        ...range(state.params.startDraw).map(() => ({
+          playerId: action._sender,
+          action: {
+            type: actions.DRAW_CARD,
+            target: {
+              player: action._sender
+            }
+          }
+        }))
+      ]
     };
   }
 

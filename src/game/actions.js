@@ -1,42 +1,6 @@
-import { shuffled } from "../util";
-
 export const DO_NEXT_ACTION = "DO_NEXT_ACTION";
 
 export const START_GAME = "START_GAME";
-/**
- * Start the game!
- */
-export const startGame = ({ players, currentPlayer }) => async (
-  dispatch,
-  getState
-) => {
-  const { started } = getState().game;
-  if (started) {
-    // idk why this is happening, hack hack hack
-    return;
-  }
-  const shuffledPlayers = {};
-  for (const [playerId, player] of Object.entries(players)) {
-    shuffledPlayers[playerId] = {
-      ...player,
-      deck: shuffled(player.deck)
-    };
-  }
-  await dispatch({
-    type: START_GAME,
-    players: shuffledPlayers,
-    currentPlayer,
-    playerOrder: shuffled(Object.keys(players))
-  });
-  const { params, playerOrder } = getState().game;
-  for (const playerId of playerOrder) {
-    for (let i = 0; i < params.startDraw; i += 1) {
-      dispatch({ type: DRAW_CARD, target: { player: playerId } });
-    }
-  }
-  await dispatch(startTurn());
-};
-
 export const DESYNC = "DESYNC";
 /**
  * In the event of a desync, we give up on doing anything else and just have clients report their
@@ -102,3 +66,13 @@ export const DAMAGE = "DAMAGE";
 export const SUMMON_CREATURE = "SUMMON_CREATURE";
 export const BUFF = "BUFF";
 export const BOUNCE = "BOUNCE";
+
+export const JOIN_GAME_START = "JOIN_GAME_START";
+export const joinGameStart = () => (dispatch, getState) => {
+  dispatch({
+    type: JOIN_GAME_START,
+    playerId: getState().client.keys.id
+  });
+};
+
+export const JOIN_GAME_ACCEPT = "JOIN_GAME_ACCEPT";

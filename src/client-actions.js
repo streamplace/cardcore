@@ -1,4 +1,5 @@
 import { playCreature } from "./game/actions";
+import ssbKeys from "ssb-keys";
 /**
  * This file should contain web-specific actions extranious to the game state
  */
@@ -77,3 +78,10 @@ export const clientPickTarget = unitId => async (dispatch, getState) => {
 
 export const CLIENT_START_TARGET = "CLIENT_START_TARGET";
 export const CLIENT_PICK_TARGET = "CLIENT_PICK_TARGET";
+export const CLIENT_GENERATE_IDENTITY = "CLIENT_GENERATE_IDENTITY";
+export const clientGenerateIdentity = () => {
+  return {
+    type: CLIENT_GENERATE_IDENTITY,
+    keys: ssbKeys.generate()
+  };
+};

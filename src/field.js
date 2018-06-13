@@ -54,9 +54,9 @@ export class Field extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     players: state.game.playerOrder,
-    myTurn: state.client.currentPlayer === state.game.turn,
+    myTurn: state.client.keys.id === state.game.turn,
     playerOrder: state.game.playerOrder,
-    currentPlayer: state.client.currentPlayer
+    currentPlayer: state.client.keys.id
   };
 };
 

@@ -3,17 +3,8 @@ import Sidebar from "./sidebar";
 import Field from "./field";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { startGame } from "./game/actions";
-import {
-  standard,
-  threeMaster,
-  cardDraw,
-  damageCreature,
-  onDeathCreature,
-  onSummonSummon,
-  onSummonHandBuff,
-  onSummonBounce
-} from "./standard";
+import { clientGenerateIdentity } from "./client-actions";
+import { joinGameStart } from "./game/actions";
 
 const BoardWrapper = styled.div`
   height: 100%;
@@ -26,49 +17,19 @@ const HugeButton = styled.button`
   margin: auto;
 `;
 
+const CentralText = styled.p`
+  text-align: center;
+  margin: auto;
+`;
+
 export class Board extends React.Component {
-  startGame() {
-    this.props.dispatch(
-      startGame({
-        currentPlayer: "me",
-        players: {
-          me: {
-            deck: [
-              standard(1),
-              standard(2),
-              standard(3),
-              standard(4),
-              standard(5),
-              standard(6),
-              threeMaster(3),
-              cardDraw(2),
-              damageCreature(4),
-              onSummonSummon,
-              onSummonHandBuff,
-              onSummonBounce
-            ],
-            emoji: "🐒"
-          },
-          them: {
-            deck: [
-              standard(1),
-              standard(1),
-              standard(1),
-              standard(1),
-              standard(1),
-              standard(1),
-              threeMaster(3),
-              cardDraw(2),
-              damageCreature(4),
-              onSummonSummon,
-              onSummonHandBuff,
-              onSummonBounce
-            ],
-            emoji: "🐙"
-          }
-        }
-      })
-    );
+  constructor(props) {
+    super();
+    props.dispatch(clientGenerateIdentity());
+  }
+
+  async joinGame() {
+    await this.props.dispatch(joinGameStart());
   }
 
   render() {
@@ -83,10 +44,17 @@ export class Board extends React.Component {
         </BoardWrapper>
       );
     }
-    if (!this.props.playerOrder) {
+    if (!this.props.iAmInGame) {
       return (
         <BoardWrapper>
-          <HugeButton onClick={() => this.startGame()}>Start Game</HugeButton>
+          <HugeButton onClick={() => this.joinGame()}>Join Game</HugeButton>
+        </BoardWrapper>
+      );
+    }
+    if (!this.props.ready) {
+      return (
+        <BoardWrapper>
+          <CentralText>waiting for someone to join...</CentralText>
         </BoardWrapper>
       );
     }
@@ -105,10 +73,16 @@ export class Board extends React.Component {
 
 const mapStateToProps = (state, props) => {
   return {
-    playerOrder: state.game.playerOrder,
-    currentPlayer: state.client.currentPlayer,
+    iAmInGame: !!state.game.players[state.client.keys.id],
+    currentPlayer: state.client.keys.id,
     sync: state.client.sync,
-    desyncStates: state.client.desyncStates
+    desyncStates: state.client.desyncStates,
+    ready:
+      state.game.playerOrder.length > 0 &&
+      state.game.playerOrder.every(
+        playerId => state.game.players[playerId].unitId
+      ),
+    playerOrder: state.game.playerOrder
   };
 };
 
