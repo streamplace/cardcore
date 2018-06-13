@@ -1,5 +1,4 @@
 import { shuffled } from "../util";
-import ssbKeys from "ssb-keys";
 
 export const DO_NEXT_ACTION = "DO_NEXT_ACTION";
 
@@ -104,12 +103,12 @@ export const SUMMON_CREATURE = "SUMMON_CREATURE";
 export const BUFF = "BUFF";
 export const BOUNCE = "BOUNCE";
 
-export const JOIN_GAME = "JOIN_GAME";
-export const joinGame = ({ deck, emoji }) => {
-  return {
-    type: "JOIN_GAME",
-    keys: ssbKeys.generate(),
-    deck: deck,
-    emoji: emoji
-  };
+export const JOIN_GAME_START = "JOIN_GAME_START";
+export const joinGameStart = () => (dispatch, getState) => {
+  dispatch({
+    type: JOIN_GAME_START,
+    playerId: getState().client.keys.id
+  });
 };
+
+export const JOIN_GAME_ACCEPT = "JOIN_GAME_ACCEPT";

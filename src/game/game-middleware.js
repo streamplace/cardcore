@@ -4,10 +4,9 @@ import stringify from "json-stable-stringify";
 import sha256 from "./sha256";
 import { desync, DESYNC } from "./actions";
 import * as gameActions from "./actions";
+import * as clientActions from "../client-actions";
 
 export const REMOTE_ACTION = Symbol("REMOTE_ACTION");
-
-const me = ssbKeys.generate();
 
 export const gameMiddleware = store => {
   const server = `${document.location.protocol}//${document.location.host}`;
@@ -18,14 +17,9 @@ export const gameMiddleware = store => {
     });
   };
   hub.subscribe("default-game").on("data", async action => {
+    const me = store.getState().client.keys;
     if (action._sender === me.id) {
       return;
-    }
-    // temporary hack to put two players on opposite sides
-    if (action.type === "START_GAME") {
-      action.currentPlayer = action.playerOrder.filter(
-        x => x !== action.currentPlayer
-      )[0];
     }
     action = {
       ...action,
@@ -55,7 +49,11 @@ export const gameMiddleware = store => {
         return;
       }
       running = true;
-      const ret = await next(action);
+      const me = store.getState().client.keys;
+      const ret = await next({
+        ...action,
+        _me: me && me.id
+      });
       const hash = await getHash();
       if (action[REMOTE_ACTION]) {
         // we just completed a remote action, assert states match
@@ -76,8 +74,13 @@ export const gameMiddleware = store => {
       running = false;
       const nextActions = store.getState().game.nextActions;
       if (nextActions.length > 0) {
-        const { playerId, action } = nextActions[nextActions.length - 1];
-        if (playerId === store.getState().client.currentPlayer) {
+        const { playerId, notPlayerId, action } = nextActions[
+          nextActions.length - 1
+        ];
+        if (
+          (playerId && playerId === me.id) ||
+          (notPlayerId && notPlayerId !== me.id) // hack hack hack
+        ) {
           await store.dispatch({
             ...action,
             _fromQueue: true
@@ -89,6 +92,9 @@ export const gameMiddleware = store => {
     };
 
     return action => {
+      if (!action[REMOTE_ACTION]) {
+        action = { ...action, _sender: store.getState().client.keys.id };
+      }
       queue.push(action);
       const prom = new Promise((resolve, reject) => {
         promises.set(action, [resolve, reject]);

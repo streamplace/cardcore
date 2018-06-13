@@ -134,3 +134,24 @@ export function damageCreature(cost) {
     ]
   };
 }
+
+export function getStandardDeck() {
+  return [
+    standard(1),
+    standard(2),
+    standard(3),
+    standard(4),
+    standard(5),
+    standard(6),
+    threeMaster(3),
+    cardDraw(2),
+    damageCreature(4),
+    onSummonSummon,
+    onSummonHandBuff,
+    onSummonBounce
+  ];
+}
+
+export function getStandardEmoji() {
+  return ["🐒", "🐙", "🐷", "😈", "👾", "🐝", "🌞"];
+}

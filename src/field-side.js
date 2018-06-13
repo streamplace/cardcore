@@ -43,7 +43,6 @@ const mapStateToProps = (state, props) => {
   return {
     player: state.game.players[props.playerId],
     turn: state.game.turn,
-    myTurn: state.game.currentPlayer === state.turn,
     units: state.game.units
   };
 };

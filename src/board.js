@@ -4,18 +4,7 @@ import Field from "./field";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { clientGenerateIdentity } from "./client-actions";
-import { joinGame } from "./game/actions";
-import { shuffled } from "./util";
-import {
-  standard,
-  threeMaster,
-  cardDraw,
-  damageCreature,
-  onDeathCreature,
-  onSummonSummon,
-  onSummonHandBuff,
-  onSummonBounce
-} from "./standard";
+import { joinGameStart } from "./game/actions";
 
 const BoardWrapper = styled.div`
   height: 100%;
@@ -33,30 +22,14 @@ const CentralText = styled.p`
   margin: auto;
 `;
 
-const RANDOM_EMOJI = ["🐒", "🐙", "🐷", "😈", "👾", "🐝", "🌞"];
-
 export class Board extends React.Component {
+  constructor(props) {
+    super();
+    props.dispatch(clientGenerateIdentity());
+  }
+
   async joinGame() {
-    await this.props.dispatch(clientGenerateIdentity());
-    await this.props.dispatch(
-      joinGame({
-        deck: [
-          standard(1),
-          standard(2),
-          standard(3),
-          standard(4),
-          standard(5),
-          standard(6),
-          threeMaster(3),
-          cardDraw(2),
-          damageCreature(4),
-          onSummonSummon,
-          onSummonHandBuff,
-          onSummonBounce
-        ],
-        emoji: shuffled(RANDOM_EMOJI)[0]
-      })
-    );
+    await this.props.dispatch(joinGameStart());
   }
 
   render() {
@@ -71,14 +44,14 @@ export class Board extends React.Component {
         </BoardWrapper>
       );
     }
-    if (!this.props.currentPlayer) {
+    if (!this.props.iAmInGame) {
       return (
         <BoardWrapper>
           <HugeButton onClick={() => this.joinGame()}>Join Game</HugeButton>
         </BoardWrapper>
       );
     }
-    if (!this.props.playerOrder) {
+    if (!this.props.ready) {
       return (
         <BoardWrapper>
           <CentralText>waiting for someone to join...</CentralText>
@@ -100,10 +73,16 @@ export class Board extends React.Component {
 
 const mapStateToProps = (state, props) => {
   return {
-    playerOrder: state.game.playerOrder,
+    iAmInGame: !!state.game.players[state.client.keys.id],
     currentPlayer: state.client.keys.id,
     sync: state.client.sync,
-    desyncStates: state.client.desyncStates
+    desyncStates: state.client.desyncStates,
+    ready:
+      state.game.playerOrder.length > 0 &&
+      state.game.playerOrder.every(
+        playerId => state.game.players[playerId].unitId
+      ),
+    playerOrder: state.game.playerOrder
   };
 };
 
