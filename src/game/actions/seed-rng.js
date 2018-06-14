@@ -62,7 +62,8 @@ export const seedRngReducer = (state, action) => {
           [action._sender]: {
             secret: true,
             id: action.id,
-            box: action.box
+            box: action.box,
+            playerId: action._sender
           }
         }
       }

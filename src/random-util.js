@@ -1,6 +1,12 @@
 // very simple PRNG from here https://gist.github.com/blixt/f17b47c62508be59987b
+
+import ssbKeys from "ssb-keys";
+
 export default class RandomUtil {
-  constructor(seed = 173) {
+  constructor(seed) {
+    if (!seed) {
+      seed = ssbKeys.hash(`${Math.random()}`);
+    }
     this.setSeed(seed);
   }
 
