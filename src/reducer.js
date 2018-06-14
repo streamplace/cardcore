@@ -10,6 +10,23 @@ const gameReducers = Object.keys(gameActions)
   .map(key => gameActions[key]);
 
 const secret = function(state = {}, action) {
+  if (action.type === clientActions.CLIENT_GENERATE_KEY) {
+    return {
+      ...state,
+      [action.keys.id]: action.keys
+    };
+  }
+
+  if (action.type === clientActions.CLIENT_BOX) {
+    return {
+      ...state,
+      [action.id]: {
+        ...state[action.id],
+        contents: action.contents
+      }
+    };
+  }
+
   return state;
 };
 
@@ -18,16 +35,6 @@ export default function rootReducer(state, action) {
   state = combinedReducers(state, action);
   for (const reducer of gameReducers) {
     state = reducer(state, action);
-  }
-
-  if (action.type === clientActions.CLIENT_GENERATE_KEY) {
-    return {
-      ...state,
-      secret: {
-        ...state.secret,
-        [action.keys.id]: action.keys
-      }
-    };
   }
 
   return state;

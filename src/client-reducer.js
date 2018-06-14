@@ -4,6 +4,7 @@ import * as clientActions from "./client-actions";
 const INITIAL_STATE = {
   sync: true,
   desyncStates: {},
+  playingCard: null,
   targetingUnit: null,
   targetingUnitId: null,
   targets: [],
@@ -13,6 +14,13 @@ const INITIAL_STATE = {
 export default function reducer(state = INITIAL_STATE, action) {
   if (action.type === clientActions.CLIENT_GENERATE_IDENTITY) {
     return { ...state, keys: action.keys };
+  }
+
+  if (action.type === clientActions.CLIENT_PLAY_CREATURE) {
+    return {
+      ...state,
+      playingCard: action.card
+    };
   }
 
   if (action.type === actions.DESYNC) {

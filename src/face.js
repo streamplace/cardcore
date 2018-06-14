@@ -35,9 +35,9 @@ const Health = styled.div`
 `;
 
 export class Face extends React.Component {
-  handleDrop({ unitId, location }) {
+  handleDrop({ card, location }) {
     if (location === "field") {
-      this.props.dispatch(attack(unitId, this.props.unitId));
+      this.props.dispatch(attack(card, this.props.unitId));
     }
   }
 

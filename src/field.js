@@ -22,6 +22,7 @@ const EndTurn = styled.button`
   font-size: 2em;
   right: 10px;
   top: -20px;
+  z-index: 2;
 
   color: ${props => (props.myTurn ? "black" : "#555")};
 `;

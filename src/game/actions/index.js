@@ -1,4 +1,5 @@
 export * from "./seed-rng";
+export * from "./shuffle-deck";
 
 export const DO_NEXT_ACTION = "DO_NEXT_ACTION";
 
@@ -22,7 +23,6 @@ export const START_TURN = "START_TURN";
 export const startTurn = () => async (dispatch, getState) => {
   const playerId = getState().game.turn;
   await dispatch({ type: START_TURN });
-  await dispatch({ type: DRAW_CARD, target: { playerId } });
 };
 
 export const DRAW_CARD = "DRAW_CARD";
@@ -31,18 +31,17 @@ export const endTurn = () => async (dispatch, getState) => {
   await dispatch({
     type: END_TURN
   });
-  dispatch(startTurn());
 };
 
 export const PLAY_CREATURE = "PLAY_CREATURE";
-export const playCreature = (unitId, targets = []) => async (
+export const playCreature = (id, privateKey, targets = []) => async (
   dispatch,
   getState
 ) => {
-  const card = getState().game.units[unitId];
   await dispatch({
     type: PLAY_CREATURE,
-    unitId,
+    id,
+    private: privateKey,
     targets
   });
 };

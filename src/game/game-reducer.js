@@ -3,6 +3,7 @@ import target from "./target-helper";
 import { getStandardDeck, getStandardEmoji } from "../standard";
 import RandomUtil from "../random-util";
 import { range } from "../util";
+import ssbKeys from "ssb-keys";
 
 const INITIAL_STATE = {
   nextActions: [],
@@ -141,10 +142,17 @@ export default function reducer(state = INITIAL_STATE, action) {
         [action._sender]: {
           ...INITIAL_PLAYER,
           unitId: playerUnitId,
-          deck: rando.shuffle(deck)
+          deck
         }
       },
       nextActions: [
+        {
+          playerId: action._sender,
+          action: {
+            type: actions.SHUFFLE_DECK,
+            playerId: action._sender
+          }
+        },
         ...range(state.params.startDraw).map(() => ({
           playerId: action._sender,
           action: {
@@ -186,7 +194,14 @@ export default function reducer(state = INITIAL_STATE, action) {
           mana: newMana,
           availableMana: newMana
         }
-      }
+      },
+      nextActions: [
+        {
+          playerId: state.turn,
+          action: { type: actions.DRAW_CARD, target: { player: state.turn } }
+        },
+        ...state.nextActions
+      ]
     };
   }
 
@@ -196,7 +211,15 @@ export default function reducer(state = INITIAL_STATE, action) {
     const playerId = state.playerOrder[playerIdx];
     return {
       ...state,
-      turn: playerId
+      turn: playerId,
+      nextActions: [
+        {
+          playerId,
+          action: {
+            type: actions.START_TURN
+          }
+        }
+      ]
     };
   }
 
@@ -208,6 +231,8 @@ export default function reducer(state = INITIAL_STATE, action) {
       players = state.playerOrder.filter(x => x !== state.turn);
     } else if (action.target.player) {
       players = [action.target.player];
+    } else if (action.target.playerId) {
+      players = [action.target.playerId];
     }
     for (const playerId of players) {
       const player = state.players[playerId];
@@ -232,16 +257,30 @@ export default function reducer(state = INITIAL_STATE, action) {
           }
         };
       } else {
+        let newActions = [];
+        if (unitId.secret && unitId.playerId !== playerId) {
+          // card is encrypted by someone else, ask them to decrypt
+          newActions.push({
+            playerId: unitId.playerId,
+            action: {
+              type: actions.SHUFFLE_DECK_DECRYPT,
+              playerId: playerId
+            }
+          });
+        } else {
+          throw new Error("who the butt encrypted this");
+        }
         state = {
           ...state,
           players: {
             ...state.players,
             [playerId]: {
               ...player,
-              hand: [...player.hand, unitId],
+              hand: [unitId, ...player.hand],
               deck: player.deck.slice(1)
             }
-          }
+          },
+          nextActions: [...newActions, ...state.nextActions]
         };
       }
     }
@@ -249,39 +288,40 @@ export default function reducer(state = INITIAL_STATE, action) {
   }
 
   if (action.type === actions.PLAY_CREATURE) {
-    const player = state.players[state.turn];
-    const unitId = action.unitId;
-    const card = state.units[unitId];
+    const player = state.players[action._sender];
+    const card = player.hand.filter(card => card.id === action.id)[0];
+    const unitId = ssbKeys.unbox(card.box, { private: action.private });
+    const unit = state.units[unitId];
     return {
       ...state,
       players: {
         ...state.players,
-        [state.turn]: {
+        [action._sender]: {
           ...player,
-          availableMana: player.availableMana - card.cost,
-          hand: player.hand.filter(u => u !== unitId),
-          field: [...player.field, unitId]
+          availableMana: player.availableMana - unit.cost,
+          hand: player.hand.filter(c => c !== card),
+          field: [unitId, ...player.field]
         }
       },
       units: {
         ...state.units,
         [unitId]: {
-          ...card,
+          ...unit,
           canAttack: false
         }
       },
       nextActions: state.nextActions.concat([
-        { playerId: state.turn, action: { type: actions.CHECK_DEATH } },
-        ...card.onSummon.map((onSummon, i) => {
+        { playerId: action._sender, action: { type: actions.CHECK_DEATH } },
+        ...unit.onSummon.map((onSummon, i) => {
           return {
-            playerId: state.turn,
+            playerId: action._sender,
             action: {
               ...onSummon,
               target: {
                 ...onSummon.target,
                 unitId: action.targets[i]
               },
-              unitId: action.unitId
+              unitId: unitId
             }
           };
         })

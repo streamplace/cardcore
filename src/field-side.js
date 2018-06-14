@@ -10,26 +10,25 @@ const FieldSideBox = styled.div`
   display: flex;
   justify-content: center;
   padding: 5px;
+  perspective: 1000px;
+  z-index: 1;
 `;
 
 export class FieldSide extends React.Component {
-  handleDrop({ unitId, location }) {
+  handleDrop({ card, location }) {
     if (location === "hand") {
-      this.props.dispatch(clientPlayCreature(unitId));
+      this.props.dispatch(clientPlayCreature(card));
     }
   }
   render() {
     return (
       <FieldSideBox innerRef={registerDropTarget(e => this.handleDrop(e))}>
-        {this.props.player.field.map((unitId, i) => {
-          const card = this.props.units[unitId];
+        {this.props.player.field.map((card, i) => {
           return (
             <Card
               key={i}
-              unitId={unitId}
-              canPlay={
-                this.props.turn === this.props.playerId && card.canAttack
-              }
+              card={card}
+              playerId={this.props.playerId}
               location="field"
             />
           );

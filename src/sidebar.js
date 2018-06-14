@@ -39,20 +39,13 @@ export class Sidebar extends React.Component {
         <SidebarBox>
           <Face playerId={this.props.playerId} />
           <HandBox>
-            {this.props.player.hand.map((unitId, i) => {
-              const card = this.props.units[unitId];
-              let canPlay;
-              if (!this.props.myTurn) {
-                canPlay = false;
-              } else if (card.cost <= this.props.availableMana) {
-                canPlay = true;
-              }
+            {this.props.player.hand.map((card, i) => {
               return (
                 <Card
-                  canPlay={canPlay}
-                  unitId={unitId}
+                  card={card}
                   key={i}
                   location="hand"
+                  playerId={this.props.playerId}
                 />
               );
             })}
@@ -66,10 +59,7 @@ export class Sidebar extends React.Component {
 
 const mapStateToProps = (state, props) => {
   return {
-    player: state.game.players[props.playerId],
-    myTurn: state.game.turn === props.playerId,
-    availableMana: state.game.players[props.playerId].availableMana,
-    units: state.game.units
+    player: state.game.players[props.playerId]
   };
 };
 

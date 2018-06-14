@@ -4,20 +4,61 @@ import { cardDrop } from "./client-actions";
 import { attack } from "./game/actions";
 import { connect } from "react-redux";
 import { registerDropTarget, clientPickTarget } from "./client-actions";
+import { traverseSecret } from "./util";
 
 export const CardBox = styled.div`
-  background-color: white;
   border: 1px solid #555;
   user-select: none;
   border-radius: 10px;
   margin-left: 10px;
   margin-right: 10px;
   position: relative;
-  overflow: hidden;
   width: 130px;
+  transition: transform 500ms ease;
+  transform: rotateY(0deg);
+  transform-style: preserve-3d;
+  z-index: 0;
 
   ${props => props.canPlay && cardGlow("5px", "blue")};
+  ${props => props.flipped && "transform: rotateY(180deg)"};
   ${props => props.canPlay && "cursor: pointer"};
+`;
+
+export const CardBack = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #36c;
+  background: linear-gradient(
+        115deg,
+        transparent 75%,
+        rgba(255, 255, 255, 0.8) 75%
+      )
+      0 0,
+    linear-gradient(245deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%) 0 0,
+    linear-gradient(115deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%) 7px -15px,
+    linear-gradient(245deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%) 7px -15px,
+    #36c;
+  background-size: 15px 30px;
+  height: 100%;
+  backface-visibility: hidden;
+  z-index: 1;
+  transform: rotateY(180deg);
+  border-radius: 10px;
+`;
+
+export const CardContents = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  backface-visibility: hidden;
+  background-color: white;
+  transform: rotateY(0deg);
+  z-index: 1;
+  border-radius: 10px;
 `;
 
 export const cardGlow = (size, color) => `
@@ -75,18 +116,31 @@ const EmojiText = styled.span`
 `;
 
 export class Card extends React.Component {
-  onDragEnd(e) {
-    this.props.dispatch(cardDrop(e, this.props.unitId, this.props.location));
+  constructor(props) {
+    super();
+    this.state = {
+      forceFlip: props.location === "hand"
+    };
   }
 
-  handleDrop({ unitId, location }) {
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ forceFlip: false });
+    }, 200);
+  }
+
+  onDragEnd(e) {
+    this.props.dispatch(cardDrop(e, this.props.card, this.props.location));
+  }
+
+  handleDrop({ card, location }) {
     if (location !== "field" || this.props.location !== "field") {
       return;
     }
-    if (unitId === this.props.unitId) {
+    if (card === this.props.unitId) {
       return;
     }
-    this.props.dispatch(attack(unitId, this.props.unitId));
+    this.props.dispatch(attack(card, this.props.unitId));
   }
   handleClick(e) {
     if (this.props.targetingUnit && this.shouldLightUp()) {
@@ -109,46 +163,95 @@ export class Card extends React.Component {
       return true;
     }
   }
+
+  isPlayable() {
+    if (!this.props.myTurn) {
+      return false;
+    }
+    if (!this.props.unit) {
+      return false;
+    }
+    if (!this.props.myUnit) {
+      return false;
+    }
+    if (this.props.location === "hand") {
+      if (this.props.player.availableMana < this.props.unit.cost) {
+        return false;
+      }
+    } else if (this.props.location === "field") {
+      if (!this.props.unit.canAttack) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   render() {
-    const { card } = this.props;
-    let shouldLightUp;
-    if (this.props.targetingUnit) {
-      if (this.shouldLightUp()) {
-        shouldLightUp = true;
+    let card;
+    let draggable = this.isPlayable();
+    let shouldLightUp = draggable;
+    const flipped = !this.props.unit;
+    if (this.props.unit) {
+      card = this.props.unit;
+      if (this.props.targetingUnit) {
+        shouldLightUp = this.shouldLightUp();
       }
     } else {
-      shouldLightUp = this.props.canPlay;
+      card = {
+        name: "",
+        text: "",
+        emoji: "",
+        attack: "",
+        health: "",
+        cost: ""
+      };
     }
 
     return (
       <CardBox
         innerRef={registerDropTarget(e => this.handleDrop(e))}
         canPlay={shouldLightUp}
-        draggable={this.props.canPlay}
+        draggable={draggable}
         onClick={e => this.handleClick(e)}
         onDragEnd={e => this.onDragEnd(e)}
+        flipped={this.state.forceFlip || flipped}
       >
-        <Type>👾</Type>
-        <Name>
-          <NameText>{card.name}</NameText>
-          <CardText>{card.text}</CardText>
-        </Name>
-        <Emoji>
-          <EmojiText>{card.emoji}</EmojiText>
-        </Emoji>
-        <Attack>{card.attack}⚔️</Attack>
-        <Health>{card.health}♥️</Health>
-        <Cost>{card.cost}💎</Cost>
+        <CardBack />
+        <CardContents>
+          <Type>👾</Type>
+          <Name>
+            <NameText>
+              {card.name} {draggable}
+            </NameText>
+            <CardText>{card.text}</CardText>
+          </Name>
+          <Emoji>
+            <EmojiText>{card.emoji}</EmojiText>
+          </Emoji>
+          <Attack>{card.attack}⚔️</Attack>
+          <Health>{card.health}♥️</Health>
+          <Cost>{card.cost}💎</Cost>
+        </CardContents>
       </CardBox>
     );
   }
 }
 
 const mapStateToProps = (state, props) => {
+  const unitId = traverseSecret(props.card, state.secret);
+  let unit;
+  if (unitId) {
+    unit = state.game.units[unitId];
+  }
   return {
-    card: state.game.units[props.unitId],
+    unit: unit,
+    unitId: unitId,
     targetingUnit: state.client.targetingUnit,
-    targets: state.client.targets
+    targets: state.client.targets,
+    secret: state.secret,
+    player: state.game.players[props.playerId],
+    myTurn: state.client.keys.id === state.game.turn,
+    myUnit: state.client.keys.id === props.playerId
   };
 };
 
