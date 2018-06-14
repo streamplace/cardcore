@@ -28,8 +28,12 @@ const noop = x => x;
 
 export default function target(state, target, func = noop) {
   const units = {};
+  const owners = {};
   if (target.unitId) {
     units[target.unitId] = state.units[target.unitId];
+    owners[target.unitId] = Object.keys(state.players).find(playerId => {
+      return state.players[playerId].field.includes(target.unitId);
+    });
   } else {
     let players;
     if (!target.player) {
@@ -44,6 +48,7 @@ export default function target(state, target, func = noop) {
 
     const locations = target.location ? [target.location] : ALL_LOCATIONS;
     const types = target.type ? [target.type] : ALL_TYPES;
+    const owners = {};
 
     for (const [playerId, player] of Object.entries(state.players)) {
       if (!players.includes(playerId)) {
@@ -51,6 +56,7 @@ export default function target(state, target, func = noop) {
       }
       if (types.includes(TYPE_FACE)) {
         units[player.unitId] = state.units[player.unitId];
+        owners[player.unitId] = playerId;
       }
       if (!types.includes(TYPE_CREATURE)) {
         continue;
@@ -58,14 +64,23 @@ export default function target(state, target, func = noop) {
       for (const location of locations) {
         for (const unitId of player[location]) {
           units[unitId] = state.units[unitId];
+          owners[unitId] = playerId;
         }
       }
     }
   }
 
   for (const unitId of Object.keys(units)) {
-    units[unitId] = func(units[unitId]);
+    units[unitId] = func(units[unitId], { playerId: owners[unitId], unitId });
   }
 
   return units;
+}
+
+export function targetArray(state, action) {
+  return Object.values(
+    target(state, action, (unit, details) => {
+      return { ...details, unit };
+    })
+  );
 }

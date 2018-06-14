@@ -1,5 +1,6 @@
 export * from "./seed-rng";
 export * from "./shuffle-deck";
+export * from "./bounce";
 
 export const DO_NEXT_ACTION = "DO_NEXT_ACTION";
 
@@ -68,7 +69,6 @@ export const CHANGE_HEALTH = "CHANGE_HEALTH";
 export const DAMAGE = "DAMAGE";
 export const SUMMON_CREATURE = "SUMMON_CREATURE";
 export const BUFF = "BUFF";
-export const BOUNCE = "BOUNCE";
 
 export const JOIN_GAME_START = "JOIN_GAME_START";
 export const joinGameStart = () => {
