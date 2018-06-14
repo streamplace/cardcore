@@ -37,7 +37,7 @@ export const onSummonHandBuff = {
   ...standard(3),
   emoji: "",
   name: "Hand Buffer",
-  text: "onSummon: git +1 to health and attack of all creatures in your hand",
+  text: "onSummon: get +1 to health and attack of all creatures in your hand",
   onSummon: [
     {
       type: "BUFF",
