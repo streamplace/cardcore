@@ -157,7 +157,7 @@ export class Card extends React.Component {
     const target = onSummon.target;
     if (this.props.location !== target.location) {
       return false;
-    } else if (this.props.card.type !== target.type) {
+    } else if (this.props.unit.type !== target.type) {
       return false;
     } else {
       return true;
