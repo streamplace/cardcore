@@ -303,15 +303,8 @@ export default function reducer(state = INITIAL_STATE, action) {
           field: [unitId, ...player.field]
         }
       },
-      units: {
-        ...state.units,
-        [unitId]: {
-          ...unit,
-          canAttack: false
-        }
-      },
-      nextActions: state.nextActions.concat([
-        { playerId: action._sender, action: { type: actions.CHECK_DEATH } },
+      units: { ...state.units, [unitId]: { ...unit, canAttack: false } },
+      nextActions: [
         ...unit.onSummon.map((onSummon, i) => {
           return {
             playerId: action._sender,
@@ -324,8 +317,10 @@ export default function reducer(state = INITIAL_STATE, action) {
               unitId: unitId
             }
           };
-        })
-      ])
+        }),
+        { playerId: action._sender, action: { type: actions.CHECK_DEATH } },
+        ...state.nextActions
+      ]
     };
   }
 

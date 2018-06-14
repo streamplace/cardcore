@@ -39,11 +39,11 @@ export class Sidebar extends React.Component {
         <SidebarBox>
           <Face playerId={this.props.playerId} />
           <HandBox>
-            {this.props.player.hand.map((card, i) => {
+            {this.props.player.hand.map(card => {
               return (
                 <Card
                   card={card}
-                  key={i}
+                  key={card.id}
                   location="hand"
                   playerId={this.props.playerId}
                 />
