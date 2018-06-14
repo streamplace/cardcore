@@ -39,13 +39,13 @@ export const seedRngReducer = (state, action) => {
       game: {
         ...state.game,
         nextActions: [
-          ...state.game.nextActions,
           {
             playerId: orderedPlayers[0],
             action: {
               type: SEED_RNG_ENCRYPT
             }
-          }
+          },
+          ...state.game.nextActions
         ]
       }
     };
@@ -75,13 +75,13 @@ export const seedRngReducer = (state, action) => {
         game: {
           ...state.game,
           nextActions: [
-            ...state.game.nextActions,
             ...orderedPlayers.map(playerId => ({
               playerId: playerId,
               action: {
                 type: SEED_RNG_DECRYPT
               }
-            }))
+            })),
+            ...state.game.nextActions
           ]
         }
       };
@@ -93,13 +93,13 @@ export const seedRngReducer = (state, action) => {
         game: {
           ...state.game,
           nextActions: [
-            ...state.game.nextActions,
             {
               playerId: orderedPlayers[seedCount],
               action: {
                 type: SEED_RNG_ENCRYPT
               }
-            }
+            },
+            ...state.game.nextActions
           ]
         }
       };

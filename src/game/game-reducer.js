@@ -44,7 +44,7 @@ export default function reducer(state = INITIAL_STATE, action) {
   if (action._fromQueue) {
     state = {
       ...state,
-      nextActions: state.nextActions.slice(0, -1)
+      nextActions: state.nextActions.slice(1)
     };
   }
 
@@ -78,13 +78,13 @@ export default function reducer(state = INITIAL_STATE, action) {
         {
           playerId: lexicalPlayers[0],
           action: {
-            type: actions.ORDER_PLAYERS
+            type: actions.SEED_RNG
           }
         },
         {
           playerId: lexicalPlayers[0],
           action: {
-            type: actions.SEED_RNG
+            type: actions.ORDER_PLAYERS
           }
         }
       ]
@@ -99,17 +99,17 @@ export default function reducer(state = INITIAL_STATE, action) {
       playerOrder: playerOrder,
       turn: playerOrder[0],
       nextActions: [
-        ...state.nextActions,
+        ...playerOrder.map(playerId => ({
+          playerId,
+          action: { type: actions.START_GAME }
+        })),
         {
           playerId: playerOrder[0],
           action: {
             type: actions.START_TURN
           }
         },
-        ...playerOrder.map(playerId => ({
-          playerId,
-          action: { type: actions.START_GAME }
-        }))
+        ...state.nextActions
       ]
     };
   }
@@ -145,7 +145,6 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       },
       nextActions: [
-        ...state.nextActions,
         ...range(state.params.startDraw).map(() => ({
           playerId: action._sender,
           action: {
@@ -154,7 +153,8 @@ export default function reducer(state = INITIAL_STATE, action) {
               player: action._sender
             }
           }
-        }))
+        })),
+        ...state.nextActions
       ]
     };
   }
