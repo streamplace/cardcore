@@ -14,7 +14,7 @@ export const CardBox = styled.div`
   margin-right: 10px;
   position: relative;
   width: 130px;
-  transition: transform 250ms ease;
+  transition: transform 500ms ease;
   transform: rotateY(0deg);
   transform-style: preserve-3d;
   z-index: 0;
@@ -151,20 +151,37 @@ export class Card extends React.Component {
     }
   }
 
+  isPlayable() {
+    if (!this.props.myTurn) {
+      return false;
+    }
+    if (!this.props.unit) {
+      return false;
+    }
+    if (!this.props.myUnit) {
+      return false;
+    }
+    if (this.props.location === "hand") {
+      if (this.props.player.availableMana < this.props.unit.cost) {
+        return false;
+      }
+    } else if (this.props.location === "field") {
+      if (!this.unit.canAttack) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   render() {
-    const unitId = traverseSecret(this.props.unitId, this.props.secret);
     let card;
-    // console.log(this.props.secret[this.props.unitId.id].contents);
-    let shouldLightUp = false;
-    const flipped = !unitId;
-    if (unitId) {
-      card = this.props.units[unitId];
+    let draggable = this.isPlayable();
+    let shouldLightUp = draggable;
+    const flipped = !this.props.unit;
+    if (this.props.unit) {
+      card = this.props.unit;
       if (this.props.targetingUnit) {
-        if (this.shouldLightUp()) {
-          shouldLightUp = true;
-        }
-      } else {
-        shouldLightUp = this.props.canPlay;
+        shouldLightUp = this.shouldLightUp();
       }
     } else {
       card = {
@@ -181,7 +198,7 @@ export class Card extends React.Component {
       <CardBox
         innerRef={registerDropTarget(e => this.handleDrop(e))}
         canPlay={shouldLightUp}
-        draggable={this.props.canPlay}
+        draggable={draggable}
         onClick={e => this.handleClick(e)}
         onDragEnd={e => this.onDragEnd(e)}
         flipped={flipped}
@@ -190,7 +207,9 @@ export class Card extends React.Component {
         <CardContents>
           <Type>👾</Type>
           <Name>
-            <NameText>{card.name}</NameText>
+            <NameText>
+              {card.name} {draggable}
+            </NameText>
             <CardText>{card.text}</CardText>
           </Name>
           <Emoji>
@@ -206,11 +225,21 @@ export class Card extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
+  const unitId = traverseSecret(props.card, state.secret);
+  let unit;
+  if (unitId) {
+    unit = state.game.units[unitId];
+  }
+  console.log(state.client.keys.id, state.game.turn);
   return {
-    units: state.game.units,
+    unit: unit,
+    unitId: unitId,
     targetingUnit: state.client.targetingUnit,
     targets: state.client.targets,
-    secret: state.secret
+    secret: state.secret,
+    player: state.game.players[props.playerId],
+    myTurn: state.client.keys.id === state.game.turn,
+    myUnit: state.client.keys.id === props.playerId
   };
 };
 
