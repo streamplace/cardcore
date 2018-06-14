@@ -116,6 +116,19 @@ const EmojiText = styled.span`
 `;
 
 export class Card extends React.Component {
+  constructor(props) {
+    super();
+    this.state = {
+      forceFlip: props.location === "hand"
+    };
+  }
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ forceFlip: false });
+    }, 200);
+  }
+
   onDragEnd(e) {
     this.props.dispatch(cardDrop(e, this.props.card, this.props.location));
   }
@@ -201,7 +214,7 @@ export class Card extends React.Component {
         draggable={draggable}
         onClick={e => this.handleClick(e)}
         onDragEnd={e => this.onDragEnd(e)}
-        flipped={flipped}
+        flipped={this.state.forceFlip || flipped}
       >
         <CardBack />
         <CardContents>
