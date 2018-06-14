@@ -194,7 +194,14 @@ export default function reducer(state = INITIAL_STATE, action) {
           mana: newMana,
           availableMana: newMana
         }
-      }
+      },
+      nextActions: [
+        {
+          playerId: state.turn,
+          action: { type: actions.DRAW_CARD, target: { player: state.turn } }
+        },
+        ...state.nextActions
+      ]
     };
   }
 
@@ -204,7 +211,15 @@ export default function reducer(state = INITIAL_STATE, action) {
     const playerId = state.playerOrder[playerIdx];
     return {
       ...state,
-      turn: playerId
+      turn: playerId,
+      nextActions: [
+        {
+          playerId,
+          action: {
+            type: actions.START_TURN
+          }
+        }
+      ]
     };
   }
 
@@ -216,6 +231,8 @@ export default function reducer(state = INITIAL_STATE, action) {
       players = state.playerOrder.filter(x => x !== state.turn);
     } else if (action.target.player) {
       players = [action.target.player];
+    } else if (action.target.playerId) {
+      players = [action.target.playerId];
     }
     for (const playerId of players) {
       const player = state.players[playerId];
