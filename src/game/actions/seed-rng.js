@@ -1,6 +1,6 @@
 import ssbKeys from "ssb-keys";
 import { clientGenerateKey } from "../../client-actions";
-
+import rando from "../../random-util";
 export const SEED_RNG = "SEED_RNG";
 export const seedRngAction = action => {
   return action;
@@ -140,6 +140,7 @@ export const seedRngReducer = (state, action) => {
     const finalSeed = ssbKeys.hash(
       orderedPlayers.map(playerId => state.game.randoSeeds[playerId]).concat("")
     );
+    rando.setSeed(finalSeed);
     return {
       ...state,
       game: {
