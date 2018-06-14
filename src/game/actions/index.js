@@ -1,4 +1,5 @@
 export * from "./seed-rng";
+export * from "./shuffle-deck";
 
 export const DO_NEXT_ACTION = "DO_NEXT_ACTION";
 

@@ -93,3 +93,18 @@ export const clientGenerateKey = () => {
     keys: ssbKeys.generate()
   };
 };
+
+export const CLIENT_BOX = "CLIENT_BOX";
+export const clientBox = (data, keys) => (dispatch, getState) => {
+  dispatch({
+    type: CLIENT_BOX,
+    id: keys.id,
+    contents: data
+  });
+  return {
+    secret: true,
+    id: keys.id,
+    playerId: getState().client.keys.id,
+    box: ssbKeys.box(data, [keys])
+  };
+};

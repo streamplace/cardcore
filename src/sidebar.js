@@ -40,11 +40,14 @@ export class Sidebar extends React.Component {
           <Face playerId={this.props.playerId} />
           <HandBox>
             {this.props.player.hand.map((unitId, i) => {
-              const card = this.props.units[unitId];
+              let card;
+              if (!unitId.secret) {
+                card = this.props.units[unitId];
+              }
               let canPlay;
               if (!this.props.myTurn) {
                 canPlay = false;
-              } else if (card.cost <= this.props.availableMana) {
+              } else if (card && card.cost <= this.props.availableMana) {
                 canPlay = true;
               }
               return (

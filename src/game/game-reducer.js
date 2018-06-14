@@ -141,10 +141,17 @@ export default function reducer(state = INITIAL_STATE, action) {
         [action._sender]: {
           ...INITIAL_PLAYER,
           unitId: playerUnitId,
-          deck: rando.shuffle(deck)
+          deck
         }
       },
       nextActions: [
+        {
+          playerId: action._sender,
+          action: {
+            type: actions.SHUFFLE_DECK,
+            playerId: action._sender
+          }
+        },
         ...range(state.params.startDraw).map(() => ({
           playerId: action._sender,
           action: {
@@ -232,16 +239,31 @@ export default function reducer(state = INITIAL_STATE, action) {
           }
         };
       } else {
+        let newActions = [];
+        if (unitId.secret && unitId.playerId !== playerId) {
+          // card is encrypted by someone else, ask them to decrypt
+          newActions.push({
+            playerId: unitId.playerId,
+            action: {
+              type: actions.SHUFFLE_DECK_DECRYPT,
+              playerId: playerId
+            }
+          });
+        } else {
+          console.log(unitId);
+          throw new Error("who the butt encrypted this");
+        }
         state = {
           ...state,
           players: {
             ...state.players,
             [playerId]: {
               ...player,
-              hand: [...player.hand, unitId],
+              hand: [unitId, ...player.hand],
               deck: player.deck.slice(1)
             }
-          }
+          },
+          nextActions: [...newActions, ...state.nextActions]
         };
       }
     }

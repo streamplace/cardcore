@@ -2,6 +2,13 @@
 
 import ssbKeys from "ssb-keys";
 
+export function shuffle(arr, func = Math.random) {
+  const randos = arr.map(() => func());
+  return Object.keys(arr)
+    .sort((a, b) => randos[a] - randos[b])
+    .map(k => arr[k]);
+}
+
 export default class RandomUtil {
   constructor(seed) {
     if (!seed) {
@@ -25,10 +32,7 @@ export default class RandomUtil {
   }
 
   shuffle(arr) {
-    const randos = arr.map(() => this.next());
-    return Object.keys(arr)
-      .sort((a, b) => randos[a] - randos[b])
-      .map(k => arr[k]);
+    return shuffle(arr, this.next.bind(this));
   }
 
   next() {

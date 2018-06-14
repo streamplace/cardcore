@@ -10,6 +10,7 @@ const FieldSideBox = styled.div`
   display: flex;
   justify-content: center;
   padding: 5px;
+  perspective: 1000px;
 `;
 
 export class FieldSide extends React.Component {
