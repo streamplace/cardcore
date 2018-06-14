@@ -36,14 +36,14 @@ export const endTurn = () => async (dispatch, getState) => {
 };
 
 export const PLAY_CREATURE = "PLAY_CREATURE";
-export const playCreature = (unitId, targets = []) => async (
+export const playCreature = (id, privateKey, targets = []) => async (
   dispatch,
   getState
 ) => {
-  const card = getState().game.units[unitId];
   await dispatch({
     type: PLAY_CREATURE,
-    unitId,
+    id,
+    private: privateKey,
     targets
   });
 };

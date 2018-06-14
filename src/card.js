@@ -117,17 +117,17 @@ const EmojiText = styled.span`
 
 export class Card extends React.Component {
   onDragEnd(e) {
-    this.props.dispatch(cardDrop(e, this.props.unitId, this.props.location));
+    this.props.dispatch(cardDrop(e, this.props.card, this.props.location));
   }
 
-  handleDrop({ unitId, location }) {
+  handleDrop({ card, location }) {
     if (location !== "field" || this.props.location !== "field") {
       return;
     }
-    if (unitId === this.props.unitId) {
+    if (card === this.props.unitId) {
       return;
     }
-    this.props.dispatch(attack(unitId, this.props.unitId));
+    this.props.dispatch(attack(card, this.props.unitId));
   }
   handleClick(e) {
     if (this.props.targetingUnit && this.shouldLightUp()) {
@@ -166,7 +166,7 @@ export class Card extends React.Component {
         return false;
       }
     } else if (this.props.location === "field") {
-      if (!this.unit.canAttack) {
+      if (!this.props.unit.canAttack) {
         return false;
       }
     }
@@ -230,7 +230,6 @@ const mapStateToProps = (state, props) => {
   if (unitId) {
     unit = state.game.units[unitId];
   }
-  console.log(state.client.keys.id, state.game.turn);
   return {
     unit: unit,
     unitId: unitId,

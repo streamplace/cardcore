@@ -1,4 +1,5 @@
 import { playCreature } from "./game/actions";
+import { traverseSecret } from "./util";
 import ssbKeys from "ssb-keys";
 /**
  * This file should contain web-specific actions extranious to the game state
@@ -11,7 +12,7 @@ const DROP_TARGET_CLASS = "hack-drop-target";
  * it was dropped on and fire some actions. The right way to do this would be to keep track of the
  * locations of every droppable thing on componentDidMount and window resize.
  */
-export const cardDrop = (e, unitId, location) => dispatch => {
+export const cardDrop = (e, card, location) => dispatch => {
   document.querySelectorAll(`.${DROP_TARGET_CLASS}`).forEach(elem => {
     const { left, right, top, bottom } = elem.getClientRects()[0];
     if (
@@ -21,7 +22,7 @@ export const cardDrop = (e, unitId, location) => dispatch => {
       e.clientY <= bottom
     ) {
       const e = new Event(DROP_TARGET_CLASS);
-      e.unitId = unitId;
+      e.card = card;
       e.location = location;
       elem.dispatchEvent(e);
     }
@@ -40,25 +41,38 @@ export const registerDropTarget = cb => ref => {
     ref.removeEventListener(DROP_TARGET_CLASS, refs.get(ref));
   }
   refs.set(ref, e => {
-    cb({ unitId: e.unitId, location: e.location });
+    cb({ card: e.card, location: e.location });
   });
   ref.addEventListener(DROP_TARGET_CLASS, refs.get(ref));
 };
 
-export const clientPlayCreature = (unitId, playerId) => (
+export const CLIENT_PLAY_CREATURE = "CLIENT_PLAY_CREATURE";
+export const clientPlayCreature = (card, playerId) => async (
   dispatch,
   getState
 ) => {
+  const state = getState();
+  const unitId = traverseSecret(card, state.secret);
   const unit = getState().game.units[unitId];
+  await dispatch({
+    type: CLIENT_PLAY_CREATURE,
+    card
+  });
 
   for (let i = 0; i < unit.onSummon.length; i++) {
     let count = unit.onSummon[i].target.count;
     if (count && count >= 1) {
-      return dispatch(clientStartTarget(unit, unitId));
+      return dispatch(clientStartTarget(unit, card));
     }
   }
 
-  dispatch(playCreature(unitId));
+  dispatch(clientPlayCreatureDone());
+};
+
+export const clientPlayCreatureDone = () => (dispatch, getState) => {
+  const { playingCard, targets } = getState().client;
+  const privateKey = getState().secret[playingCard.id].private;
+  dispatch(playCreature(playingCard.id, privateKey, targets));
 };
 
 export const clientStartTarget = (unit, unitId) => (dispatch, getState) => {
@@ -70,9 +84,7 @@ export const clientPickTarget = unitId => async (dispatch, getState) => {
     getState().client.targets.length ===
     getState().client.targetingUnit.onSummon.length;
   if (timeToPlay) {
-    await dispatch(
-      playCreature(getState().client.targetingUnitId, getState().client.targets)
-    );
+    await dispatch(clientPlayCreatureDone());
   }
 };
 

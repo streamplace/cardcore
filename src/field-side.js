@@ -15,9 +15,9 @@ const FieldSideBox = styled.div`
 `;
 
 export class FieldSide extends React.Component {
-  handleDrop({ unitId, location }) {
+  handleDrop({ card, location }) {
     if (location === "hand") {
-      this.props.dispatch(clientPlayCreature(unitId));
+      this.props.dispatch(clientPlayCreature(card));
     }
   }
   render() {

@@ -3,6 +3,7 @@ import target from "./target-helper";
 import { getStandardDeck, getStandardEmoji } from "../standard";
 import RandomUtil from "../random-util";
 import { range } from "../util";
+import ssbKeys from "ssb-keys";
 
 const INITIAL_STATE = {
   nextActions: [],
@@ -250,7 +251,6 @@ export default function reducer(state = INITIAL_STATE, action) {
             }
           });
         } else {
-          console.log(unitId);
           throw new Error("who the butt encrypted this");
         }
         state = {
@@ -271,39 +271,40 @@ export default function reducer(state = INITIAL_STATE, action) {
   }
 
   if (action.type === actions.PLAY_CREATURE) {
-    const player = state.players[state.turn];
-    const unitId = action.unitId;
-    const card = state.units[unitId];
+    const player = state.players[action._sender];
+    const card = player.hand.filter(card => card.id === action.id)[0];
+    const unitId = ssbKeys.unbox(card.box, { private: action.private });
+    const unit = state.units[unitId];
     return {
       ...state,
       players: {
         ...state.players,
-        [state.turn]: {
+        [action._sender]: {
           ...player,
-          availableMana: player.availableMana - card.cost,
-          hand: player.hand.filter(u => u !== unitId),
-          field: [...player.field, unitId]
+          availableMana: player.availableMana - unit.cost,
+          hand: player.hand.filter(c => c !== card),
+          field: [unitId, ...player.field]
         }
       },
       units: {
         ...state.units,
         [unitId]: {
-          ...card,
+          ...unit,
           canAttack: false
         }
       },
       nextActions: state.nextActions.concat([
-        { playerId: state.turn, action: { type: actions.CHECK_DEATH } },
-        ...card.onSummon.map((onSummon, i) => {
+        { playerId: action._sender, action: { type: actions.CHECK_DEATH } },
+        ...unit.onSummon.map((onSummon, i) => {
           return {
-            playerId: state.turn,
+            playerId: action._sender,
             action: {
               ...onSummon,
               target: {
                 ...onSummon.target,
                 unitId: action.targets[i]
               },
-              unitId: action.unitId
+              unitId: unitId
             }
           };
         })
