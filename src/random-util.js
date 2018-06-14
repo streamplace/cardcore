@@ -9,7 +9,7 @@ export function shuffle(arr, func = Math.random) {
     .map(k => arr[k]);
 }
 
-export default class RandomUtil {
+export class RandomUtil {
   constructor(seed) {
     if (!seed) {
       seed = ssbKeys.hash(`${Math.random()}`);
@@ -43,3 +43,5 @@ export default class RandomUtil {
     return (this.next() - 1) / 2147483646;
   }
 }
+
+export default new RandomUtil();

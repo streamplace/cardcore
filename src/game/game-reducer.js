@@ -1,7 +1,7 @@
 import * as actions from "./actions";
 import target from "./target-helper";
 import { getStandardDeck, getStandardEmoji } from "../standard";
-import RandomUtil from "../random-util";
+import rando from "../random-util";
 import { range } from "../util";
 import ssbKeys from "ssb-keys";
 
@@ -36,9 +36,6 @@ const uid = () => {
   cur += 1;
   return res;
 };
-
-// same deal but for random numbers
-const rando = new RandomUtil();
 
 export default function reducer(state = INITIAL_STATE, action) {
   // special logic to clean out the queue if we're executing a queued action
@@ -93,7 +90,6 @@ export default function reducer(state = INITIAL_STATE, action) {
   }
 
   if (action.type === actions.ORDER_PLAYERS) {
-    rando.setSeed(state.randoSeed);
     const playerOrder = rando.shuffle(Object.keys(state.players).sort());
     return {
       ...state,
