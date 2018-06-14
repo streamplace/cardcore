@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "crypto-hash": "^0.1.0",
+    "deep-diff": "^1.0.1",
     "json-stable-stringify": "^1.0.1",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",

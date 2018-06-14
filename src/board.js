@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { clientGenerateIdentity } from "./client-actions";
 import { joinGameStart } from "./game/actions";
+import { diff } from "deep-diff";
 
 const BoardWrapper = styled.div`
   height: 100%;
@@ -22,6 +23,10 @@ const CentralText = styled.p`
   margin: auto;
 `;
 
+const DesyncBox = styled.div`
+  user-select: default;
+`;
+
 export class Board extends React.Component {
   constructor(props) {
     super();
@@ -34,13 +39,21 @@ export class Board extends React.Component {
 
   render() {
     if (!this.props.sync) {
+      const players = Object.keys(this.props.desyncStates);
+      let str;
+      if (players.length < 2 || players.length > 2) {
+        str = JSON.stringify(this.props.desyncStates, null, 2);
+      } else {
+        const [p1, p2] = Object.values(this.props.desyncStates);
+        str = JSON.stringify(diff(p1, p2), null, 2);
+      }
       return (
         <BoardWrapper>
           <p>fatal error: desync</p>
           <p>if you wanna help, send someone this blob of data:</p>
-          <p>
-            <pre>{JSON.stringify(this.props.desyncStates, null, 2)}</pre>
-          </p>
+          <DesyncBox>
+            <pre>{str}</pre>
+          </DesyncBox>
         </BoardWrapper>
       );
     }
