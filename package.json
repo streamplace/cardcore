@@ -36,6 +36,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "noto-emoji": "git+https://github.com/streamplace/noto-emoji.git",
     "opn-cli": "^3.1.0",
     "react-scripts": "^1.1.4"
   }
