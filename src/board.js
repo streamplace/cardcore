@@ -11,6 +11,7 @@ const BoardWrapper = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+  ${props => props.disableSelect && "user-select: none"};
 `;
 
 const HugeButton = styled.button`
@@ -27,17 +28,46 @@ const DesyncBox = styled.div`
   user-select: default;
 `;
 
+const BigMessage = styled.p`
+  font-size: 2em;
+`;
+
+const LinkBox = styled.pre`
+  font-size: 2em;
+  user-select: all;
+  background-color: #ccc;
+  border-radius: 10px;
+  line-height: 200px;
+`;
+
+const LoadingBox = styled.div`
+  padding: 2em;
+`;
+
 export class Board extends React.Component {
   constructor(props) {
     super();
-    props.dispatch(clientGenerateIdentity());
   }
 
   async joinGame() {
+    await this.props.dispatch(clientGenerateIdentity());
     await this.props.dispatch(joinGameStart());
   }
 
+  componentDidMount() {
+    this.interval = setInterval(() => {
+      this.joinGame();
+    }, 1500);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
   render() {
+    if (this.props.ready) {
+      clearInterval(this.interval);
+    }
     if (!this.props.sync) {
       const players = Object.keys(this.props.desyncStates);
       let str;
@@ -49,33 +79,30 @@ export class Board extends React.Component {
       }
       return (
         <BoardWrapper>
-          <p>fatal error: desync</p>
-          <p>if you wanna help, send someone this blob of data:</p>
+          <BigMessage>fatal error: desync</BigMessage>
+          <BigMessage>
+            if you wanna help, send someone this blob of data:
+          </BigMessage>
           <DesyncBox>
-            <pre>{str}</pre>
+            <LinkBox>{str}</LinkBox>
           </DesyncBox>
-        </BoardWrapper>
-      );
-    }
-    if (!this.props.iAmInGame) {
-      return (
-        <BoardWrapper>
-          <HugeButton onClick={() => this.joinGame()}>Join Game</HugeButton>
         </BoardWrapper>
       );
     }
     if (!this.props.ready) {
       return (
-        <BoardWrapper>
-          <CentralText>waiting for someone to join...</CentralText>
-        </BoardWrapper>
+        <LoadingBox>
+          <p>Waiting for another player...</p>
+          <p>Send your friend this link:</p>
+          <p>{document.location.href}</p>
+        </LoadingBox>
       );
     }
     const notMe = this.props.playerOrder.filter(
       x => x !== this.props.currentPlayer
     )[0];
     return (
-      <BoardWrapper>
+      <BoardWrapper disableSelect={true}>
         <Sidebar playerId={notMe} />
         <Field />
         <Sidebar playerId={this.props.currentPlayer} />

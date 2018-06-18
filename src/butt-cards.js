@@ -1,5 +1,4 @@
-import React, { Component } from "react";
-import logo from "./logo.svg";
+import React from "react";
 import styled, { injectGlobal } from "styled-components";
 import { Provider } from "react-redux";
 import store from "./store";
@@ -8,7 +7,6 @@ import Board from "./board";
 injectGlobal`
   body {
     margin: 0;
-    user-select: none;
   }
   html, body, #root {
     height: 100%;
@@ -20,7 +18,7 @@ const AppContainer = styled.div`
   height: 100%;
 `;
 
-class App extends Component {
+class ButtCards extends React.Component {
   render() {
     return (
       <Provider store={store}>
@@ -32,4 +30,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default ButtCards;

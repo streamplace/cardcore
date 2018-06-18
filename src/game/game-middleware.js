@@ -8,13 +8,14 @@ export const REMOTE_ACTION = Symbol("REMOTE_ACTION");
 
 export const gameMiddleware = store => {
   const server = `${document.location.protocol}//${document.location.host}`;
-  const hub = signalhub("game", [server]);
+  const channelName = document.location.pathname.slice(1);
+  const hub = signalhub("butt-card", [server]);
   const getHash = () => {
     return new Promise((resolve, reject) => {
       resolve(hash(stringify(store.getState().game)));
     });
   };
-  hub.subscribe("default-game").on("data", async action => {
+  hub.subscribe(channelName).on("data", async action => {
     const me = store.getState().client.keys;
     if (action._sender === me.id) {
       return;
@@ -62,7 +63,7 @@ export const gameMiddleware = store => {
         }
       } else if (gameActions[action.type]) {
         // tell everyone else the action happened and the resulting hash
-        hub.broadcast("default-game", {
+        hub.broadcast(channelName, {
           ...action,
           _sender: me.id,
           _hash: hash
