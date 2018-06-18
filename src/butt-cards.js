@@ -1,7 +1,7 @@
 import React from "react";
 import styled, { injectGlobal } from "styled-components";
 import { Provider } from "react-redux";
-import store from "./store";
+import storeGenerator from "./store";
 import Board from "./board";
 
 injectGlobal`
@@ -19,9 +19,13 @@ const AppContainer = styled.div`
 `;
 
 class ButtCards extends React.Component {
+  constructor() {
+    super();
+    this.store = storeGenerator();
+  }
   render() {
     return (
-      <Provider store={store}>
+      <Provider store={this.store}>
         <AppContainer>
           <Board />
         </AppContainer>

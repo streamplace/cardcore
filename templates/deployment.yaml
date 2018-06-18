@@ -19,6 +19,7 @@ spec:
         app: {{ template "..name" . }}
         release: {{ .Release.Name }}
     spec:
+      terminationGracePeriodSeconds: 2
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
