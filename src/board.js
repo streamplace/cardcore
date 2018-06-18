@@ -50,11 +50,11 @@ export class Board extends React.Component {
   }
 
   async joinGame() {
-    await this.props.dispatch(clientGenerateIdentity());
     await this.props.dispatch(joinGameStart());
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    await this.props.dispatch(clientGenerateIdentity());
     this.interval = setInterval(() => {
       this.joinGame();
     }, 1500);
@@ -65,7 +65,7 @@ export class Board extends React.Component {
   }
 
   render() {
-    if (this.props.ready) {
+    if (this.props.started) {
       clearInterval(this.interval);
     }
     if (!this.props.sync) {
@@ -117,6 +117,7 @@ const mapStateToProps = (state, props) => {
     currentPlayer: state.client.keys.id,
     sync: state.client.sync,
     desyncStates: state.client.desyncStates,
+    started: state.client.started,
     ready:
       state.game.playerOrder.length > 0 &&
       state.game.playerOrder.every(

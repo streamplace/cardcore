@@ -8,10 +8,17 @@ const INITIAL_STATE = {
   targetingUnit: null,
   targetingUnitId: null,
   targets: [],
-  keys: {}
+  keys: {},
+  started: false
 };
 
 export default function reducer(state = INITIAL_STATE, action) {
+  if (action.type === actions.JOIN_GAME_ACCEPT) {
+    return {
+      ...state,
+      started: true
+    };
+  }
   if (action.type === clientActions.CLIENT_GENERATE_IDENTITY) {
     return { ...state, keys: action.keys };
   }
