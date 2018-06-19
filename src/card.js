@@ -124,9 +124,13 @@ export class Card extends React.Component {
   }
 
   componentDidMount() {
-    setTimeout(() => {
+    this.timeout = setTimeout(() => {
       this.setState({ forceFlip: false });
     }, 200);
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timeout);
   }
 
   onDragEnd(e) {
