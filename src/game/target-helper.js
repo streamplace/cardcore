@@ -10,7 +10,7 @@ import {
   PLAYER_SELF,
   PLAYER_ENEMY
 } from "./constants";
-
+import rando from "../random-util";
 /**
  * Returns an object of {unitId: unit}
  *
@@ -27,7 +27,7 @@ import {
 const noop = x => x;
 
 export default function target(state, target, func = noop) {
-  const units = {};
+  let units = {};
   const owners = {};
   if (target.unitId) {
     units[target.unitId] = state.units[target.unitId];
@@ -68,6 +68,16 @@ export default function target(state, target, func = noop) {
         }
       }
     }
+  }
+
+  if (target.random) {
+    let newArray = Object.keys(units).sort();
+    let newUnitIds = rando.shuffle(newArray);
+    let newUnitObject = {};
+    for (let i = 0; i < target.count; i++) {
+      newUnitObject[newUnitIds[i]] = units[newUnitIds[i]];
+    }
+    units = newUnitObject;
   }
 
   for (const unitId of Object.keys(units)) {

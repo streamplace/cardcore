@@ -114,7 +114,7 @@ export function damageCreature(cost) {
     health: cost,
     type: "creature",
     name: "Creature Damager",
-    text: `onSummon: deal 1 to three target creatures`,
+    text: `onSummon: deal 1 damage to three target creatures`,
     onSummon: [
       {
         type: "DAMAGE",
@@ -135,6 +135,29 @@ export function damageCreature(cost) {
   };
 }
 
+export const onSummonRandomDamage = {
+  ...standard(2),
+  name: "Random Creature Damager",
+  text: `onSummon: deal 1 random damage to three target creatures`,
+  onSummon: [
+    {
+      type: "DAMAGE",
+      value: 1,
+      target: { type: "creature", count: 1, location: "field", random: true }
+    },
+    {
+      type: "DAMAGE",
+      value: 1,
+      target: { type: "creature", count: 1, location: "field", random: true }
+    },
+    {
+      type: "DAMAGE",
+      value: 1,
+      target: { type: "creature", count: 1, location: "field", random: true }
+    }
+  ]
+};
+
 export function getStandardDeck() {
   return [
     standard(1),
@@ -148,7 +171,8 @@ export function getStandardDeck() {
     damageCreature(4),
     onSummonSummon,
     onSummonHandBuff,
-    onSummonBounce
+    onSummonBounce,
+    onSummonRandomDamage
   ];
 }
 
