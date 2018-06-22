@@ -61,7 +61,8 @@ export const clientPlayCreature = (card, playerId) => async (
 
   for (let i = 0; i < unit.onSummon.length; i++) {
     let count = unit.onSummon[i].target.count;
-    if (count && count >= 1) {
+    let random = unit.onSummon[i].target.random;
+    if (count && count >= 1 && random !== true) {
       return dispatch(clientStartTarget(unit, card));
     }
   }

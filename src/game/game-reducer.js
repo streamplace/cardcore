@@ -301,6 +301,12 @@ export default function reducer(state = INITIAL_STATE, action) {
       },
       units: { ...state.units, [unitId]: { ...unit, canAttack: false } },
       nextActions: [
+        {
+          playerId: action._sender,
+          action: {
+            type: actions.SEED_RNG
+          }
+        },
         ...unit.onSummon.map((onSummon, i) => {
           return {
             playerId: action._sender,
