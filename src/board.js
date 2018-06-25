@@ -37,7 +37,7 @@ const LinkBox = styled.pre`
   user-select: all;
   background-color: #ccc;
   border-radius: 10px;
-  line-height: 200px;
+  padding: 1em;
 `;
 
 const LoadingBox = styled.div`
