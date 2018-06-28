@@ -4,35 +4,37 @@ import { clientGenerateKey, clientBox } from "../../client-actions";
 import ssbKeys from "ssb-keys";
 
 export const SHUFFLE_DECK = "SHUFFLE_DECK";
-// export const shuffleDeckAction = action => (dispatch, getState) => {
+// export const shuffleDeck = action => (dispatch, getState) => {
 //   dispatch(action);
 // };
 
 export const SHUFFLE_DECK_ENCRYPT = "SHUFFLE_DECK_ENCRYPT";
-export const shuffleDeckEncryptAction = action => async (
+export const shuffleDeckEncrypt = ({ playerId }) => async (
   dispatch,
   getState
 ) => {
   let encryptedDeck = [];
-  for (const card of getState().game.players[action.playerId].deck) {
+  for (const card of getState().game.players[playerId].deck) {
     const { keys } = await dispatch(clientGenerateKey());
     encryptedDeck.push(await dispatch(clientBox(card, keys)));
   }
   return dispatch({
-    ...action,
-    deck: shuffle(encryptedDeck)
+    type: SHUFFLE_DECK_ENCRYPT,
+    deck: shuffle(encryptedDeck),
+    playerId
   });
 };
 
 // for now this operates on the first card in someone's hand... maybe that's okay.
 export const SHUFFLE_DECK_DECRYPT = "SHUFFLE_DECK_DECRYPT";
-export const shuffleDeckDecryptAction = action => (dispatch, getState) => {
+export const shuffleDeckDecrypt = ({ playerId }) => (dispatch, getState) => {
   const state = getState();
-  const encryptedCard = state.game.players[action.playerId].hand[0];
+  const encryptedCard = state.game.players[playerId].hand[0];
   const keys = state.secret[encryptedCard.id];
   dispatch({
-    ...action,
-    private: keys.private
+    type: SHUFFLE_DECK_DECRYPT,
+    privateKey: keys.private,
+    playerId
   });
 };
 
@@ -86,7 +88,7 @@ export const shuffleDeckReducer = (state, action) => {
             ...state.game.players[action.playerId],
             hand: [
               ssbKeys.unbox(state.game.players[action.playerId].hand[0].box, {
-                private: action.private
+                private: action.privateKey
               }),
               ...state.game.players[action.playerId].hand.slice(1)
             ]

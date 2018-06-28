@@ -73,7 +73,7 @@ export const clientPlayCreature = (card, playerId) => async (
 export const clientPlayCreatureDone = () => (dispatch, getState) => {
   const { playingCard, targets } = getState().client;
   const privateKey = getState().secret[playingCard.id].private;
-  dispatch(playCreature(playingCard.id, privateKey, targets));
+  dispatch(playCreature({ id: playingCard.id, privateKey, targets }));
 };
 
 export const clientStartTarget = (unit, unitId) => (dispatch, getState) => {

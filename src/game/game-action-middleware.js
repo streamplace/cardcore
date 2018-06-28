@@ -18,8 +18,7 @@ for (const [key, value] of Object.entries(actions)) {
     .split("_")
     .map(word => word[0].toUpperCase() + word.slice(1).toLowerCase())
     .join("");
-  const actionCreator =
-    camelCase[0].toLowerCase() + camelCase.slice(1) + "Action";
+  const actionCreator = camelCase[0].toLowerCase() + camelCase.slice(1);
   if (actions[actionCreator]) {
     actionMap[value] = actions[actionCreator];
   }
@@ -28,8 +27,7 @@ for (const [key, value] of Object.entries(actions)) {
 export const gameActionMiddleware = store => {
   return next => {
     return action => {
-      if (actionMap[action.type] && action._needsCreator) {
-        action = { ...action, _needsCreator: false };
+      if (actionMap[action.type] && action._fromQueue) {
         action = actionMap[action.type](action);
       }
       return next(action);

@@ -2,31 +2,31 @@ import ssbKeys from "ssb-keys";
 import { clientGenerateKey } from "../../client-actions";
 import rando from "../../random-util";
 export const SEED_RNG = "SEED_RNG";
-export const seedRngAction = action => {
+export const seedRng = action => {
   return action;
 };
 
 export const SEED_RNG_ENCRYPT = "SEED_RNG_ENCRYPT";
-export const seedRngEncryptAction = action => async (dispatch, getState) => {
+export const seedRngEncrypt = () => async (dispatch, getState) => {
   const { keys } = await dispatch(clientGenerateKey());
-  // Math.random isn't the most secure probably
-  const randoSecret = ssbKeys.hash(`${Math.random()}`);
+  // idk just hash a key
+  const randoSecret = ssbKeys.hash(ssbKeys.generate().id);
   const boxed = ssbKeys.box(randoSecret, [keys]);
-  dispatch({
-    ...action,
+  return dispatch({
+    type: SEED_RNG_ENCRYPT,
     id: keys.id,
     box: boxed
   });
 };
 
 export const SEED_RNG_DECRYPT = "SEED_RNG_DECRYPT";
-export const seedRngDecryptAction = action => async (dispatch, getState) => {
+export const seedRngDecrypt = () => async (dispatch, getState) => {
   const state = getState();
-  const mySeed = state.game.randoSeeds[action._sender];
+  const mySeed = state.game.randoSeeds[state.client.keys.id];
   const privateKey = state.secret[mySeed.id].private;
-  dispatch({
-    ...action,
-    private: privateKey
+  return dispatch({
+    type: SEED_RNG_DECRYPT,
+    privateKey: privateKey
   });
 };
 
@@ -124,7 +124,7 @@ export const seedRngReducer = (state, action) => {
           ...state.game.randoSeeds,
           [action._sender]: ssbKeys.unbox(
             state.game.randoSeeds[action._sender].box,
-            { private: action.private }
+            { private: action.privateKey }
           )
         }
       }

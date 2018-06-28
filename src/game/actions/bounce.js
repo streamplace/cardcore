@@ -2,16 +2,17 @@ import { targetArray } from "../target-helper";
 import { clientGenerateKey, clientBox } from "../../client-actions";
 
 export const BOUNCE = "BOUNCE";
-export const bounceAction = action => {
-  return action;
+export const bounce = ({ target }) => {
+  return { type: BOUNCE, target };
 };
 
 export const BOUNCE_ENCRYPT = "BOUNCE_ENCRYPT";
-export const bounceEncryptAction = action => async (dispatch, getState) => {
+export const bounceEncrypt = ({ unitId }) => async (dispatch, getState) => {
   const { keys } = await dispatch(clientGenerateKey());
-  const card = await dispatch(clientBox(action.unitId, keys));
+  const card = await dispatch(clientBox(unitId, keys));
   return dispatch({
-    ...action,
+    type: "BOUNCE_ENCRYPT",
+    unitId,
     card
   });
 };

@@ -35,14 +35,14 @@ export const endTurn = () => async (dispatch, getState) => {
 };
 
 export const PLAY_CREATURE = "PLAY_CREATURE";
-export const playCreature = (id, privateKey, targets = []) => async (
+export const playCreature = ({ id, privateKey, targets = [] }) => async (
   dispatch,
   getState
 ) => {
   await dispatch({
     type: PLAY_CREATURE,
     id,
-    private: privateKey,
+    privateKey,
     targets
   });
 };
