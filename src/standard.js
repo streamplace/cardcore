@@ -105,6 +105,22 @@ export function cardDraw(cost) {
   };
 }
 
+export const onSummonDamageOwnHero = {
+  ...standard(1),
+  emoji: "",
+  attack: 3,
+  health: 2,
+  name: "Owner Damager",
+  text: `onSummon: Deal 3 damage to your hero`,
+  onSummon: [
+    {
+      type: "DAMAGE",
+      value: 3,
+      target: { type: "face", player: "self" }
+    }
+  ]
+};
+
 export function damageCreature(cost) {
   const emoji = emojis[cost] || emojis[emojis.length - 1];
   return {
@@ -163,16 +179,14 @@ export function getStandardDeck() {
     standard(1),
     standard(2),
     standard(3),
-    standard(4),
-    standard(5),
-    standard(6),
     threeMaster(3),
     cardDraw(2),
     damageCreature(4),
     onSummonSummon,
     onSummonHandBuff,
     onSummonBounce,
-    onSummonRandomDamage
+    onSummonRandomDamage,
+    onSummonDamageOwnHero
   ];
 }
 
