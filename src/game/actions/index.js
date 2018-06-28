@@ -1,10 +1,12 @@
+export * from "./bounce";
+export * from "./draw-card";
 export * from "./seed-rng";
 export * from "./shuffle-deck";
-export * from "./bounce";
+export * from "./start-game";
+export * from "./turns";
 
 export const DO_NEXT_ACTION = "DO_NEXT_ACTION";
 
-export const START_GAME = "START_GAME";
 export const DESYNC = "DESYNC";
 /**
  * In the event of a desync, we give up on doing anything else and just have clients report their
@@ -16,22 +18,6 @@ export const desync = (user, state) => {
     user: user,
     state: state
   };
-};
-
-export const ORDER_PLAYERS = "ORDER_PLAYERS";
-
-export const START_TURN = "START_TURN";
-export const startTurn = () => async (dispatch, getState) => {
-  const playerId = getState().game.turn;
-  await dispatch({ type: START_TURN });
-};
-
-export const DRAW_CARD = "DRAW_CARD";
-export const END_TURN = "END_TURN";
-export const endTurn = () => async (dispatch, getState) => {
-  await dispatch({
-    type: END_TURN
-  });
 };
 
 export const PLAY_CREATURE = "PLAY_CREATURE";
@@ -69,12 +55,3 @@ export const CHANGE_HEALTH = "CHANGE_HEALTH";
 export const DAMAGE = "DAMAGE";
 export const SUMMON_CREATURE = "SUMMON_CREATURE";
 export const BUFF = "BUFF";
-
-export const JOIN_GAME_START = "JOIN_GAME_START";
-export const joinGameStart = () => {
-  return {
-    type: JOIN_GAME_START
-  };
-};
-
-export const JOIN_GAME_ACCEPT = "JOIN_GAME_ACCEPT";
