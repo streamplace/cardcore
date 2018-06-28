@@ -7,7 +7,7 @@
  * actions.SEED_RNG_DECRYPT => actions.seedRngDecryptAction
  */
 
-import * as actions from "./actions/index";
+import * as actions from "./actions";
 
 const actionMap = {};
 for (const [key, value] of Object.entries(actions)) {
@@ -24,9 +24,36 @@ for (const [key, value] of Object.entries(actions)) {
   }
 }
 
+/**
+ * two kinds of actions are allowed - you can either be a human that did an action on your turn or you can be a computer handling the most recent action in nextactions
+ */
+export function checkActionAllowed(state, action) {
+  // non-game actions are always allowed
+  if (!actions[action.type]) {
+    return;
+  }
+  // also if we don't have a turn order yet, nbd
+  if (!state.game || !state.game.turn) {
+    return;
+  }
+  const sender = action._sender || state.client.keys.id;
+  if (state.game.nextActions.length > 0) {
+    const queueUser = state.game.nextActions[0].playerId;
+    if (sender !== queueUser) {
+      throw new Error(`queue wants user ${queueUser} but user ${sender} acted`);
+    }
+  } else if (state.game.turn !== sender) {
+    throw new Error(
+      `${sender} acted out of turn; it's ${state.game.turn}'s turn`
+    );
+  }
+}
+
 export const gameActionMiddleware = store => {
   return next => {
     return action => {
+      const state = store.getState();
+      checkActionAllowed(state, action);
       if (actionMap[action.type] && action._fromQueue) {
         action = actionMap[action.type](action);
       }
