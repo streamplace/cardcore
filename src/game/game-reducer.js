@@ -30,7 +30,6 @@ export default function reducer(state = INITIAL_STATE, action) {
   }
 
   if (action.type === actions.PLAY_CREATURE) {
-    console.log(action);
     const player = state.players[action._sender];
     const card = player.hand.filter(card => card.id === action.id)[0];
     const unitId = ssbKeys.unbox(card.box, { private: action.privateKey });
