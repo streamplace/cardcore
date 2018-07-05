@@ -147,25 +147,15 @@ export class Card extends React.Component {
     this.props.dispatch(attack(card, this.props.unitId));
   }
   handleClick(e) {
-    if (this.props.targetingUnit && this.shouldLightUp()) {
+    if (this.shouldLightUp()) {
       this.props.dispatch(clientPickTarget(this.props.unitId));
     }
   }
   shouldLightUp() {
-    const onSummon = this.props.targetingUnit.onSummon[
-      this.props.targets.length
-    ];
-    if (!onSummon) {
+    if (!this.props.availableTargets) {
       return false;
     }
-    const target = onSummon.target;
-    if (this.props.location !== target.location) {
-      return false;
-    } else if (this.props.unit.type !== target.type) {
-      return false;
-    } else {
-      return true;
-    }
+    return this.props.availableTargets.includes(this.props.unitId);
   }
 
   isPlayable() {
@@ -197,7 +187,7 @@ export class Card extends React.Component {
     const flipped = !this.props.unit;
     if (this.props.unit) {
       card = this.props.unit;
-      if (this.props.targetingUnit) {
+      if (this.props.availableTargets) {
         shouldLightUp = this.shouldLightUp();
       }
     } else {
@@ -255,7 +245,8 @@ const mapStateToProps = (state, props) => {
     secret: state.secret,
     player: state.game.players[props.playerId],
     myTurn: state.client.keys.id === state.game.turn,
-    myUnit: state.client.keys.id === props.playerId
+    myUnit: state.client.keys.id === props.playerId,
+    availableTargets: state.client.availableTargets
   };
 };
 

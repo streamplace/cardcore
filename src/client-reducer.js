@@ -5,8 +5,7 @@ const INITIAL_STATE = {
   sync: true,
   desyncStates: {},
   playingCard: null,
-  targetingUnit: null,
-  targetingUnitId: null,
+  targetQueue: [],
   targets: [],
   keys: {},
   started: false
@@ -26,7 +25,18 @@ export default function reducer(state = INITIAL_STATE, action) {
   if (action.type === clientActions.CLIENT_PLAY_CREATURE) {
     return {
       ...state,
+      targetQueue: action.unit.onSummon.map(onSummon => onSummon.target),
       playingCard: action.card
+    };
+  }
+
+  if (action.type === clientActions.CLIENT_TARGET_CANCEL) {
+    return {
+      ...state,
+      targetQueue: [],
+      targets: [],
+      availableTargets: null,
+      playingCard: null
     };
   }
 
@@ -43,24 +53,25 @@ export default function reducer(state = INITIAL_STATE, action) {
   if (action.type === clientActions.CLIENT_START_TARGET) {
     return {
       ...state,
-      targetingUnit: action.unit,
-      targetingUnitId: action.unitId
-    };
-  }
-  if (action.type === actions.PLAY_CREATURE) {
-    return {
-      ...state,
-      targetingUnit: null,
-      targetingUnitId: null,
-      targets: []
+      availableTargets: action.availableTargets
     };
   }
 
   if (action.type === clientActions.CLIENT_PICK_TARGET) {
     return {
       ...state,
+      targetQueue: state.targetQueue.slice(1),
       targets: [...state.targets, action.unitId]
     };
   }
+
+  if (action.type === actions.PLAY_CREATURE) {
+    return {
+      ...state,
+      availableTargets: null,
+      targets: []
+    };
+  }
+
   return state;
 }

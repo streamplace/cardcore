@@ -1,6 +1,7 @@
 import { playCreature } from "./game/actions";
 import { traverseSecret } from "./util";
 import ssbKeys from "ssb-keys";
+import targetHelper from "./game/target-helper";
 /**
  * This file should contain web-specific actions extranious to the game state
  */
@@ -36,7 +37,9 @@ export const registerDropTarget = cb => ref => {
   if (!ref) {
     return;
   }
-  ref.className += ` ${DROP_TARGET_CLASS}`;
+  if (!ref.className.includes(DROP_TARGET_CLASS)) {
+    ref.className += ` ${DROP_TARGET_CLASS}`;
+  }
   if (refs.has(ref)) {
     ref.removeEventListener(DROP_TARGET_CLASS, refs.get(ref));
   }
@@ -47,27 +50,21 @@ export const registerDropTarget = cb => ref => {
 };
 
 export const CLIENT_PLAY_CREATURE = "CLIENT_PLAY_CREATURE";
-export const clientPlayCreature = (card, playerId) => async (
-  dispatch,
-  getState
-) => {
+export const clientPlayCreature = card => async (dispatch, getState) => {
   const state = getState();
   const unitId = traverseSecret(card, state.secret);
   const unit = getState().game.units[unitId];
   await dispatch({
     type: CLIENT_PLAY_CREATURE,
-    card
+    card,
+    unit
   });
 
-  for (let i = 0; i < unit.onSummon.length; i++) {
-    let count = unit.onSummon[i].target.count;
-    let random = unit.onSummon[i].target.random;
-    if (count && count >= 1 && random !== true) {
-      return dispatch(clientStartTarget(unit, card));
-    }
-  }
+  dispatch(clientPlayCreatureTarget());
+};
 
-  dispatch(clientPlayCreatureDone());
+export const clientPlayCreatureTarget = card => async (dispatch, getState) => {
+  await dispatch(clientStartTarget());
 };
 
 export const clientPlayCreatureDone = () => (dispatch, getState) => {
@@ -76,17 +73,30 @@ export const clientPlayCreatureDone = () => (dispatch, getState) => {
   dispatch(playCreature({ id: playingCard.id, privateKey, targets }));
 };
 
-export const clientStartTarget = (unit, unitId) => (dispatch, getState) => {
-  dispatch({ type: CLIENT_START_TARGET, unit, unitId });
+export const clientStartTarget = () => (dispatch, getState) => {
+  const state = getState();
+  if (state.client.targetQueue.length === 0) {
+    return dispatch(clientPlayCreatureDone());
+  }
+  const target = state.client.targetQueue[0];
+  if (target.random || target.count === undefined) {
+    return dispatch(clientPickTarget(null));
+  }
+  const availableTargets = Object.keys(targetHelper(state.game, target));
+  if (availableTargets.length === 0) {
+    return dispatch(clientPickTarget(null));
+  }
+  dispatch({ type: CLIENT_START_TARGET, availableTargets });
 };
+
+export const CLIENT_TARGET_CANCEL = "CLIENT_TARGET_CANCEL";
+export const clientTargetCancel = () => {
+  return { type: CLIENT_TARGET_CANCEL };
+};
+
 export const clientPickTarget = unitId => async (dispatch, getState) => {
   await dispatch({ type: CLIENT_PICK_TARGET, unitId });
-  const timeToPlay =
-    getState().client.targets.length ===
-    getState().client.targetingUnit.onSummon.length;
-  if (timeToPlay) {
-    await dispatch(clientPlayCreatureDone());
-  }
+  await dispatch(clientStartTarget());
 };
 
 export const CLIENT_START_TARGET = "CLIENT_START_TARGET";
