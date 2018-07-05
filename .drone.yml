@@ -5,6 +5,8 @@ clone:
 
 pipeline:
   test:
+    environment:
+      - NODE_ENV=development
     image: node:8
     pull: true
     commands:
