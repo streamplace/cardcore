@@ -10,6 +10,8 @@ pipeline:
     image: node:8
     pull: true
     commands:
+      - echo $NODE_ENV
       - npm install
+      - npm ls
       - npm run test
       - npm build
