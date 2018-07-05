@@ -1,7 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import Card from "./card";
-import { registerDropTarget, clientPlayCreature } from "./client-actions";
+import {
+  registerDropTarget,
+  clientPlayCreature,
+  clientTargetCancel
+} from "./client-actions";
 import { playCreature } from "./game/actions";
 import { connect } from "react-redux";
 
@@ -20,9 +24,21 @@ export class FieldSide extends React.Component {
       this.props.dispatch(clientPlayCreature(card));
     }
   }
+
+  handleClick(e) {
+    // only act if they clicked the field itself, not a card
+    if (e.target !== e.currentTarget) {
+      return;
+    }
+    this.props.dispatch(clientTargetCancel());
+  }
+
   render() {
     return (
-      <FieldSideBox innerRef={registerDropTarget(e => this.handleDrop(e))}>
+      <FieldSideBox
+        onClick={e => this.handleClick(e)}
+        innerRef={registerDropTarget(e => this.handleDrop(e))}
+      >
         {this.props.player.field.map((card, i) => {
           return (
             <Card

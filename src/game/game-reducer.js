@@ -53,19 +53,26 @@ export default function reducer(state = INITIAL_STATE, action) {
             type: actions.SEED_RNG
           }
         },
-        ...unit.onSummon.map((onSummon, i) => {
-          return {
-            playerId: action._sender,
-            action: {
-              ...onSummon,
-              target: {
-                ...onSummon.target,
-                unitId: action.targets[i]
-              },
-              unitId: unitId
+        ...unit.onSummon
+          .filter((onSummon, i) => {
+            if (Object.keys(target(state, onSummon.target)).length === 0) {
+              return false;
             }
-          };
-        }),
+            return true;
+          })
+          .map((onSummon, i) => {
+            return {
+              playerId: action._sender,
+              action: {
+                ...onSummon,
+                target: {
+                  ...onSummon.target,
+                  unitId: onSummon.target.random ? undefined : action.targets[i]
+                },
+                unitId: unitId
+              }
+            };
+          }),
         { playerId: action._sender, action: { type: actions.CHECK_DEATH } },
         ...state.nextActions
       ]
