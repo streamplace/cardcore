@@ -1,0 +1,13 @@
+clone:
+  git:
+    image: plugins/git
+    tags: true
+
+pipeline:
+  test:
+    image: node:8
+    pull: true
+    commands:
+      - npm install
+      - npm run test
+      - npm build
