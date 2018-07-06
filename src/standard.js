@@ -61,7 +61,6 @@ export const onSummonBounce = {
   ]
 };
 export function threeMaster(cost) {
-  const emoji = emojis[cost] || emojis[emojis.length - 1];
   return {
     cost: cost,
     // emoji: emoji,
@@ -86,7 +85,6 @@ export function threeMaster(cost) {
 }
 
 export function cardDraw(cost) {
-  const emoji = emojis[cost] || emojis[emojis.length - 1];
   return {
     cost: cost,
     // emoji: emoji,
@@ -122,7 +120,6 @@ export const onSummonDamageOwnHero = {
 };
 
 export function damageCreature(cost) {
-  const emoji = emojis[cost] || emojis[emojis.length - 1];
   return {
     cost: cost,
     // emoji: emoji,

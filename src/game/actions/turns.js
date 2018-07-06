@@ -1,13 +1,12 @@
 import { DRAW_CARD } from "./draw-card";
 
 export const START_TURN = "START_TURN";
-export const startTurn = () => async (dispatch, getState) => {
-  const playerId = getState().game.turn;
+export const startTurn = () => async dispatch => {
   await dispatch({ type: START_TURN });
 };
 
 export const END_TURN = "END_TURN";
-export const endTurn = () => async (dispatch, getState) => {
+export const endTurn = () => async dispatch => {
   await dispatch({
     type: END_TURN
   });

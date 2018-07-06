@@ -14,16 +14,6 @@ const BoardWrapper = styled.div`
   ${props => props.disableSelect && "user-select: none"};
 `;
 
-const HugeButton = styled.button`
-  font-size: 50px;
-  margin: auto;
-`;
-
-const CentralText = styled.p`
-  text-align: center;
-  margin: auto;
-`;
-
 const DesyncBox = styled.div`
   user-select: default;
 `;

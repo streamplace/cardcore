@@ -212,7 +212,11 @@ export class Card extends React.Component {
       >
         <CardBack />
         <CardContents>
-          <Type>👾</Type>
+          <Type>
+            <span role="img" aria-label="Creature">
+              👾
+            </span>
+          </Type>
           <Name>
             <NameText>
               {card.name} {draggable}
@@ -222,9 +226,24 @@ export class Card extends React.Component {
           <Emoji>
             <EmojiText>{card.emoji}</EmojiText>
           </Emoji>
-          <Attack>{card.attack}⚔️</Attack>
-          <Health>{card.health}♥️</Health>
-          <Cost>{card.cost}💎</Cost>
+          <Attack>
+            {card.attack}
+            <span role="img" aria-label="Sword">
+              ⚔️
+            </span>
+          </Attack>
+          <Health>
+            {card.health}
+            <span role="img" aria-label="Heart">
+              ♥️
+            </span>
+          </Health>
+          <Cost>
+            {card.cost}
+            <span role="img" aria-label="Diamond">
+              💎
+            </span>
+          </Cost>
         </CardContents>
       </CardBox>
     );

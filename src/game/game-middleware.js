@@ -69,7 +69,7 @@ export const gameMiddleware = store => {
           _hash: hash
         });
       }
-      const [resolve, reject] = promises.get(action);
+      const [resolve] = promises.get(action); // hack, maybe should reject?
       running = false;
       const nextActions = store.getState().game.nextActions;
       // only dequeue if a game action just happened - client actions don't count
