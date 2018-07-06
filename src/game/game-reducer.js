@@ -166,8 +166,6 @@ export default function reducer(state = INITIAL_STATE, action) {
     const playerUnitId = uid();
     const newUnit = {};
     const player = state.players[state.turn];
-    const unitId = action.unitId;
-    const card = state.units[unitId];
     newUnit[playerUnitId] = { ...action.unit };
     return {
       ...state,

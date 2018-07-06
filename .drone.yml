@@ -1,0 +1,11 @@
+
+pipeline:
+  test:
+    environment:
+      - NODE_ENV=development
+    image: node:10
+    pull: true
+    commands:
+      - npm install
+      - npm run test
+      - npm run build

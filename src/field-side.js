@@ -6,7 +6,6 @@ import {
   clientPlayCreature,
   clientTargetCancel
 } from "./client-actions";
-import { playCreature } from "./game/actions";
 import { connect } from "react-redux";
 
 const FieldSideBox = styled.div`

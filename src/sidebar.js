@@ -12,13 +12,6 @@ const SidebarVert = styled.div`
   flex-direction: column;
 `;
 
-const ManaBox = styled.div`
-  flex-shrink: 1;
-  flex-grow: 0;
-  font-size: 35px;
-  height: 45px;
-`;
-
 const SidebarBox = styled.div`
   background-color: #aaa;
   flex-grow: 1;

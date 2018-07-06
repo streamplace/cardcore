@@ -46,10 +46,18 @@ export class Face extends React.Component {
       <FaceVert innerRef={registerDropTarget(e => this.handleDrop(e))}>
         <FaceBox>
           <Emoji>{this.props.unit.emoji}</Emoji>
-          <Health>{this.props.unit.health} ❤️</Health>
+          <Health>
+            {this.props.unit.health}{" "}
+            <span role="img" aria-label="Heart">
+              ❤️
+            </span>
+          </Health>
         </FaceBox>
         <ManaBox>
-          💎 {this.props.player.availableMana}/{this.props.player.mana}
+          <span role="img" aria-label="Diamond">
+            💎
+          </span>{" "}
+          {this.props.player.availableMana}/{this.props.player.mana}
         </ManaBox>
       </FaceVert>
     );
