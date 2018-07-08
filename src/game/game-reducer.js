@@ -29,77 +29,6 @@ export default function reducer(state = INITIAL_STATE, action) {
     };
   }
 
-  if (action.type === actions.PLAY_CREATURE) {
-    const player = state.players[action._sender];
-    const card = player.hand.filter(card => card.id === action.id)[0];
-    const unitId = ssbKeys.unbox(card.box, { private: action.privateKey });
-    const unit = state.units[unitId];
-    return {
-      ...state,
-      players: {
-        ...state.players,
-        [action._sender]: {
-          ...player,
-          availableMana: player.availableMana - unit.cost,
-          hand: player.hand.filter(c => c !== card),
-          field: [unitId, ...player.field]
-        }
-      },
-      units: { ...state.units, [unitId]: { ...unit, canAttack: false } },
-      nextActions: [
-        {
-          playerId: action._sender,
-          action: {
-            type: actions.SEED_RNG
-          }
-        },
-        ...unit.onSummon
-          .filter((onSummon, i) => {
-            if (Object.keys(target(state, onSummon.target)).length === 0) {
-              return false;
-            }
-            return true;
-          })
-          .map((onSummon, i) => {
-            return {
-              playerId: action._sender,
-              action: {
-                ...onSummon,
-                target: {
-                  ...onSummon.target,
-                  unitId: onSummon.target.random ? undefined : action.targets[i]
-                },
-                unitId: unitId
-              }
-            };
-          }),
-        { playerId: action._sender, action: { type: actions.CHECK_DEATH } },
-        ...state.nextActions
-      ]
-    };
-  }
-
-  if (action.type === actions.ATTACK) {
-    const { attackingUnitId, defendingUnitId } = action;
-    const attackingUnit = state.units[attackingUnitId];
-    const defendingUnit = state.units[defendingUnitId];
-    return {
-      ...state,
-      units: {
-        ...state.units,
-        [attackingUnitId]: {
-          ...attackingUnit,
-          health: attackingUnit.health - defendingUnit.attack,
-          canAttack: false
-        },
-        [defendingUnitId]: {
-          ...defendingUnit,
-          health: defendingUnit.health - attackingUnit.attack
-        }
-      }
-    };
-  }
-
   if (action.type === actions.DAMAGE) {
     return {
       ...state,
@@ -112,23 +41,6 @@ export default function reducer(state = INITIAL_STATE, action) {
           };
         })
       }
-    };
-  }
-
-  if (action.type === actions.CHECK_DEATH) {
-    const newPlayers = {};
-    Object.entries(state.players).forEach(([playerId, player]) => {
-      newPlayers[playerId] = {
-        ...player,
-        field: player.field.filter(unitId => state.units[unitId].health > 0),
-        graveyard: player.field.concat(
-          player.field.filter(unitId => state.units[unitId].health <= 0)
-        )
-      };
-    });
-    return {
-      ...state,
-      players: newPlayers
     };
   }
 
