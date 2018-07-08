@@ -35,6 +35,9 @@ export default function rootReducer(state, action) {
   state = combinedReducers(state, action);
   for (const reducer of gameReducers) {
     state = reducer(state, action);
+    if (!state) {
+      throw new Error(`${reducer.name} returned undefined`);
+    }
   }
 
   return state;

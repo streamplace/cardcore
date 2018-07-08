@@ -75,6 +75,11 @@ export const gameMiddleware = store => {
       // only dequeue if a game action just happened - client actions don't count
       if (nextActions.length > 0 && gameActions[action.type]) {
         const { playerId, notPlayerId, action } = nextActions[0];
+        if (!gameActions[action.type]) {
+          throw new Error(
+            `${action.type} is queued but we don't have a definition`
+          );
+        }
         if (
           (playerId && playerId === me.id) ||
           (notPlayerId && notPlayerId !== me.id) // hack hack hack
