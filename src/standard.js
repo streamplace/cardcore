@@ -33,21 +33,6 @@ export const onSummonSummon = {
   ]
 };
 
-export const onSummonHandBuff = {
-  ...standard(3),
-  emoji: "",
-  name: "Hand Buffer",
-  text: "onSummon: get +1 to health and attack of all creatures in your hand",
-  onSummon: [
-    {
-      type: "BUFF",
-      attack: 1,
-      health: 1,
-      target: { type: "creature", location: "hand", player: "self" }
-    }
-  ]
-};
-
 export const onSummonBounce = {
   ...standard(1),
   emoji: "",
@@ -180,7 +165,6 @@ export function getStandardDeck() {
     cardDraw(2),
     damageCreature(4),
     onSummonSummon,
-    onSummonHandBuff,
     onSummonBounce,
     onSummonRandomDamage,
     onSummonDamageOwnHero

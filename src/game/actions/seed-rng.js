@@ -117,7 +117,6 @@ export const seedRngReducer = (state, action) => {
     }
     state = {
       ...state,
-      secret: newSecret,
       game: {
         ...state.game,
         randoSeeds: {

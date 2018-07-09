@@ -55,6 +55,9 @@ export class Board extends React.Component {
   }
 
   render() {
+    if (this.props.loading) {
+      return <div />;
+    }
     if (this.props.started) {
       clearInterval(this.interval);
     }
@@ -102,6 +105,11 @@ export class Board extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
+  if (!state.game) {
+    return {
+      loading: true
+    };
+  }
   return {
     iAmInGame: !!state.game.players[state.client.keys.id],
     currentPlayer: state.client.keys.id,

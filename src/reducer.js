@@ -1,8 +1,6 @@
-import { gameReducer as game } from "./game";
 import * as gameActions from "./game/actions";
 import * as clientActions from "./client-actions";
 import client from "./client-reducer";
-import { combineReducers } from "redux";
 
 // automatically find any reducer functions in the actions file and call them
 const gameReducers = Object.keys(gameActions)
@@ -30,11 +28,40 @@ const secret = function(state = {}, action) {
   return state;
 };
 
-export const combinedReducers = combineReducers({ game, client, secret });
-export default function rootReducer(state, action) {
-  state = combinedReducers(state, action);
+const reducers = { client, secret };
+export default function rootReducer(state = {}, action) {
+  // special logic to clean out the queue if we're executing a queued action
+  if (
+    state &&
+    state.game &&
+    state.game.nextActions[0] &&
+    (action._sender === state.game.nextActions[0].playerId ||
+      action._sender !== state.game.nextActions[0].notPlayerId) && // omfg hack
+    action.type === state.game.nextActions[0].action.type
+  ) {
+    state = {
+      ...state,
+      game: {
+        ...state.game,
+        nextActions: state.game.nextActions.slice(1)
+      }
+    };
+  }
+
+  for (const [name, reducer] of Object.entries(reducers)) {
+    const newState = reducer(state[name], action);
+    if (state[name] !== newState) {
+      state = {
+        ...state,
+        [name]: newState
+      };
+    }
+  }
   for (const reducer of gameReducers) {
     state = reducer(state, action);
+    if (!state) {
+      throw new Error(`${reducer.name} returned undefined`);
+    }
   }
 
   return state;
