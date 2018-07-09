@@ -34,6 +34,7 @@
     "production:serve": "serve -s -l 3002 build",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom --forceExit",
+    "ci-test": "CI=true react-scripts test --env=jsdom --forceExit",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
