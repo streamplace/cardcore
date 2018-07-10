@@ -8,6 +8,7 @@ pipeline:
     commands:
       - npm install
       - npm run test
+      - npm --no-git-tag-version version "0.0.1-${DRONE_COMMIT:0:8}"
       - npm run build
 
   publish:
@@ -18,5 +19,4 @@ pipeline:
       - npm_token
     commands:
       - npm config set '//registry.npmjs.org/:_authToken' $NPM_TOKEN
-      - npm --no-git-tag-version version "0.0.1-${DRONE_COMMIT:0:8}"
       - npm publish --tag $DRONE_BRANCH
