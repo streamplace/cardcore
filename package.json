@@ -1,6 +1,6 @@
 {
   "name": "@streamplace/cards",
-  "version": "0.0.1-0.0.0-10",
+  "version": "0.0.1",
   "dependencies": {
     "crypto-hash": "^0.1.0",
     "deep-diff": "^1.0.1",
