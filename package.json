@@ -1,6 +1,6 @@
 {
-  "name": "butt-cards",
-  "version": "0.1.0",
+  "name": "@streamplace/cards",
+  "version": "0.0.1",
   "private": true,
   "dependencies": {
     "crypto-hash": "^0.1.0",
