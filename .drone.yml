@@ -18,6 +18,5 @@ pipeline:
       - npm_token
     commands:
       - npm config set '//registry.npmjs.org/:_authToken' $NPM_TOKEN
-      - echo $DRONE_BUILD
-      - npm version 0.0.1-$DRONE_BUILD
+      - npm version "0.0.1-${DRONE_COMMIT:0:8}"
       - npm publish --tag $DRONE_BRANCH
