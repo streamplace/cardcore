@@ -2,6 +2,7 @@ import ssbKeys from "ssb-keys";
 import { SEED_RNG } from "./seed-rng";
 import { CHECK_DEATH } from "./check-death";
 import target from "../target-helper";
+import { START_GAME } from "./start-game";
 
 export const PLAY_CREATURE = "PLAY_CREATURE";
 export const playCreature = ({
@@ -18,6 +19,19 @@ export const playCreature = ({
 };
 
 export const playCreatureReducer = (state, action) => {
+  if (action.type === START_GAME) {
+    return {
+      ...state,
+      game: {
+        ...state.game,
+        allowedActions: {
+          ...state.game.allowedActions,
+          [PLAY_CREATURE]: true
+        }
+      }
+    };
+  }
+
   if (action.type === PLAY_CREATURE) {
     const player = state.game.players[action._sender];
     const card = player.hand.filter(card => card.id === action.id)[0];

@@ -1,4 +1,5 @@
 import { DRAW_CARD } from "./draw-card";
+import { START_GAME } from "./start-game";
 
 export const START_TURN = "START_TURN";
 export const startTurn = () => async dispatch => {
@@ -13,6 +14,19 @@ export const endTurn = () => async dispatch => {
 };
 
 export function turnReducer(state, action) {
+  if (action.type === START_GAME) {
+    return {
+      ...state,
+      game: {
+        ...state.game,
+        allowedActions: {
+          ...state.game.allowedActions,
+          [END_TURN]: true
+        }
+      }
+    };
+  }
+
   if (action.type === START_TURN) {
     const player = state.game.players[state.game.turn];
     let newMana = player.mana + 1;

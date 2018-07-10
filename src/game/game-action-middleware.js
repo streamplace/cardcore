@@ -42,6 +42,12 @@ export function checkActionAllowed(state, action) {
     if (sender !== queueUser) {
       throw new Error(`queue wants user ${queueUser} but user ${sender} acted`);
     }
+  }
+  // no queue, check if it's an allowed action
+  else if (state.game.allowedActions[action.type] !== true) {
+    throw new Error(
+      `${sender} attempted to do non-allowed action ${action.type}`
+    );
   } else if (state.game.turn !== sender) {
     throw new Error(
       `${sender} acted out of turn; it's ${state.game.turn}'s turn`

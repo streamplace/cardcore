@@ -19,6 +19,7 @@ export const gameReducer = (state, action) => {
       ...state,
       game: {
         nextActions: [],
+        allowedActions: {},
         playerOrder: [],
         params: {
           startDraw: 3
