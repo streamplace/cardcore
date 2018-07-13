@@ -2,7 +2,6 @@
   "name": "@streamplace/cards",
   "version": "0.0.1",
   "dependencies": {
-    "crypto-hash": "^0.1.0",
     "deep-diff": "^1.0.1",
     "express": "^4.16.3",
     "http-proxy-middleware": "^0.18.0",
