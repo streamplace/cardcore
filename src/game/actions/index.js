@@ -27,7 +27,18 @@ export const gameReducer = (state, action) => {
         started: false,
         players: {},
         units: {},
-        randoSeeds: {}
+        randoSeeds: {},
+        prev: null
+      }
+    };
+  }
+
+  if (action._prev) {
+    return {
+      ...state,
+      game: {
+        ...state.game,
+        prev: action._prev
       }
     };
   }

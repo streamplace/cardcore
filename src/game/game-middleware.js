@@ -1,8 +1,7 @@
 import signalhub from "signalhub";
-import { hash } from "ssb-keys";
-import stringify from "json-stable-stringify";
 import { desync, DESYNC } from "./actions";
 import * as gameActions from "./actions";
+import hashState from "./state-hasher";
 
 export const REMOTE_ACTION = Symbol("REMOTE_ACTION");
 
@@ -10,11 +9,6 @@ export const gameMiddleware = store => {
   const server = `${document.location.protocol}//${document.location.host}`;
   const channelName = document.location.pathname.slice(1);
   const hub = signalhub("butt-card", [server]);
-  const getHash = () => {
-    return new Promise((resolve, reject) => {
-      resolve(hash(stringify(store.getState().game)));
-    });
-  };
   hub.subscribe(channelName).on("data", async action => {
     const me = store.getState().client.keys;
     if (action._sender === me.id) {
@@ -33,6 +27,7 @@ export const gameMiddleware = store => {
     const queue = [];
     let running = false;
     let sync = true;
+    let prevHash = null;
 
     const runNext = async () => {
       if (running) {
@@ -49,12 +44,15 @@ export const gameMiddleware = store => {
       }
       running = true;
       const me = store.getState().client.keys;
+      const isGameAction = !!gameActions[action.type];
       const ret = await next({
         ...action,
-        _me: me && me.id
+        _me: me && me.id,
+        _prev: isGameAction ? prevHash : undefined
       });
-      const hash = await getHash();
+      const hash = await hashState(store.getState().game);
       if (action[REMOTE_ACTION]) {
+        prevHash = hash;
         // we just completed a remote action, assert states match
         if (sync && hash !== action._hash) {
           // very bad and extremely fatal for now - perhaps someday we recover
@@ -62,6 +60,7 @@ export const gameMiddleware = store => {
           store.dispatch(desync(me.id, store.getState().game));
         }
       } else if (gameActions[action.type]) {
+        prevHash = hash;
         // tell everyone else the action happened and the resulting hash
         hub.broadcast(channelName, {
           ...action,
