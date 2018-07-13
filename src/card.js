@@ -6,6 +6,9 @@ import { connect } from "react-redux";
 import { registerDropTarget, clientPickTarget } from "./client-actions";
 import { traverseSecret } from "./util";
 
+const WIDTH = 130;
+const HEIGHT = 210;
+
 export const CardBox = styled.div`
   border: 1px solid #555;
   user-select: none;
@@ -13,9 +16,9 @@ export const CardBox = styled.div`
   margin-left: 10px;
   margin-right: 10px;
   position: relative;
-  width: 130px;
   transition: transform 500ms ease;
   transform: rotateY(0deg);
+  width: ${props => props.scaleWidth}px;
   transform-style: preserve-3d;
   z-index: 0;
 
@@ -24,11 +27,17 @@ export const CardBox = styled.div`
   ${props => props.canPlay && "cursor: pointer"};
 `;
 
-export const CardBack = styled.div`
+export const CardFace = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  position: absolute;
+  transform-origin: top left;
+  width: ${WIDTH}px;
+  height: ${HEIGHT}px;
+`;
+
+export const CardBack = styled(CardFace)`
   background: #36c;
   background: linear-gradient(
         115deg,
@@ -41,22 +50,16 @@ export const CardBack = styled.div`
     linear-gradient(245deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%) 7px -15px,
     #36c;
   background-size: 15px 30px;
-  height: 100%;
   backface-visibility: hidden;
   z-index: 1;
-  transform: rotateY(180deg);
+  transform: rotateY(180deg) scale(${props => props.ratio}) translateX(-100%);
   border-radius: 10px;
 `;
 
-export const CardContents = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0px;
-  left: 0px;
+export const CardContents = styled(CardFace)`
   backface-visibility: hidden;
   background-color: white;
-  transform: rotateY(0deg);
+  transform: rotateY(0deg) scale(${props => props.ratio});
   z-index: 1;
   border-radius: 10px;
 `;
@@ -119,7 +122,9 @@ export class Card extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      forceFlip: props.location === "hand"
+      forceFlip: props.location === "hand",
+      width: 0,
+      ratio: 1
     };
   }
 
@@ -127,10 +132,13 @@ export class Card extends React.Component {
     this.timeout = setTimeout(() => {
       this.setState({ forceFlip: false });
     }, 200);
+    this.handleResize = this.handleResize.bind(this);
+    window.addEventListener("resize", this.handleResize);
   }
 
   componentWillUnmount() {
     clearTimeout(this.timeout);
+    window.removeEventListener("resize", this.handleResize);
   }
 
   onDragEnd(e) {
@@ -180,6 +188,29 @@ export class Card extends React.Component {
     return true;
   }
 
+  ref(elem) {
+    registerDropTarget(e => this.handleDrop(e))(elem);
+    if (!elem) {
+      return;
+    }
+    this.elem = elem;
+    this.handleResize();
+  }
+
+  handleResize() {
+    if (!this.elem) {
+      return;
+    }
+    const { height } = this.elem.getClientRects()[0];
+    const scaleWidth = height * (WIDTH / HEIGHT);
+    if (scaleWidth !== this.state.width) {
+      this.setState({
+        width: height * (WIDTH / HEIGHT),
+        ratio: height / HEIGHT
+      });
+    }
+  }
+
   render() {
     let card;
     let draggable = this.isPlayable();
@@ -203,15 +234,16 @@ export class Card extends React.Component {
 
     return (
       <CardBox
-        innerRef={registerDropTarget(e => this.handleDrop(e))}
+        innerRef={elem => this.ref(elem)}
+        scaleWidth={this.state.width}
         canPlay={shouldLightUp}
         draggable={draggable}
         onClick={e => this.handleClick(e)}
         onDragEnd={e => this.onDragEnd(e)}
         flipped={this.state.forceFlip || flipped}
       >
-        <CardBack />
-        <CardContents>
+        <CardBack ratio={this.state.ratio} />
+        <CardContents ratio={this.state.ratio}>
           <Type>
             <span role="img" aria-label="Creature">
               👾
