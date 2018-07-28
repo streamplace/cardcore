@@ -33,8 +33,7 @@
     "prepare": "npm run build",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom --forceExit",
-    "ci-test": "CI=true react-scripts test --env=jsdom --forceExit",
-    "eject": "react-scripts eject"
+    "ci-test": "CI=true react-scripts test --env=jsdom --forceExit"
   },
   "devDependencies": {
     "opn-cli": "^3.1.0",
