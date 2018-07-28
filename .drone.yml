@@ -8,6 +8,7 @@ pipeline:
     commands:
       - yarn install
       - npm run test
+      - npx lerna exec npm run prepare
 
   publish:
     image: node:10

@@ -30,8 +30,7 @@
     "production": "run-p production:proxy start:signalhub production:serve",
     "production:proxy": "PORT=80 node proxy.js",
     "production:serve": "serve -s -l 3002 build",
-    "prepare": "npm run build",
-    "build": "react-scripts build",
+    "prepare": "react-scripts build",
     "test": "react-scripts test --env=jsdom --forceExit",
     "ci-test": "CI=true react-scripts test --env=jsdom --forceExit"
   },
