@@ -6,7 +6,8 @@
   ],
   "version": "0.0.1",
   "scripts": {
-    "start": "lerna exec --no-sort --concurrency=999 npm run start"
+    "start": "lerna exec --no-sort --concurrency=999 npm run start",
+    "test": "lerna exec npm run test"
   },
   "devDependencies": {
     "lerna": "^3.0.0-rc.0"

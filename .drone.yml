@@ -6,10 +6,8 @@ pipeline:
     image: node:10
     pull: true
     commands:
-      - npm install
+      - yarn install
       - npm run test
-      - npm --no-git-tag-version version "0.0.1-${DRONE_COMMIT:0:8}"
-      - npm run build
 
   publish:
     image: node:10
