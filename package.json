@@ -6,10 +6,24 @@
   ],
   "version": "0.0.1",
   "scripts": {
-    "start": "lerna exec --no-sort --concurrency=999 npm run start",
-    "test": "lerna exec npm run test"
+    "start": "run-p start:babel start:packages",
+    "start:babel": "NODE_ENV=development lerna exec --stream -- babel --copy-files -d dist --source-maps true --watch src",
+    "start:packages": "lerna run --no-sort --concurrency=999 --stream start",
+    "test": "lerna run --stream test",
+    "prepare": "NODE_ENV=production lerna exec -- babel --copy-files -d dist --source-maps true src"
   },
   "devDependencies": {
-    "lerna": "^3.0.0-rc.0"
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react-app": "^3.1.2",
+    "lerna": "^3.0.0-rc.0",
+    "npm-run-all": "^4.1.3"
+  },
+  "babel": {
+    "presets": [
+      "env",
+      "react-app"
+    ]
   }
 }
