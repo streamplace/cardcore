@@ -1,6 +1,6 @@
 import ssbKeys from "ssb-keys";
 import { clientGenerateKey } from "@streamplace/card-client";
-import rando from "@streamplace/card-util";
+import { rando } from "@streamplace/card-util";
 
 export const SEED_RNG = "SEED_RNG";
 export const seedRng = action => {
@@ -23,6 +23,8 @@ export const seedRngEncrypt = () => async (dispatch, getState) => {
 export const SEED_RNG_DECRYPT = "SEED_RNG_DECRYPT";
 export const seedRngDecrypt = () => async (dispatch, getState) => {
   const state = getState();
+  console.log("seedRngDecrypt");
+  console.log(state.secret);
   const mySeed = state.game.randoSeeds[state.client.keys.id];
   const privateKey = state.secret[mySeed.id].private;
   return dispatch({
@@ -109,6 +111,7 @@ export const seedRngReducer = (state, action) => {
   }
 
   if (action.type === SEED_RNG_DECRYPT) {
+    console.log(action);
     const orderedPlayers = Object.keys(state.game.players).sort();
     const randoSeed = state.game.randoSeeds[action._sender];
     let newSecret = state.secret;

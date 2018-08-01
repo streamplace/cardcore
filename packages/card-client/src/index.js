@@ -1,3 +1,2 @@
-import clientReducer from "./client-reducer";
+export { default as clientReducer } from "./client-reducer";
 export * from "./client-actions";
-export { clientReducer };
