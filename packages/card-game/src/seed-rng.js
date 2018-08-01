@@ -23,8 +23,6 @@ export const seedRngEncrypt = () => async (dispatch, getState) => {
 export const SEED_RNG_DECRYPT = "SEED_RNG_DECRYPT";
 export const seedRngDecrypt = () => async (dispatch, getState) => {
   const state = getState();
-  console.log("seedRngDecrypt");
-  console.log(state.secret);
   const mySeed = state.game.randoSeeds[state.client.keys.id];
   const privateKey = state.secret[mySeed.id].private;
   return dispatch({
