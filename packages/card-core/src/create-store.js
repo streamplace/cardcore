@@ -1,5 +1,6 @@
 import { createStore, compose, applyMiddleware } from "redux";
-import { gameActionMiddleware, gameMiddleware } from "./game";
+import gameActionMiddleware from "./game-action-middleware";
+import gameMiddleware from "./game-middleware";
 import invariant from "redux-immutable-state-invariant";
 import reducer from "./reducer";
 import thunk from "redux-thunk";

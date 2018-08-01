@@ -1,0 +1,10 @@
+{
+  "name": "@streamplace/card-client",
+  "version": "0.0.1",
+  "description": "streamcards client",
+  "main": "dist/index.js",
+  "repository": "git@github.com:streamplace/stream-cards.git",
+  "author": "Streamplace",
+  "license": "Apache-2.0",
+  "private": false
+}

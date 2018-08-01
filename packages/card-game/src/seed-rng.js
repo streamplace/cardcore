@@ -1,6 +1,7 @@
 import ssbKeys from "ssb-keys";
-import { clientGenerateKey } from "../../client-actions";
-import rando from "../../random-util";
+import { clientGenerateKey } from "@streamplace/card-client";
+import rando from "@streamplace/card-util";
+
 export const SEED_RNG = "SEED_RNG";
 export const seedRng = action => {
   return action;

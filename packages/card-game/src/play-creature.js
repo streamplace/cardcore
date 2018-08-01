@@ -1,7 +1,7 @@
 import ssbKeys from "ssb-keys";
 import { SEED_RNG } from "./seed-rng";
 import { CHECK_DEATH } from "./check-death";
-import target from "../target-helper";
+import { target } from "@streamplace/card-util";
 import { START_GAME } from "./start-game";
 
 export const PLAY_CREATURE = "PLAY_CREATURE";

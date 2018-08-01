@@ -1,4 +1,4 @@
-import target from "../target-helper";
+import { target } from "@streamplace/card-util";
 
 export const DAMAGE = "DAMAGE";
 

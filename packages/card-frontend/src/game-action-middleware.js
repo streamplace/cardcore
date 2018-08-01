@@ -7,7 +7,7 @@
  * actions.SEED_RNG_DECRYPT => actions.seedRngDecryptAction
  */
 
-import * as actions from "./actions";
+import * as actions from "@streamplace/card-core";
 
 const actionMap = {};
 for (const [key, value] of Object.entries(actions)) {
@@ -55,7 +55,7 @@ export function checkActionAllowed(state, action) {
   }
 }
 
-export const gameActionMiddleware = store => {
+export default function gameActionMiddleware(store) {
   return next => {
     return action => {
       const state = store.getState();
@@ -66,4 +66,4 @@ export const gameActionMiddleware = store => {
       return next(action);
     };
   };
-};
+}

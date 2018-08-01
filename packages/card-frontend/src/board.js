@@ -3,8 +3,8 @@ import Sidebar from "./sidebar";
 import Field from "./field";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { clientGenerateIdentity } from "./client-actions";
-import { joinGameStart } from "./game/actions";
+import { clientGenerateIdentity } from "@streamplace/card-client";
+import { joinGameStart } from "@streamplace/card-game";
 import { diff } from "deep-diff";
 
 const BoardWrapper = styled.div`
