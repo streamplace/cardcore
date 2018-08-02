@@ -6,8 +6,7 @@ pipeline:
     image: node:10
     pull: true
     commands:
-      - npm install
-      - npx lerna bootstrap
+      - yarn install
       - npm run test
       - npx lerna exec npm run prepare
 
