@@ -1,5 +1,5 @@
 import { playCreature } from "@streamplace/card-game";
-import { traverseSecret, targetHelper } from "@streamplace/card-util";
+import { traverseSecret, target as targetHelper } from "@streamplace/card-util";
 import ssbKeys from "ssb-keys";
 /**
  * This file should contain web-specific actions extranious to the game state

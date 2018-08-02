@@ -7,7 +7,7 @@
   "version": "0.0.1",
   "scripts": {
     "start": "run-p start:babel start:packages",
-    "start:babel": "NODE_ENV=development lerna exec --stream -- babel --copy-files -d dist --source-maps true --source-root '$PWD'/dist src",
+    "start:babel": "NODE_ENV=development lerna exec --stream -- babel --copy-files -d dist --source-maps true --source-root '$PWD'/dist --watch src",
     "start:packages": "lerna run --no-sort --concurrency=999 --stream start",
     "test": "lerna run --stream test",
     "prepare": "NODE_ENV=production lerna exec --stream -- babel --copy-files -d dist --source-maps true src"

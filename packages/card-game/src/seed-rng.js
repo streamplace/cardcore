@@ -109,7 +109,6 @@ export const seedRngReducer = (state, action) => {
   }
 
   if (action.type === SEED_RNG_DECRYPT) {
-    console.log(action);
     const orderedPlayers = Object.keys(state.game.players).sort();
     const randoSeed = state.game.randoSeeds[action._sender];
     let newSecret = state.secret;
