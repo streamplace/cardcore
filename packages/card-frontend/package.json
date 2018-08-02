@@ -35,8 +35,7 @@
     "production:proxy": "PORT=80 node proxy.js",
     "production:serve": "serve -s -l 3002 build",
     "prepare": "react-scripts build",
-    "test": "react-scripts test --env=jsdom --forceExit",
-    "ci-test": "CI=true react-scripts test --env=jsdom --forceExit"
+    "test": "CI=true react-scripts test --env=jsdom --forceExit"
   },
   "devDependencies": {
     "opn-cli": "^3.1.0",
