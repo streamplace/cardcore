@@ -6,5 +6,8 @@
   "repository": "git@github.com:streamplace/stream-cards.git",
   "author": "Streamplace",
   "license": "Apache-2.0",
-  "private": false
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  }
 }

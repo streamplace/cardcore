@@ -25,5 +25,8 @@
       "env",
       "react-app"
     ]
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

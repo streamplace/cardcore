@@ -40,5 +40,8 @@
   "devDependencies": {
     "opn-cli": "^3.1.0",
     "@streamplace/react-scripts": "1.1.4-fork"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
