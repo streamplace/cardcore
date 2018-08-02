@@ -1,4 +1,4 @@
-import { uid } from "../../util";
+import { uid } from "@streamplace/card-util";
 
 export const SUMMON_CREATURE = "SUMMON_CREATURE";
 

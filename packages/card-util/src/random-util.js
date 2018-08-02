@@ -44,4 +44,4 @@ export class RandomUtil {
   }
 }
 
-export default new RandomUtil();
+export const rando = new RandomUtil();

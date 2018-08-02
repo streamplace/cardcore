@@ -1,7 +1,7 @@
 import React from "react";
 import styled, { injectGlobal } from "styled-components";
 import { Provider } from "react-redux";
-import storeGenerator from "./store";
+import { createStore } from "@streamplace/card-core";
 import Board from "./board";
 import pkg from "../package.json";
 
@@ -29,7 +29,7 @@ const VersionOverlay = styled.div`
 class ButtCards extends React.Component {
   constructor() {
     super();
-    this.store = storeGenerator();
+    this.store = createStore();
   }
   render() {
     return (

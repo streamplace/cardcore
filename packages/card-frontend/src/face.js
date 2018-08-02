@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { registerDropTarget } from "./client-actions";
-import { attack } from "./game";
+import { registerDropTarget } from "@streamplace/card-client";
+import { attack } from "@streamplace/card-game";
 
 const FaceVert = styled.div`
   display: flex;

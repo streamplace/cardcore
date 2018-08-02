@@ -1,6 +1,5 @@
-import { rotateArray } from "../../util";
-import { shuffle } from "../../random-util";
-import { clientGenerateKey, clientBox } from "../../client-actions";
+import { rotateArray, shuffle } from "@streamplace/card-util";
+import { clientGenerateKey, clientBox } from "@streamplace/card-client";
 import ssbKeys from "ssb-keys";
 
 export const SHUFFLE_DECK = "SHUFFLE_DECK";

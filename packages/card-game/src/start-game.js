@@ -2,9 +2,8 @@ import { SEED_RNG } from "./seed-rng";
 import { START_TURN } from "./turns";
 import { DRAW_CARD } from "./draw-card";
 import { SHUFFLE_DECK } from "./shuffle-deck";
-import { getStandardDeck, getStandardEmoji } from "../../standard";
-import rando from "../../random-util";
-import { range, uid } from "../../util";
+import { getStandardDeck, getStandardEmoji } from "./standard";
+import { rando, range, uid } from "@streamplace/card-util";
 
 export const JOIN_GAME_START = "JOIN_GAME_START";
 export const joinGameStart = () => {

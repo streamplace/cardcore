@@ -1,0 +1,10 @@
+{
+  "name": "@streamplace/card-core",
+  "version": "0.0.1",
+  "description": "Core functions for cards",
+  "main": "dist/index.js",
+  "repository": "git@github.com:streamplace/stream-cards.git",
+  "author": "Streamplace",
+  "license": "Apache-2.0",
+  "private": false
+}

@@ -1,7 +1,6 @@
-import { playCreature } from "./game/actions";
-import { traverseSecret } from "./util";
+import { playCreature } from "@streamplace/card-game";
+import { traverseSecret, target as targetHelper } from "@streamplace/card-util";
 import ssbKeys from "ssb-keys";
-import targetHelper from "./game/target-helper";
 /**
  * This file should contain web-specific actions extranious to the game state
  */
@@ -12,6 +11,8 @@ const DROP_TARGET_CLASS = "hack-drop-target";
  * Called when a card is dropped on a location. We proceed to do some hacky shit to determine what
  * it was dropped on and fire some actions. The right way to do this would be to keep track of the
  * locations of every droppable thing on componentDidMount and window resize.
+ *
+ * xxx todo move this to the web-specific frontend
  */
 export const cardDrop = (e, card, location) => dispatch => {
   document.querySelectorAll(`.${DROP_TARGET_CLASS}`).forEach(elem => {
@@ -30,10 +31,13 @@ export const cardDrop = (e, card, location) => dispatch => {
   });
 };
 
-const refs = new WeakMap();
+let refs;
 
 // not a redux action, hax instead
 export const registerDropTarget = cb => ref => {
+  if (!refs) {
+    refs = new WeakMap();
+  }
   if (!ref) {
     return;
   }

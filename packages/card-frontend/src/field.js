@@ -2,7 +2,7 @@ import React from "react";
 import FieldSide from "./field-side";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import { endTurn } from "./game/actions";
+import { endTurn } from "@streamplace/card-game";
 
 const FieldBox = styled.div`
   flex-grow: 2;

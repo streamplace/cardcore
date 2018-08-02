@@ -1,10 +1,13 @@
 import React from "react";
 import styled from "styled-components";
-import { cardDrop } from "./client-actions";
-import { attack } from "./game/actions";
+import {
+  registerDropTarget,
+  clientPickTarget,
+  cardDrop
+} from "@streamplace/card-client";
+import { attack } from "@streamplace/card-game";
 import { connect } from "react-redux";
-import { registerDropTarget, clientPickTarget } from "./client-actions";
-import { traverseSecret } from "./util";
+import { traverseSecret } from "@streamplace/card-util";
 
 const WIDTH = 130;
 const HEIGHT = 210;

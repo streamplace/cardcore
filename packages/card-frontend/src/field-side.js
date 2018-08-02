@@ -5,7 +5,7 @@ import {
   registerDropTarget,
   clientPlayCreature,
   clientTargetCancel
-} from "./client-actions";
+} from "@streamplace/card-client";
 import { connect } from "react-redux";
 
 const FieldSideBox = styled.div`

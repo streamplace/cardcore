@@ -6,7 +6,10 @@ import {
   PLAYER_SELF,
   PLAYER_ENEMY
 } from "./constants";
-import rando from "../random-util";
+import { rando } from "./random-util";
+
+const noop = x => x;
+
 /**
  * Returns an object of {unitId: unit}
  *
@@ -19,10 +22,7 @@ import rando from "../random-util";
  * @property {boolean} target.random
  * @property {boolean} target.type
  */
-
-const noop = x => x;
-
-export default function target(state, target, func = noop) {
+export function target(state, target, func = noop) {
   let units = {};
   const owners = {};
   if (target.unitId) {
