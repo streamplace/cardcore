@@ -1,5 +1,5 @@
 import { targetArray } from "@streamplace/card-util";
-import { clientGenerateKey, clientBox } from "@streamplace/card-client";
+import { clientGenerateKey, clientBox } from "@cardcore/client";
 
 export const BOUNCE = "BOUNCE";
 export const bounce = ({ target }) => {

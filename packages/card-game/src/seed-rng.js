@@ -1,5 +1,5 @@
 import ssbKeys from "ssb-keys";
-import { clientGenerateKey } from "@streamplace/card-client";
+import { clientGenerateKey } from "@cardcore/client";
 import { rando } from "@streamplace/card-util";
 
 export const SEED_RNG = "SEED_RNG";

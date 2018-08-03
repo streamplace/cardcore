@@ -2,7 +2,7 @@
   "name": "@streamplace/card-frontend",
   "version": "0.0.1",
   "dependencies": {
-    "@streamplace/card-client": "^0.0.1",
+    "@cardcore/client": "^0.0.1",
     "cardcore": "^0.0.1",
     "@streamplace/card-game": "^0.0.1",
     "@streamplace/card-util": "^0.0.1",

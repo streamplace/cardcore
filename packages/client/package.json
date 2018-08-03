@@ -1,5 +1,5 @@
 {
-  "name": "@streamplace/card-client",
+  "name": "@cardcore/client",
   "version": "0.0.1",
   "description": "streamcards client",
   "main": "dist/index.js",

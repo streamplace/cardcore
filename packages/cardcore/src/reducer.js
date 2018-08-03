@@ -1,6 +1,6 @@
 import * as gameActions from "@streamplace/card-game";
-import * as clientActions from "@streamplace/card-client";
-import { clientReducer as client } from "@streamplace/card-client";
+import * as clientActions from "@cardcore/client";
+import { clientReducer as client } from "@cardcore/client";
 
 // automatically find any reducer functions in the actions file and call them
 const gameReducers = Object.keys(gameActions)

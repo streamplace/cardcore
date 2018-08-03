@@ -4,7 +4,7 @@ import {
   registerDropTarget,
   clientPickTarget,
   cardDrop
-} from "@streamplace/card-client";
+} from "@cardcore/client";
 import { attack } from "@streamplace/card-game";
 import { connect } from "react-redux";
 import { traverseSecret } from "@streamplace/card-util";

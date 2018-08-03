@@ -1,5 +1,5 @@
 import { rotateArray, shuffle } from "@streamplace/card-util";
-import { clientGenerateKey, clientBox } from "@streamplace/card-client";
+import { clientGenerateKey, clientBox } from "@cardcore/client";
 import ssbKeys from "ssb-keys";
 
 export const SHUFFLE_DECK = "SHUFFLE_DECK";

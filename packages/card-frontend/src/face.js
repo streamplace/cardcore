@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { registerDropTarget } from "@streamplace/card-client";
+import { registerDropTarget } from "@cardcore/client";
 import { attack } from "@streamplace/card-game";
 
 const FaceVert = styled.div`
