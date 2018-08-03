@@ -1,0 +1,13 @@
+{
+  "name": "@cardcore/game",
+  "version": "0.0.1",
+  "description": "base rules for the Streamplace card game",
+  "main": "dist/index.js",
+  "repository": "git@github.com:streamplace/stream-cards.git",
+  "author": "Streamplace",
+  "license": "Apache-2.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  }
+}
