@@ -1,5 +1,5 @@
 {
-  "name": "@streamplace/card-frontend",
+  "name": "@cardcore/frontend",
   "version": "0.0.1",
   "dependencies": {
     "@cardcore/client": "^0.0.1",
