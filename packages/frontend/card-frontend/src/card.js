@@ -7,7 +7,7 @@ import {
 } from "@cardcore/client";
 import { attack } from "@cardcore/game";
 import { connect } from "react-redux";
-import { traverseSecret } from "@streamplace/card-util";
+import { traverseSecret } from "@cardcore/util";
 
 const WIDTH = 130;
 const HEIGHT = 210;

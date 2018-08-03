@@ -1,6 +1,6 @@
 import ssbKeys from "ssb-keys";
 import { clientGenerateKey } from "@cardcore/client";
-import { rando } from "@streamplace/card-util";
+import { rando } from "@cardcore/util";
 
 export const SEED_RNG = "SEED_RNG";
 export const seedRng = action => {

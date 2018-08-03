@@ -1,4 +1,4 @@
-import { targetArray } from "@streamplace/card-util";
+import { targetArray } from "@cardcore/util";
 import { clientGenerateKey, clientBox } from "@cardcore/client";
 
 export const BOUNCE = "BOUNCE";

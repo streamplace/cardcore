@@ -1,5 +1,5 @@
 {
-  "name": "@streamplace/card-util",
+  "name": "@cardcore/util",
   "version": "0.0.1",
   "description": "various streamcards utilities",
   "main": "dist/index.js",

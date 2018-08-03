@@ -1,4 +1,4 @@
-import { rotateArray, shuffle } from "@streamplace/card-util";
+import { rotateArray, shuffle } from "@cardcore/util";
 import { clientGenerateKey, clientBox } from "@cardcore/client";
 import ssbKeys from "ssb-keys";
 

@@ -1,4 +1,4 @@
-import { target } from "@streamplace/card-util";
+import { target } from "@cardcore/util";
 
 export const CHANGE_ATTACK = "CHANGE_ATTACK";
 export const CHANGE_HEALTH = "CHANGE_HEALTH";

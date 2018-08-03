@@ -5,7 +5,7 @@
     "@cardcore/client": "^0.0.1",
     "cardcore": "^0.0.1",
     "@cardcore/game": "^0.0.1",
-    "@streamplace/card-util": "^0.0.1",
+    "@cardcore/util": "^0.0.1",
     "deep-diff": "^1.0.1",
     "express": "^4.16.3",
     "http-proxy-middleware": "^0.18.0",
