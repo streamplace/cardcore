@@ -1,4 +1,4 @@
-import { playCreature } from "@streamplace/card-game";
+import { playCreature } from "@cardcore/game";
 import { traverseSecret, target as targetHelper } from "@streamplace/card-util";
 import ssbKeys from "ssb-keys";
 /**

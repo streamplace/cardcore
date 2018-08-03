@@ -4,7 +4,7 @@ import Field from "./field";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { clientGenerateIdentity } from "@cardcore/client";
-import { joinGameStart } from "@streamplace/card-game";
+import { joinGameStart } from "@cardcore/game";
 import { diff } from "deep-diff";
 
 const BoardWrapper = styled.div`

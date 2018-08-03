@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { registerDropTarget } from "@cardcore/client";
-import { attack } from "@streamplace/card-game";
+import { attack } from "@cardcore/game";
 
 const FaceVert = styled.div`
   display: flex;

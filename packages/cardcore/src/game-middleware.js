@@ -1,5 +1,5 @@
 import signalhub from "signalhub";
-import * as gameActions from "@streamplace/card-game";
+import * as gameActions from "@cardcore/game";
 import hashState from "./state-hasher";
 
 export const REMOTE_ACTION = Symbol("REMOTE_ACTION");

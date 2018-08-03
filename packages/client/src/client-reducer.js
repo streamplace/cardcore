@@ -1,4 +1,4 @@
-import * as actions from "@streamplace/card-game";
+import * as actions from "@cardcore/game";
 import * as clientActions from "./client-actions";
 
 const INITIAL_STATE = {

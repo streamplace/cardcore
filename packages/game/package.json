@@ -1,5 +1,5 @@
 {
-  "name": "@streamplace/card-game",
+  "name": "@cardcore/game",
   "version": "0.0.1",
   "description": "base rules for the Streamplace card game",
   "main": "dist/index.js",

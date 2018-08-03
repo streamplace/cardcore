@@ -1,4 +1,4 @@
-import * as gameActions from "@streamplace/card-game";
+import * as gameActions from "@cardcore/game";
 import * as clientActions from "@cardcore/client";
 import { clientReducer as client } from "@cardcore/client";
 

@@ -7,7 +7,7 @@
  * actions.SEED_RNG_DECRYPT => actions.seedRngDecryptAction
  */
 
-import * as actions from "@streamplace/card-game";
+import * as actions from "@cardcore/game";
 
 const actionMap = {};
 for (const [key, value] of Object.entries(actions)) {

@@ -4,7 +4,7 @@
   "dependencies": {
     "@cardcore/client": "^0.0.1",
     "cardcore": "^0.0.1",
-    "@streamplace/card-game": "^0.0.1",
+    "@cardcore/game": "^0.0.1",
     "@streamplace/card-util": "^0.0.1",
     "deep-diff": "^1.0.1",
     "express": "^4.16.3",
