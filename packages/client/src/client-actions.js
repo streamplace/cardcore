@@ -106,10 +106,24 @@ export const clientPickTarget = unitId => async (dispatch, getState) => {
 export const CLIENT_START_TARGET = "CLIENT_START_TARGET";
 export const CLIENT_PICK_TARGET = "CLIENT_PICK_TARGET";
 export const CLIENT_GENERATE_IDENTITY = "CLIENT_GENERATE_IDENTITY";
+const CARDCORE_IDENTITY = "CARDCORE_IDENTITY";
 export const clientGenerateIdentity = () => {
+  let keys;
+  if (localStorage.getItem(CARDCORE_IDENTITY)) {
+    try {
+      keys = JSON.parse(localStorage.getItem(CARDCORE_IDENTITY));
+    } catch (e) {
+      console.error("error parsing cardcore identity, clearing", e);
+      localStorage.removeItem(CARDCORE_IDENTITY);
+    }
+  }
+  if (!keys) {
+    keys = ssbKeys.generate();
+    localStorage.setItem(CARDCORE_IDENTITY, JSON.stringify(keys));
+  }
   return {
     type: CLIENT_GENERATE_IDENTITY,
-    keys: ssbKeys.generate()
+    keys
   };
 };
 
