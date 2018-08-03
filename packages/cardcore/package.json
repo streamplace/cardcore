@@ -1,5 +1,5 @@
 {
-  "name": "@streamplace/card-core",
+  "name": "cardcore",
   "version": "0.0.1",
   "description": "Core functions for cards",
   "main": "dist/index.js",

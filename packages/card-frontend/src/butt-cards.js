@@ -1,7 +1,7 @@
 import React from "react";
 import styled, { injectGlobal } from "styled-components";
 import { Provider } from "react-redux";
-import { createStore } from "@streamplace/card-core";
+import { createStore } from "cardcore";
 import Board from "./board";
 import pkg from "../package.json";
 
