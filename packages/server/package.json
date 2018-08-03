@@ -1,0 +1,19 @@
+{
+  "name": "@cardcore/server",
+  "version": "0.0.1",
+  "description": "Cardcore Server",
+  "main": "dist/index.js",
+  "repository": "git@github.com:streamplace/cardcore.git",
+  "author": "Streamplace",
+  "license": "Apache-2.0",
+  "private": false,
+  "dependencies": {
+    "body-parser": "^1.18.3"
+  },
+  "devDependencies": {
+    "babel-watch": "^2.0.7"
+  },
+  "scripts": {
+    "start": "NODE_ENV=development babel-watch src/index.js"
+  }
+}
