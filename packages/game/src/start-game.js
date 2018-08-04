@@ -5,15 +5,16 @@ import { SHUFFLE_DECK } from "./shuffle-deck";
 import { getStandardDeck, getStandardEmoji } from "./standard";
 import { rando, range, uid } from "@cardcore/util";
 
-export const JOIN_GAME_START = "JOIN_GAME_START";
-export const joinGameStart = () => {
-  return {
-    type: JOIN_GAME_START
-  };
-};
-export const JOIN_GAME_ACCEPT = "JOIN_GAME_ACCEPT";
+export const JOIN_GAME = "JOIN_GAME";
 export const ORDER_PLAYERS = "ORDER_PLAYERS";
 export const START_GAME = "START_GAME";
+export const CREATE_GAME = "CREATE_GAME";
+export const createGame = () => {
+  return {
+    type: CREATE_GAME,
+    startTime: Date.now()
+  };
+};
 
 const INITIAL_PLAYER = {
   mana: 0,
@@ -25,28 +26,7 @@ const INITIAL_PLAYER = {
 };
 
 export function startGameReducer(state, action) {
-  if (action.type === JOIN_GAME_START) {
-    // On this one, clear out both the nextActions queue and the players list... this is the first
-    // person joining. Everyone else joins with JOIN_GAME_ACCEPT
-    return {
-      ...state,
-      game: {
-        ...state.game,
-        players: {
-          [action._sender]: {}
-        },
-        nextActions: [
-          {
-            action: { type: JOIN_GAME_ACCEPT },
-            // lol lol lol hack hack hack
-            notPlayerId: action._sender
-          }
-        ]
-      }
-    };
-  }
-
-  if (action.type === JOIN_GAME_ACCEPT) {
+  if (action.type === JOIN_GAME) {
     let lexicalPlayers = [
       ...Object.keys(state.game.players),
       action._sender

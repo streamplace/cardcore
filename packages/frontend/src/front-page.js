@@ -1,7 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import { withRouter } from "react-router-dom";
-import { v4 } from "uuid";
+import { createGame } from "@cardcore/game";
+import { clientGenerateIdentity } from "@cardcore/client";
+import { connect } from "react-redux";
 
 const FrontPageBox = styled.div`
   width: 100%;
@@ -16,8 +18,12 @@ const CreateGame = styled.button`
 `;
 
 class FrontPage extends React.Component {
-  handleClick() {
-    this.props.history.push(`/${v4()}`);
+  async handleClick() {
+    await this.props.dispatch(createGame());
+  }
+
+  async componentDidMount() {
+    await this.props.dispatch(clientGenerateIdentity());
   }
 
   render() {
@@ -29,4 +35,8 @@ class FrontPage extends React.Component {
   }
 }
 
-export default withRouter(FrontPage);
+const mapStateToProps = () => {
+  return {};
+};
+
+export default withRouter(connect(mapStateToProps)(FrontPage));

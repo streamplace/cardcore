@@ -12,20 +12,33 @@ export * from "./start-game";
 export * from "./summon-creature";
 export * from "./turns";
 
+import { CREATE_GAME, JOIN_GAME } from "./start-game";
+
 export const gameReducer = (state, action) => {
   // initialization
-  if (action.type === "@@INIT") {
+  // On this one, clear out both the nextActions queue and the players list... this is the first
+  // person joining. Everyone else joins with JOIN_GAME
+  if (action.type === CREATE_GAME) {
     return {
       ...state,
       game: {
-        nextActions: [],
+        startTime: action.startTime,
+        nextActions: [
+          {
+            action: { type: JOIN_GAME },
+            // lol lol lol hack hack hack
+            notPlayerId: action._sender
+          }
+        ],
         allowedActions: {},
         playerOrder: [],
         params: {
           startDraw: 3
         },
         started: false,
-        players: {},
+        players: {
+          [action._sender]: {}
+        },
         units: {},
         randoSeeds: {},
         prev: null

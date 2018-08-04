@@ -69,9 +69,10 @@ export default function gameMiddleware(store) {
       }
       const [resolve] = promises.get(action); // hack, maybe should reject?
       running = false;
-      const nextActions = store.getState().game.nextActions;
+      const state = store.getState();
+      const nextActions = state.game && state.game.nextActions;
       // only dequeue if a game action just happened - client actions don't count
-      if (nextActions.length > 0 && gameActions[action.type]) {
+      if (nextActions && nextActions.length > 0 && gameActions[action.type]) {
         const { playerId, notPlayerId, action } = nextActions[0];
         if (!gameActions[action.type]) {
           throw new Error(
