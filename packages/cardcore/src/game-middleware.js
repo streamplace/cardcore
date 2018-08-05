@@ -1,6 +1,6 @@
 // import signalhub from "signalhub";
 import * as gameActions from "@cardcore/game";
-import hashState from "./state-hasher";
+import { hashState } from "@cardcore/util";
 import ssbKeys from "ssb-keys";
 import stringify from "json-stable-stringify";
 import fetch from "isomorphic-fetch";
