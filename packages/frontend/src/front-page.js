@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { withRouter } from "react-router-dom";
 import { createGame } from "@cardcore/game";
-import { clientGenerateIdentity } from "@cardcore/client";
+import { clientGenerateIdentity, clientGetGameHash } from "@cardcore/client";
 import { connect } from "react-redux";
 
 const FrontPageBox = styled.div`
@@ -20,6 +20,7 @@ const CreateGame = styled.button`
 class FrontPage extends React.Component {
   async handleClick() {
     await this.props.dispatch(createGame());
+    console.log(await this.props.dispatch(clientGetGameHash()));
   }
 
   async componentDidMount() {

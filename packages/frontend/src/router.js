@@ -16,7 +16,7 @@ export default class Router extends React.Component {
       <Provider store={this.store}>
         <BrowserRouter>
           <Switch>
-            <Route path="/:id" component={ButtCards} />
+            <Route path="/game/:id" component={ButtCards} />
             <Route path="/" component={FrontPage} />
           </Switch>
         </BrowserRouter>

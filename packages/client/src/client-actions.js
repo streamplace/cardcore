@@ -1,5 +1,9 @@
 import { playCreature } from "@cardcore/game";
-import { traverseSecret, target as targetHelper } from "@cardcore/util";
+import {
+  traverseSecret,
+  target as targetHelper,
+  hashState
+} from "@cardcore/util";
 import ssbKeys from "ssb-keys";
 /**
  * This file should contain web-specific actions extranious to the game state
@@ -148,4 +152,10 @@ export const clientBox = (data, keys) => (dispatch, getState) => {
     playerId: getState().client.keys.id,
     box: ssbKeys.box(data, [keys])
   };
+};
+
+// this isn't a redux action really, don't tell anyone
+export const clientGetGameHash = () => (dispatch, getState) => {
+  const state = getState();
+  return hashState(state.game);
 };

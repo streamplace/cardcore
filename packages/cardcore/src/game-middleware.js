@@ -1,24 +1,27 @@
-import signalhub from "signalhub";
+// import signalhub from "signalhub";
 import * as gameActions from "@cardcore/game";
 import hashState from "./state-hasher";
+import ssbKeys from "ssb-keys";
+import stringify from "json-stable-stringify";
+import fetch from "isomorphic-fetch";
 
 export const REMOTE_ACTION = Symbol("REMOTE_ACTION");
 
 export default function gameMiddleware(store) {
   const server = `${document.location.protocol}//${document.location.host}`;
   const channelName = document.location.pathname.slice(1);
-  const hub = signalhub("butt-card", [server]);
-  hub.subscribe(channelName).on("data", async action => {
-    const me = store.getState().client.keys;
-    if (action._sender === me.id) {
-      return;
-    }
-    action = {
-      ...action,
-      [REMOTE_ACTION]: true
-    };
-    store.dispatch(action);
-  });
+  // const hub = signalhub("butt-card", [server]);
+  // hub.subscribe(channelName).on("data", async action => {
+  //   const me = store.getState().client.keys;
+  //   if (action._sender === me.id) {
+  //     return;
+  //   }
+  //   action = {
+  //     ...action,
+  //     [REMOTE_ACTION]: true
+  //   };
+  //   store.dispatch(action);
+  // });
 
   const promises = new WeakMap();
 
@@ -59,12 +62,21 @@ export default function gameMiddleware(store) {
           store.dispatch(gameActions.desync(me.id, store.getState().game));
         }
       } else if (gameActions[action.type]) {
+        const prev = prevHash;
         prevHash = hash;
         // tell everyone else the action happened and the resulting hash
-        hub.broadcast(channelName, {
+        const next = hash;
+        const signedAction = ssbKeys.signObj(me, {
           ...action,
-          _sender: me.id,
-          _hash: hash
+          prev,
+          next
+        });
+        await fetch(`/${encodeURIComponent(next)}`, {
+          method: "POST",
+          body: stringify(signedAction),
+          headers: {
+            "content-type": "application/json"
+          }
         });
       }
       const [resolve] = promises.get(action); // hack, maybe should reject?
