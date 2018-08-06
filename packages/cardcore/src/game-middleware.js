@@ -1,6 +1,6 @@
 // import signalhub from "signalhub";
 import * as gameActions from "@cardcore/game";
-import { CLIENT_LOAD_STATE } from "@cardcore/client";
+import { CLIENT_LOAD_STATE, clientPoll } from "@cardcore/client";
 import { hashState } from "@cardcore/util";
 import ssbKeys from "ssb-keys";
 import stringify from "json-stable-stringify";
@@ -37,6 +37,7 @@ export function gameMiddleware(store) {
         return;
       }
       if (queue.length === 0) {
+        store.dispatch(clientPoll());
         return;
       }
       const action = queue.shift();

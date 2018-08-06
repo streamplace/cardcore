@@ -19,7 +19,13 @@ export const clientLoadState = gameId => async (dispatch, getState) => {
   });
 };
 
+let polling = false;
+
 export const clientPoll = () => async (dispatch, getState) => {
+  if (polling) {
+    return;
+  }
+  polling = true;
   const poll = async () => {
     const hash = await dispatch(clientGetGameHash());
     const res = await fetch(`/${hash}/next`);
@@ -27,8 +33,13 @@ export const clientPoll = () => async (dispatch, getState) => {
       return;
     }
     const action = await res.json();
-    dispatch({ ...action, [REMOTE_ACTION]: true });
+    const me = getState().client.keys;
+    if (action._sender !== me.id) {
+      polling = false;
+      clearInterval(interval);
+      dispatch({ ...action, [REMOTE_ACTION]: true });
+    }
   };
   poll();
-  setInterval(poll, 2000);
+  let interval = setInterval(poll, 2000);
 };

@@ -27,6 +27,8 @@ const EndTurn = styled.button`
   color: ${props => (props.myTurn ? "black" : "#555")};
 `;
 
+const Loading = styled.div``;
+
 export class Field extends React.Component {
   render() {
     const text = this.props.myTurn ? "End Turn" : "Their Turn";
@@ -43,7 +45,7 @@ export class Field extends React.Component {
               this.props.dispatch(endTurn());
             }}
           >
-            {text}
+            {this.props.loading ? <Loading>Loading...</Loading> : text}
           </EndTurn>
         </Middle>
         <FieldSide playerId={this.props.currentPlayer} />
@@ -57,7 +59,8 @@ const mapStateToProps = (state, props) => {
     players: state.game.playerOrder,
     myTurn: state.client.keys.id === state.game.turn,
     playerOrder: state.game.playerOrder,
-    currentPlayer: state.client.keys.id
+    currentPlayer: state.client.keys.id,
+    loading: state.game.nextActions.length !== 0
   };
 };
 
