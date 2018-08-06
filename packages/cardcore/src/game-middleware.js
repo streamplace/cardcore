@@ -1,5 +1,6 @@
 // import signalhub from "signalhub";
 import * as gameActions from "@cardcore/game";
+import { CLIENT_LOAD_STATE } from "@cardcore/client";
 import { hashState } from "@cardcore/util";
 import ssbKeys from "ssb-keys";
 import stringify from "json-stable-stringify";
@@ -7,7 +8,7 @@ import fetch from "isomorphic-fetch";
 
 export const REMOTE_ACTION = Symbol("REMOTE_ACTION");
 
-export default function gameMiddleware(store) {
+export function gameMiddleware(store) {
   const server = `${document.location.protocol}//${document.location.host}`;
   const channelName = document.location.pathname.slice(1);
   // const hub = signalhub("butt-card", [server]);
@@ -50,18 +51,21 @@ export default function gameMiddleware(store) {
       const ret = await next({
         ...action,
         _me: me && me.id,
-        _prev: isGameAction ? prevHash : undefined
+        prev: isGameAction ? prevHash : undefined
       });
       const hash = await hashState(store.getState().game);
       if (action[REMOTE_ACTION]) {
         prevHash = hash;
         // we just completed a remote action, assert states match
-        if (sync && hash !== action._hash) {
+        if (sync && hash !== action.next) {
           // very bad and extremely fatal for now - perhaps someday we recover
           sync = false;
           store.dispatch(gameActions.desync(me.id, store.getState().game));
         }
-      } else if (gameActions[action.type]) {
+      } else if (
+        gameActions[action.type] &&
+        action.type !== gameActions.DESYNC
+      ) {
         const prev = prevHash;
         prevHash = hash;
         // tell everyone else the action happened and the resulting hash
@@ -84,7 +88,11 @@ export default function gameMiddleware(store) {
       const state = store.getState();
       const nextActions = state.game && state.game.nextActions;
       // only dequeue if a game action just happened - client actions don't count
-      if (nextActions && nextActions.length > 0 && gameActions[action.type]) {
+      if (
+        nextActions &&
+        nextActions.length > 0 &&
+        (gameActions[action.type] || action.type === CLIENT_LOAD_STATE)
+      ) {
         const { playerId, notPlayerId, action } = nextActions[0];
         if (!gameActions[action.type]) {
           throw new Error(

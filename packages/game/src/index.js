@@ -46,12 +46,12 @@ export const gameReducer = (state, action) => {
     };
   }
 
-  if (action._prev) {
+  if (action.prev) {
     return {
       ...state,
       game: {
         ...state.game,
-        prev: action._prev
+        prev: action.prev
       }
     };
   }

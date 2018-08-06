@@ -1,6 +1,5 @@
 import * as gameActions from "@cardcore/game";
 import * as clientActions from "@cardcore/client";
-import { clientReducer as client } from "@cardcore/client";
 
 // automatically find any reducer functions in the actions file and call them
 const gameReducers = Object.keys(gameActions)
@@ -28,12 +27,20 @@ const secret = function(state = {}, action) {
   return state;
 };
 
-const reducers = { client, secret };
 export default function rootReducer(state = {}, action) {
+  const reducers = { client: clientActions.clientReducer, secret };
+  // temporary hacky game init logic
+  if (action.type === clientActions.CLIENT_LOAD_STATE) {
+    return {
+      ...state,
+      game: action.gameState
+    };
+  }
   // special logic to clean out the queue if we're executing a queued action
   if (
     state &&
     state.game &&
+    state.game.nextActions &&
     state.game.nextActions[0] &&
     (action._sender === state.game.nextActions[0].playerId ||
       action._sender !== state.game.nextActions[0].notPlayerId) && // omfg hack

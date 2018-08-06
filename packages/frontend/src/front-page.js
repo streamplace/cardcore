@@ -20,7 +20,8 @@ const CreateGame = styled.button`
 class FrontPage extends React.Component {
   async handleClick() {
     await this.props.dispatch(createGame());
-    console.log(await this.props.dispatch(clientGetGameHash()));
+    const hash = await this.props.dispatch(clientGetGameHash());
+    this.props.history.push(`/game/${hash.replace(".sha256", "")}`);
   }
 
   async componentDidMount() {
