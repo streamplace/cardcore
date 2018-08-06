@@ -5,5 +5,12 @@ export default function hashState(game) {
   if (!game) {
     return null;
   }
-  return hash(stringify(game));
+  return (
+    hash(stringify(game))
+      // switch up the two url-unsafe characters in base64
+      .replace(/\+/g, "-")
+      .replace(/\//g, "~")
+      // and putting 256 bygit tes in base64 means there's always 1 trailing =. lose it.
+      .replace(/=/g, "")
+  );
 }
