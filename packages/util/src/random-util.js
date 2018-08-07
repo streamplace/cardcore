@@ -11,10 +11,9 @@ export function shuffle(arr, func = Math.random) {
 
 export class RandomUtil {
   constructor(seed) {
-    if (!seed) {
-      seed = ssbKeys.hash(`${Math.random()}`);
+    if (seed) {
+      this.setSeed(seed);
     }
-    this.setSeed(seed);
   }
 
   setSeed(seed) {
@@ -36,11 +35,18 @@ export class RandomUtil {
   }
 
   next() {
+    if (!this.seed) {
+      throw new Error("tried to use RNG without providing a seed!");
+    }
     return (this.seed = (this.seed * 16807) % 2147483647);
   }
 
   nextFloat() {
     return (this.next() - 1) / 2147483646;
+  }
+
+  clearSeed() {
+    this.seed = null;
   }
 }
 

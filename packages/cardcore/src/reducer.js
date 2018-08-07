@@ -1,5 +1,6 @@
 import * as gameActions from "@cardcore/game";
 import * as clientActions from "@cardcore/client";
+import { rando } from "@cardcore/util";
 
 // automatically find any reducer functions in the actions file and call them
 const gameReducers = Object.keys(gameActions)
@@ -28,6 +29,10 @@ const secret = function(state = {}, action) {
 };
 
 export default function rootReducer(state = {}, action) {
+  let startRandoSeed = state.game && state.game.randoSeed;
+  if (state.game && state.game.randoSeed) {
+    rando.setSeed(startRandoSeed);
+  }
   const reducers = { client: clientActions.clientReducer, secret };
   // temporary hacky game init logic
   if (action.type === clientActions.CLIENT_LOAD_STATE) {
@@ -71,5 +76,15 @@ export default function rootReducer(state = {}, action) {
     }
   }
 
+  if (state.game && rando.seed && state.game.randoSeed !== rando.seed) {
+    state = {
+      ...state,
+      game: {
+        ...state.game,
+        randoSeed: rando.seed
+      }
+    };
+  }
+  rando.clearSeed();
   return state;
 }

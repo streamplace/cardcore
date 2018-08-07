@@ -76,13 +76,19 @@ export function gameMiddleware(store) {
           prev,
           next
         });
-        await fetch(`/${encodeURIComponent(next)}`, {
+        const res = await fetch(`/${encodeURIComponent(next)}`, {
           method: "POST",
           body: stringify(signedAction),
           headers: {
             "content-type": "application/json"
           }
         });
+        if (res.status === 409) {
+          sync = false;
+          store.dispatch(gameActions.desync("client", store.getState().game));
+          const server = await res.json();
+          store.dispatch(gameActions.desync("server", server.state.game));
+        }
       }
       const [resolve] = promises.get(action); // hack, maybe should reject?
       running = false;

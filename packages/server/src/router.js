@@ -27,6 +27,9 @@ app.get(nextRegex, getKey);
 
 app.post(hashRegex, async (req, res) => {
   const action = req.body;
+  if (req.body.next !== req.params[0]) {
+    return res.sendStatus(400);
+  }
   const verified = ssbKeys.verifyObj(
     {
       id: req.body._sender,
@@ -46,7 +49,11 @@ app.post(hashRegex, async (req, res) => {
     const newState = gameReducer({ game: prevState }, action);
     const newHash = hashState(newState.game);
     if (newHash !== req.params[0] || newHash !== req.body.next) {
-      return res.sendStatus(401);
+      res.status(409);
+      res.json({
+        state: newState,
+        hash: newHash
+      });
     }
     await req.store.put(newHash, stringify(newState.game));
     await req.store.put(`${action.prev}/next`, stringify(action));
