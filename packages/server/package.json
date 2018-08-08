@@ -9,6 +9,7 @@
   "private": false,
   "dependencies": {
     "body-parser": "^1.18.3",
+    "level": "^4.0.0",
     "morgan": "^1.9.0",
     "ssb-keys": "git+https://github.com/streamplace/ssb-keys.git"
   },

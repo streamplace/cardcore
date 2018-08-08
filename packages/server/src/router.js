@@ -15,7 +15,7 @@ const getKey = async (req, res) => {
     res.header("content-type", "application/json");
     res.send(stringify(data));
   } catch (err) {
-    if (err.code === "ENOENT") {
+    if (err.name === "NotFoundError") {
       return res.sendStatus(204);
     }
     console.error(err);

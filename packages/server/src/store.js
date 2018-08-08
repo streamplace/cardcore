@@ -1,19 +1,20 @@
 import path from "path";
 import fs from "fs-extra";
+import level from "level";
+
 export default class Store {
   constructor({ dataDir } = {}) {
     this.dir = dataDir || path.resolve(__dirname, "..", "..", "..", "data");
     fs.ensureDir(this.dir);
+    this.db = level(path.resolve(this.dir, "cardcore-leveldb"));
   }
 
   async put(id, str) {
-    id = encodeURIComponent(id);
-    await fs.writeFile(path.resolve(this.dir, id), str, "utf8");
+    await this.db.put(id, str);
   }
 
   async get(id) {
-    id = encodeURIComponent(id);
-    const data = await fs.readFile(path.resolve(this.dir, id), "utf8");
+    const data = await this.db.get(id);
     return JSON.parse(data);
   }
 }
