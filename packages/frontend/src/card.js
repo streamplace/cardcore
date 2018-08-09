@@ -7,7 +7,7 @@ import {
 } from "@cardcore/client";
 import { attack } from "@cardcore/game";
 import { connect } from "react-redux";
-import { traverseBoxes } from "@cardcore/util";
+import { Box } from "@cardcore/util";
 
 const WIDTH = 130;
 const HEIGHT = 210;
@@ -286,7 +286,7 @@ export class Card extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-  const unitId = traverseBoxes(props.card, state.game.boxes, state.client.keys);
+  const unitId = Box.traverse(props.card, state.game.boxes, state.client.keys);
   let unit;
   if (unitId) {
     unit = state.game.units[unitId];

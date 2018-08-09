@@ -1,41 +1,10 @@
 import { rotateArray, shuffle } from "@cardcore/util";
-import { clientGenerateKey, clientBox } from "@cardcore/client";
-import ssbKeys from "@streamplace/ssb-keys";
+import { Box } from "@cardcore/util";
 
 export const SHUFFLE_DECK = "SHUFFLE_DECK";
 // export const shuffleDeck = action => (dispatch, getState) => {
 //   dispatch(action);
 // };
-
-// contents can be anything JSON-able. owners is an array of ssb ids
-export const newBox = (contents, ...ownerIds) => {
-  const keys = ssbKeys.generate();
-  const box = {
-    contents: ssbKeys.box(contents, [keys]),
-    keys: {}
-  };
-  for (const ownerId of ownerIds) {
-    box.keys[ownerId] = ssbKeys.box(keys.private, [
-      {
-        id: ownerId,
-        public: ownerId.slice(1),
-        curve: "ed25519"
-      }
-    ]);
-  }
-  return { boxId: keys.id, box };
-};
-
-export const addBoxKey = (box, me, ownerId) => {
-  const boxMasterPrivateKey = ssbKeys.unbox(box.keys[me.id], me);
-  return ssbKeys.box(boxMasterPrivateKey, [
-    {
-      id: ownerId,
-      public: ownerId.slice(1),
-      curve: "ed25519"
-    }
-  ]);
-};
 
 export const SHUFFLE_DECK_ENCRYPT = "SHUFFLE_DECK_ENCRYPT";
 export const shuffleDeckEncrypt = ({ playerId }) => async (
@@ -46,7 +15,7 @@ export const shuffleDeckEncrypt = ({ playerId }) => async (
   let encryptedDeck = [];
   const boxes = {};
   for (const card of state.game.players[playerId].deck) {
-    const { boxId, box } = newBox(card, state.client.keys.id);
+    const { boxId, box } = Box.new(card, state.client.keys.id);
     encryptedDeck.push(boxId);
     boxes[boxId] = box;
   }
@@ -65,7 +34,7 @@ export const shuffleDeckDecrypt = ({ playerId, boxId }) => (
   getState
 ) => {
   const state = getState();
-  const key = addBoxKey(state.game.boxes[boxId], state.client.keys, playerId);
+  const key = Box.addKey(state.game.boxes[boxId], state.client.keys, playerId);
   dispatch({
     type: SHUFFLE_DECK_DECRYPT,
     boxId,

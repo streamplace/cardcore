@@ -1,5 +1,5 @@
 import { playCreature } from "@cardcore/game";
-import { traverseBoxes, target as targetHelper } from "@cardcore/util";
+import { Box, target as targetHelper } from "@cardcore/util";
 import ssbKeys from "@streamplace/ssb-keys";
 
 export * from "./client-poll";
@@ -59,7 +59,7 @@ export const registerDropTarget = cb => ref => {
 export const CLIENT_PLAY_CREATURE = "CLIENT_PLAY_CREATURE";
 export const clientPlayCreature = card => async (dispatch, getState) => {
   const state = getState();
-  const unitId = traverseBoxes(card, state.game.boxes, state.client.keys);
+  const unitId = Box.traverse(card, state.game.boxes, state.client.keys);
   const unit = getState().game.units[unitId];
   await dispatch({
     type: CLIENT_PLAY_CREATURE,
