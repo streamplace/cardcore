@@ -35,8 +35,8 @@ export default function rootReducer(state = {}, action) {
   }
   const reducers = { client: clientActions.clientReducer, secret };
   // temporary hacky game init logic
-  if (action.type === clientActions.CLIENT_LOAD_STATE) {
-    return {
+  if (action.type === clientActions.CLIENT_LOAD_STATE_START) {
+    state = {
       ...state,
       game: action.gameState
     };

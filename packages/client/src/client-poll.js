@@ -7,7 +7,11 @@ export const clientGetGameHash = () => (dispatch, getState) => {
   return hashState(state.game);
 };
 
-export const CLIENT_LOAD_STATE = "CLIENT_LOAD_STATE";
+/**
+ * Load the state of a game by replaying all the actions
+ */
+export const CLIENT_LOAD_STATE_START = "CLIENT_LOAD_STATE_START";
+export const CLIENT_LOAD_STATE_DONE = "CLIENT_LOAD_STATE_DONE";
 export const clientLoadState = gameId => async (dispatch, getState) => {
   const res = await fetch(`/${gameId}.sha256`);
   if (res.status !== 200) {
@@ -15,12 +19,27 @@ export const clientLoadState = gameId => async (dispatch, getState) => {
     console.error(err);
     return;
   }
-  const gameState = await res.json();
-  dispatch({
-    type: CLIENT_LOAD_STATE,
-    gameState,
+  const startState = await res.json();
+  await dispatch({
+    type: CLIENT_LOAD_STATE_START,
+    gameState: startState,
     [REMOTE_ACTION]: true,
     next: `${gameId}.sha256`
+  });
+  while (true) {
+    const hash = await dispatch(clientGetGameHash());
+    const headRes = await fetch(`/${hash}/next`, {
+      method: "HEAD"
+    });
+    if (headRes.status !== 204) {
+      break;
+    }
+    const actionRes = await fetch(`/${hash}/next`);
+    const action = await actionRes.json();
+    await dispatch({ ...action, [REMOTE_ACTION]: true });
+  }
+  await dispatch({
+    type: "CLIENT_LOAD_STATE_DONE"
   });
 };
 
@@ -30,6 +49,9 @@ const BACKOFF_INTERVALS = [50, 150, 500, 1000, 2000];
 
 export const clientPoll = () => async (dispatch, getState) => {
   if (polling) {
+    return;
+  }
+  if (getState().client.loadingState) {
     return;
   }
   let handle;

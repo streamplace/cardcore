@@ -60,7 +60,11 @@ export default function gameActionMiddleware(store) {
     return action => {
       const state = store.getState();
       checkActionAllowed(state, action);
-      if (actionMap[action.type] && action._fromQueue) {
+      if (
+        !state.client.loadingState &&
+        actionMap[action.type] &&
+        action._fromQueue
+      ) {
         action = actionMap[action.type](action);
       }
       return next(action);

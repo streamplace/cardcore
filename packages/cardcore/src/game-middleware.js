@@ -1,6 +1,6 @@
 // import signalhub from "signalhub";
 import * as gameActions from "@cardcore/game";
-import { CLIENT_LOAD_STATE, clientPoll } from "@cardcore/client";
+import { CLIENT_LOAD_STATE_DONE, clientPoll } from "@cardcore/client";
 import { hashState } from "@cardcore/util";
 import ssbKeys from "@streamplace/ssb-keys";
 import stringify from "json-stable-stringify";
@@ -98,7 +98,8 @@ export function gameMiddleware(store) {
       if (
         nextActions &&
         nextActions.length > 0 &&
-        (gameActions[action.type] || action.type === CLIENT_LOAD_STATE)
+        (gameActions[action.type] || action.type === CLIENT_LOAD_STATE_DONE) &&
+        !state.client.loadingState
       ) {
         const { playerId, notPlayerId, action } = nextActions[0];
         if (!gameActions[action.type]) {

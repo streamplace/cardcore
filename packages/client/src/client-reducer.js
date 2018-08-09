@@ -8,7 +8,8 @@ const INITIAL_STATE = {
   targetQueue: [],
   targets: [],
   keys: {},
-  started: false
+  started: false,
+  loadingState: true
 };
 
 export default function reducer(state = INITIAL_STATE, action) {
@@ -62,6 +63,23 @@ export default function reducer(state = INITIAL_STATE, action) {
       ...state,
       targetQueue: state.targetQueue.slice(1),
       targets: [...state.targets, action.unitId]
+    };
+  }
+
+  if (action.type === clientActions.CLIENT_LOAD_STATE_START) {
+    return {
+      ...state,
+      loadingState: true
+    };
+  }
+
+  if (
+    action.type === clientActions.CLIENT_LOAD_STATE_DONE ||
+    action.type === actions.CREATE_GAME
+  ) {
+    return {
+      ...state,
+      loadingState: false
     };
   }
 
