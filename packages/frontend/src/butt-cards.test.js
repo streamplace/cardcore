@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import ButtCards from "./butt-cards";
+import Router from "./router";
 
 it("renders without crashing", () => {
   const div = document.createElement("div");
-  ReactDOM.render(<ButtCards />, div);
+  ReactDOM.render(<Router />, div);
   ReactDOM.unmountComponentAtNode(div);
 });

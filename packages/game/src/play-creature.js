@@ -1,4 +1,4 @@
-import ssbKeys from "ssb-keys";
+import ssbKeys from "@streamplace/ssb-keys";
 import { SEED_RNG } from "./seed-rng";
 import { CHECK_DEATH } from "./check-death";
 import { target } from "@cardcore/util";

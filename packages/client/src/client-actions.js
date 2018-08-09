@@ -1,6 +1,9 @@
 import { playCreature } from "@cardcore/game";
 import { traverseSecret, target as targetHelper } from "@cardcore/util";
-import ssbKeys from "ssb-keys";
+import ssbKeys from "@streamplace/ssb-keys";
+
+export * from "./client-poll";
+
 /**
  * This file should contain web-specific actions extranious to the game state
  */
@@ -106,10 +109,35 @@ export const clientPickTarget = unitId => async (dispatch, getState) => {
 export const CLIENT_START_TARGET = "CLIENT_START_TARGET";
 export const CLIENT_PICK_TARGET = "CLIENT_PICK_TARGET";
 export const CLIENT_GENERATE_IDENTITY = "CLIENT_GENERATE_IDENTITY";
+const CARDCORE_IDENTITY = "CARDCORE_IDENTITY";
 export const clientGenerateIdentity = () => {
+  let storage;
+  if (typeof localStorage === "object") {
+    storage = localStorage;
+  } else {
+    // noop i guess? idk this only happens in jsdom?
+    storage = {
+      getItem: () => null,
+      setItem: () => null,
+      removeItem: () => null
+    };
+  }
+  let keys;
+  if (storage.getItem(CARDCORE_IDENTITY)) {
+    try {
+      keys = JSON.parse(storage.getItem(CARDCORE_IDENTITY));
+    } catch (e) {
+      console.error("error parsing cardcore identity, clearing", e);
+      storage.removeItem(CARDCORE_IDENTITY);
+    }
+  }
+  if (!keys) {
+    keys = ssbKeys.generate();
+    storage.setItem(CARDCORE_IDENTITY, JSON.stringify(keys));
+  }
   return {
     type: CLIENT_GENERATE_IDENTITY,
-    keys: ssbKeys.generate()
+    keys
   };
 };
 

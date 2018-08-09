@@ -1,7 +1,5 @@
 import React from "react";
 import styled, { injectGlobal } from "styled-components";
-import { Provider } from "react-redux";
-import { createStore } from "cardcore";
 import Board from "./board";
 import pkg from "../package.json";
 
@@ -27,18 +25,12 @@ const VersionOverlay = styled.div`
 `;
 
 class ButtCards extends React.Component {
-  constructor() {
-    super();
-    this.store = createStore();
-  }
   render() {
     return (
-      <Provider store={this.store}>
-        <AppContainer>
-          <VersionOverlay>v{pkg.version}</VersionOverlay>
-          <Board />
-        </AppContainer>
-      </Provider>
+      <AppContainer>
+        <VersionOverlay>v{pkg.version}</VersionOverlay>
+        <Board gameId={this.props.match.params.gameId} />
+      </AppContainer>
     );
   }
 }

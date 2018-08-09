@@ -3,9 +3,10 @@
   "version": "0.0.1",
   "dependencies": {
     "@cardcore/client": "^0.0.1",
-    "cardcore": "^0.0.1",
     "@cardcore/game": "^0.0.1",
     "@cardcore/util": "^0.0.1",
+    "@streamplace/ssb-keys": "^7.0.16",
+    "cardcore": "^0.0.1",
     "deep-diff": "^1.0.1",
     "express": "^4.16.3",
     "http-proxy-middleware": "^0.18.0",
@@ -20,26 +21,21 @@
     "redux-immutable-state-invariant": "^2.1.0",
     "redux-thunk": "^2.3.0",
     "serve": "^9.0.0",
-    "signalhub": "^4.9.0",
-    "ssb-keys": "git+https://github.com/streamplace/ssb-keys.git",
     "styled-components": "^3.3.0",
     "uuid": "^3.2.1"
   },
   "scripts": {
-    "start": "run-p start:proxy start:react start:signalhub start:opn",
-    "start:proxy": "node proxy.js",
+    "start": "run-p start:react start:opn",
     "start:react": "PORT=3002 BROWSER=none react-scripts start | cat",
-    "start:signalhub": "signalhub listen -p 3001",
     "start:opn": "sleep 3; opn http://localhost:3000",
     "production": "run-p production:proxy start:signalhub production:serve",
-    "production:proxy": "PORT=80 node proxy.js",
     "production:serve": "serve -s -l 3002 build",
     "prepare": "react-scripts build",
     "test": "CI=true react-scripts test --env=jsdom --forceExit"
   },
   "devDependencies": {
-    "opn-cli": "^3.1.0",
-    "@streamplace/react-scripts": "1.1.4-fork"
+    "@streamplace/react-scripts": "1.1.4-fork",
+    "opn-cli": "^3.1.0"
   },
   "publishConfig": {
     "access": "public"

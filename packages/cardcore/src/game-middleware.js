@@ -1,24 +1,28 @@
-import signalhub from "signalhub";
+// import signalhub from "signalhub";
 import * as gameActions from "@cardcore/game";
-import hashState from "./state-hasher";
+import { CLIENT_LOAD_STATE, clientPoll } from "@cardcore/client";
+import { hashState } from "@cardcore/util";
+import ssbKeys from "@streamplace/ssb-keys";
+import stringify from "json-stable-stringify";
+import fetch from "isomorphic-fetch";
 
 export const REMOTE_ACTION = Symbol("REMOTE_ACTION");
 
-export default function gameMiddleware(store) {
+export function gameMiddleware(store) {
   const server = `${document.location.protocol}//${document.location.host}`;
   const channelName = document.location.pathname.slice(1);
-  const hub = signalhub("butt-card", [server]);
-  hub.subscribe(channelName).on("data", async action => {
-    const me = store.getState().client.keys;
-    if (action._sender === me.id) {
-      return;
-    }
-    action = {
-      ...action,
-      [REMOTE_ACTION]: true
-    };
-    store.dispatch(action);
-  });
+  // const hub = signalhub("butt-card", [server]);
+  // hub.subscribe(channelName).on("data", async action => {
+  //   const me = store.getState().client.keys;
+  //   if (action._sender === me.id) {
+  //     return;
+  //   }
+  //   action = {
+  //     ...action,
+  //     [REMOTE_ACTION]: true
+  //   };
+  //   store.dispatch(action);
+  // });
 
   const promises = new WeakMap();
 
@@ -33,6 +37,7 @@ export default function gameMiddleware(store) {
         return;
       }
       if (queue.length === 0) {
+        store.dispatch(clientPoll());
         return;
       }
       const action = queue.shift();
@@ -47,31 +52,54 @@ export default function gameMiddleware(store) {
       const ret = await next({
         ...action,
         _me: me && me.id,
-        _prev: isGameAction ? prevHash : undefined
+        prev: isGameAction ? prevHash : undefined
       });
       const hash = await hashState(store.getState().game);
       if (action[REMOTE_ACTION]) {
         prevHash = hash;
         // we just completed a remote action, assert states match
-        if (sync && hash !== action._hash) {
+        if (sync && hash !== action.next) {
           // very bad and extremely fatal for now - perhaps someday we recover
           sync = false;
           store.dispatch(gameActions.desync(me.id, store.getState().game));
         }
-      } else if (gameActions[action.type]) {
+      } else if (
+        gameActions[action.type] &&
+        action.type !== gameActions.DESYNC
+      ) {
+        const prev = prevHash;
         prevHash = hash;
         // tell everyone else the action happened and the resulting hash
-        hub.broadcast(channelName, {
+        const next = hash;
+        const signedAction = ssbKeys.signObj(me, {
           ...action,
-          _sender: me.id,
-          _hash: hash
+          prev,
+          next
         });
+        const res = await fetch(`/${encodeURIComponent(next)}`, {
+          method: "POST",
+          body: stringify(signedAction),
+          headers: {
+            "content-type": "application/json"
+          }
+        });
+        if (res.status === 409) {
+          sync = false;
+          store.dispatch(gameActions.desync("client", store.getState().game));
+          const server = await res.json();
+          store.dispatch(gameActions.desync("server", server.state.game));
+        }
       }
       const [resolve] = promises.get(action); // hack, maybe should reject?
       running = false;
-      const nextActions = store.getState().game.nextActions;
+      const state = store.getState();
+      const nextActions = state.game && state.game.nextActions;
       // only dequeue if a game action just happened - client actions don't count
-      if (nextActions.length > 0 && gameActions[action.type]) {
+      if (
+        nextActions &&
+        nextActions.length > 0 &&
+        (gameActions[action.type] || action.type === CLIENT_LOAD_STATE)
+      ) {
         const { playerId, notPlayerId, action } = nextActions[0];
         if (!gameActions[action.type]) {
           throw new Error(

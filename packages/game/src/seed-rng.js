@@ -1,4 +1,4 @@
-import ssbKeys from "ssb-keys";
+import ssbKeys from "@streamplace/ssb-keys";
 import { clientGenerateKey } from "@cardcore/client";
 import { rando } from "@cardcore/util";
 

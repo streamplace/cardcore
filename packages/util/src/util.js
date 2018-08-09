@@ -1,3 +1,5 @@
+import { rando } from "./random-util";
+
 /**
  * Like Python's range. Get an array of numbers from 0 to n.
  */
@@ -34,13 +36,6 @@ export const traverseSecret = (secret, secrets) => {
   return null;
 };
 
-/**
- * id-generation function that assumes that all users will execute it in the _exact_ same order.
- * this is.... hopefully reasonable.
- */
-let cur = 0;
 export const uid = () => {
-  let res = `id-${cur}`;
-  cur += 1;
-  return res;
+  return `id-${rando.next()}`;
 };

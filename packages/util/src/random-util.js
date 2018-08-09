@@ -1,6 +1,6 @@
 // very simple PRNG from here https://gist.github.com/blixt/f17b47c62508be59987b
 
-import ssbKeys from "ssb-keys";
+import ssbKeys from "@streamplace/ssb-keys";
 
 export function shuffle(arr, func = Math.random) {
   const randos = arr.map(() => func());
@@ -11,10 +11,9 @@ export function shuffle(arr, func = Math.random) {
 
 export class RandomUtil {
   constructor(seed) {
-    if (!seed) {
-      seed = ssbKeys.hash(`${Math.random()}`);
+    if (seed) {
+      this.setSeed(seed);
     }
-    this.setSeed(seed);
   }
 
   setSeed(seed) {
@@ -36,11 +35,18 @@ export class RandomUtil {
   }
 
   next() {
+    if (!this.seed) {
+      throw new Error("tried to use RNG without providing a seed!");
+    }
     return (this.seed = (this.seed * 16807) % 2147483647);
   }
 
   nextFloat() {
     return (this.next() - 1) / 2147483646;
+  }
+
+  clearSeed() {
+    this.seed = null;
   }
 }
 

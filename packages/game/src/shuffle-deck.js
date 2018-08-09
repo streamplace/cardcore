@@ -1,6 +1,6 @@
 import { rotateArray, shuffle } from "@cardcore/util";
 import { clientGenerateKey, clientBox } from "@cardcore/client";
-import ssbKeys from "ssb-keys";
+import ssbKeys from "@streamplace/ssb-keys";
 
 export const SHUFFLE_DECK = "SHUFFLE_DECK";
 // export const shuffleDeck = action => (dispatch, getState) => {

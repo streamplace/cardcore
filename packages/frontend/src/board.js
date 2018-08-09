@@ -3,7 +3,11 @@ import Sidebar from "./sidebar";
 import Field from "./field";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { clientGenerateIdentity } from "@cardcore/client";
+import {
+  clientGenerateIdentity,
+  clientPoll,
+  clientLoadState
+} from "@cardcore/client";
 import { joinGameStart } from "@cardcore/game";
 import { diff } from "deep-diff";
 
@@ -45,9 +49,10 @@ export class Board extends React.Component {
 
   async componentDidMount() {
     await this.props.dispatch(clientGenerateIdentity());
-    this.interval = setInterval(() => {
-      this.joinGame();
-    }, 1500);
+    if (this.props.loading) {
+      await this.props.dispatch(clientLoadState(this.props.gameId));
+    }
+    await this.props.dispatch(clientPoll());
   }
 
   componentWillUnmount() {
@@ -105,7 +110,7 @@ export class Board extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-  if (!state.game) {
+  if (!state.game || !state.game.players) {
     return {
       loading: true
     };
