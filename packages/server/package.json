@@ -11,7 +11,8 @@
     "@streamplace/ssb-keys": "^7.0.16",
     "body-parser": "^1.18.3",
     "level": "^4.0.0",
-    "morgan": "^1.9.0"
+    "morgan": "^1.9.0",
+    "wolfy87-eventemitter": "^5.2.5"
   },
   "devDependencies": {
     "babel-watch": "^2.0.7",

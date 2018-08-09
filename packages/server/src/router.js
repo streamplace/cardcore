@@ -3,13 +3,14 @@ import ssbKeys from "@streamplace/ssb-keys";
 import { gameReducer } from "cardcore";
 import { hashState } from "@cardcore/util";
 import stringify from "json-stable-stringify";
+import EE from "wolfy87-eventemitter";
 
 const app = Router();
 
 const hashRegex = /^\/(.*\.sha256)$/;
 const nextRegex = /^\/(.*\.sha256\/next)$/;
 
-const getKey = async (req, res) => {
+app.get(hashRegex, async (req, res) => {
   try {
     const data = await req.store.get(req.params[0]);
     res.header("content-type", "application/json");
@@ -21,9 +22,66 @@ const getKey = async (req, res) => {
     console.error(err);
     res.sendStatus(404);
   }
-};
-app.get(hashRegex, getKey);
-app.get(nextRegex, getKey);
+});
+
+const POLL_FREQUENCY = 500;
+const TIMEOUT = 14000;
+
+class Poller extends EE {
+  constructor(key, store) {
+    super();
+    this.key = key;
+    this.store = store;
+    this.done = false;
+    this.pollHandle = setTimeout(() => this._poll(), 0);
+    this.timeoutHandle = setTimeout(() => this.cancel(), TIMEOUT);
+  }
+
+  _poll() {
+    this.store
+      .get(this.key)
+      .then(data => {
+        if (this.done) {
+          return;
+        }
+        this.emit("data", data);
+        clearTimeout(this.timeoutHandle);
+      })
+      .catch(err => {
+        if (err.name === "NotFoundError") {
+          this.pollHandle = setTimeout(() => this._poll(), POLL_FREQUENCY);
+        } else {
+          this.emit("error", err);
+          this.cancel();
+        }
+      });
+  }
+
+  cancel() {
+    clearTimeout(this.pollHandle);
+    clearTimeout(this.timeoutHandle);
+    this.done = true;
+    this.emit("nodata");
+  }
+}
+
+app.get(nextRegex, async (req, res) => {
+  const poller = new Poller(req.params[0], req.store);
+  poller
+    .on("data", data => {
+      res.header("content-type", "application/json");
+      res.send(stringify(data));
+    })
+    .on("nodata", () => {
+      res.sendStatus(204);
+    })
+    .on("error", err => {
+      res.status(500);
+      res.send(err);
+    });
+});
+
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 app.post(hashRegex, async (req, res) => {
   const action = req.body;
