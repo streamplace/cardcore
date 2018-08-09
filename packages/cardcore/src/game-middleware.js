@@ -2,7 +2,7 @@
 import * as gameActions from "@cardcore/game";
 import { CLIENT_LOAD_STATE, clientPoll } from "@cardcore/client";
 import { hashState } from "@cardcore/util";
-import ssbKeys from "ssb-keys";
+import ssbKeys from "@streamplace/ssb-keys";
 import stringify from "json-stable-stringify";
 import fetch from "isomorphic-fetch";
 

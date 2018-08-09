@@ -1,6 +1,6 @@
 // very simple PRNG from here https://gist.github.com/blixt/f17b47c62508be59987b
 
-import ssbKeys from "ssb-keys";
+import ssbKeys from "@streamplace/ssb-keys";
 
 export function shuffle(arr, func = Math.random) {
   const randos = arr.map(() => func());

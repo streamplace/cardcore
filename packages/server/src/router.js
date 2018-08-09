@@ -1,5 +1,5 @@
 import Router from "express/lib/router";
-import ssbKeys from "ssb-keys";
+import ssbKeys from "@streamplace/ssb-keys";
 import { gameReducer } from "cardcore";
 import { hashState } from "@cardcore/util";
 import stringify from "json-stable-stringify";

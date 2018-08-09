@@ -9,5 +9,8 @@
   "private": false,
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@streamplace/ssb-keys": "^7.0.16"
   }
 }

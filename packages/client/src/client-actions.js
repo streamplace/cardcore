@@ -1,6 +1,6 @@
 import { playCreature } from "@cardcore/game";
 import { traverseSecret, target as targetHelper } from "@cardcore/util";
-import ssbKeys from "ssb-keys";
+import ssbKeys from "@streamplace/ssb-keys";
 
 export * from "./client-poll";
 

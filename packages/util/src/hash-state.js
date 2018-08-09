@@ -1,4 +1,4 @@
-import { hash } from "ssb-keys";
+import { hash } from "@streamplace/ssb-keys";
 import stringify from "json-stable-stringify";
 
 export default function hashState(game) {
