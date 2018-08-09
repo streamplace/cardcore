@@ -24,6 +24,21 @@ app.get(hashRegex, async (req, res) => {
   }
 });
 
+app.head(nextRegex, async (req, res) => {
+  try {
+    const data = await req.store.get(req.params[0]);
+    res.status(204);
+    res.end();
+  } catch (err) {
+    if (err.name === "NotFoundError") {
+      return res.sendStatus(404);
+    }
+    console.error(err);
+    res.status(500);
+    res.end();
+  }
+});
+
 const POLL_FREQUENCY = 500;
 const TIMEOUT = 14000;
 
@@ -103,6 +118,18 @@ app.post(hashRegex, async (req, res) => {
     let prevState = {};
     if (action.prev) {
       prevState = await req.store.get(action.prev);
+      let nextState;
+      try {
+        nextState = await req.store.get(`${action.prev}/next`);
+      } catch (e) {
+        if (e.name !== "NotFoundError") {
+          throw e;
+        }
+      }
+      if (nextState) {
+        res.sendStatus(410);
+        return;
+      }
     }
     const newState = gameReducer({ game: prevState }, action);
     const newHash = hashState(newState.game);
