@@ -7,33 +7,70 @@ export const SHUFFLE_DECK = "SHUFFLE_DECK";
 //   dispatch(action);
 // };
 
+// contents can be anything JSON-able. owners is an array of ssb ids
+export const newBox = (contents, ...ownerIds) => {
+  const keys = ssbKeys.generate();
+  const box = {
+    contents: ssbKeys.box(contents, [keys]),
+    keys: {}
+  };
+  for (const ownerId of ownerIds) {
+    box.keys[ownerId] = ssbKeys.box(keys.private, [
+      {
+        id: ownerId,
+        public: ownerId.slice(1),
+        curve: "ed25519"
+      }
+    ]);
+  }
+  return { boxId: keys.id, box };
+};
+
+export const addBoxKey = (box, me, ownerId) => {
+  const boxMasterPrivateKey = ssbKeys.unbox(box.keys[me.id], me);
+  return ssbKeys.box(boxMasterPrivateKey, [
+    {
+      id: ownerId,
+      public: ownerId.slice(1),
+      curve: "ed25519"
+    }
+  ]);
+};
+
 export const SHUFFLE_DECK_ENCRYPT = "SHUFFLE_DECK_ENCRYPT";
 export const shuffleDeckEncrypt = ({ playerId }) => async (
   dispatch,
   getState
 ) => {
+  const state = getState();
   let encryptedDeck = [];
-  for (const card of getState().game.players[playerId].deck) {
-    const { keys } = await dispatch(clientGenerateKey());
-    encryptedDeck.push(await dispatch(clientBox(card, keys)));
+  const boxes = {};
+  for (const card of state.game.players[playerId].deck) {
+    const { boxId, box } = newBox(card, state.client.keys.id);
+    encryptedDeck.push(boxId);
+    boxes[boxId] = box;
   }
   return dispatch({
     type: SHUFFLE_DECK_ENCRYPT,
     deck: shuffle(encryptedDeck),
+    boxes,
     playerId
   });
 };
 
 // for now this operates on the first card in someone's hand... maybe that's okay.
 export const SHUFFLE_DECK_DECRYPT = "SHUFFLE_DECK_DECRYPT";
-export const shuffleDeckDecrypt = ({ playerId }) => (dispatch, getState) => {
+export const shuffleDeckDecrypt = ({ playerId, boxId }) => (
+  dispatch,
+  getState
+) => {
   const state = getState();
-  const encryptedCard = state.game.players[playerId].hand[0];
-  const keys = state.secret[encryptedCard.id];
+  const key = addBoxKey(state.game.boxes[boxId], state.client.keys, playerId);
   dispatch({
     type: SHUFFLE_DECK_DECRYPT,
-    privateKey: keys.private,
-    playerId
+    boxId,
+    playerId,
+    key
   });
 };
 
@@ -71,26 +108,37 @@ export const shuffleDeckReducer = (state, action) => {
             ...state.game.players[action.playerId],
             deck: action.deck
           }
-        }
+        },
+        boxes: action.deck.reduce(
+          (boxes, boxId) => ({
+            ...boxes,
+            [boxId]: {
+              contents: action.boxes[boxId].contents,
+              keys: {
+                [action._sender]: action.boxes[boxId].keys[action._sender]
+              }
+            }
+          }),
+          state.game.boxes
+        )
       }
     };
   }
 
   if (action.type === SHUFFLE_DECK_DECRYPT) {
+    const box = state.game.boxes[action.boxId];
     return {
       ...state,
       game: {
         ...state.game,
-        players: {
-          ...state.game.players,
-          [action.playerId]: {
-            ...state.game.players[action.playerId],
-            hand: [
-              ssbKeys.unbox(state.game.players[action.playerId].hand[0].box, {
-                private: action.privateKey
-              }),
-              ...state.game.players[action.playerId].hand.slice(1)
-            ]
+        boxes: {
+          ...state.game.boxes,
+          [action.boxId]: {
+            ...box,
+            keys: {
+              ...box.keys,
+              [action.playerId]: action.key
+            }
           }
         }
       }

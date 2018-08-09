@@ -41,7 +41,8 @@ export const gameReducer = (state, action) => {
         },
         units: {},
         randoSeeds: {},
-        prev: null
+        prev: null,
+        boxes: {}
       }
     };
   }

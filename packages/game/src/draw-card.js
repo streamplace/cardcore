@@ -15,10 +15,10 @@ export function drawCardReducer(state, action) {
     }
     for (const playerId of players) {
       const player = state.game.players[playerId];
-      const unitId = player.deck[0];
-      if (!unitId) {
+      const boxId = player.deck[0];
+      if (!boxId) {
         // fatigue
-        state = {
+        return {
           ...state,
           game: {
             ...state.game,
@@ -38,36 +38,32 @@ export function drawCardReducer(state, action) {
             }
           }
         };
-      } else {
-        let newActions = [];
-        if (unitId.secret && unitId.playerId !== playerId) {
-          // card is encrypted by someone else, ask them to decrypt
-          newActions.push({
-            playerId: unitId.playerId,
-            action: {
-              type: SHUFFLE_DECK_DECRYPT,
-              playerId: playerId
+      }
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          players: {
+            ...state.game.players,
+            [playerId]: {
+              ...player,
+              hand: [boxId, ...player.hand],
+              deck: player.deck.slice(1)
             }
-          });
-        } else {
-          throw new Error("who the butt encrypted this");
-        }
-        state = {
-          ...state,
-          game: {
-            ...state.game,
-            players: {
-              ...state.game.players,
-              [playerId]: {
-                ...player,
-                hand: [unitId, ...player.hand],
-                deck: player.deck.slice(1)
+          },
+          nextActions: [
+            {
+              playerId: Object.keys(state.game.boxes[boxId].keys).sort()[0],
+              action: {
+                type: SHUFFLE_DECK_DECRYPT,
+                playerId: playerId,
+                boxId: boxId
               }
             },
-            nextActions: [...newActions, ...state.game.nextActions]
-          }
-        };
-      }
+            ...state.game.nextActions
+          ]
+        }
+      };
     }
     return state;
   }
