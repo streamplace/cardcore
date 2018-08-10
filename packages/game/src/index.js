@@ -5,6 +5,7 @@ export * from "./check-death";
 export * from "./damage";
 export * from "./desync";
 export * from "./draw-card";
+export * from "./play-card";
 export * from "./play-creature";
 export * from "./seed-rng";
 export * from "./shuffle-deck";

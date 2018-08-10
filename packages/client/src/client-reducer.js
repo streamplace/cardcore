@@ -4,7 +4,7 @@ import * as clientActions from "./client-actions";
 const INITIAL_STATE = {
   sync: true,
   desyncStates: {},
-  playingCard: null,
+  playingBoxId: null,
   targetQueue: [],
   targets: [],
   keys: {},
@@ -27,7 +27,7 @@ export default function reducer(state = INITIAL_STATE, action) {
     return {
       ...state,
       targetQueue: action.unit.onSummon.map(onSummon => onSummon.target),
-      playingCard: action.card
+      playingBoxId: action.boxId
     };
   }
 
@@ -37,7 +37,7 @@ export default function reducer(state = INITIAL_STATE, action) {
       targetQueue: [],
       targets: [],
       availableTargets: null,
-      playingCard: null
+      playingBoxId: null
     };
   }
 

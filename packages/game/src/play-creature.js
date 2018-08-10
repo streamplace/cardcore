@@ -1,41 +1,23 @@
-import ssbKeys from "@streamplace/ssb-keys";
 import { SEED_RNG } from "./seed-rng";
 import { CHECK_DEATH } from "./check-death";
-import { target } from "@cardcore/util";
+import { target, Box } from "@cardcore/util";
 import { START_GAME } from "./start-game";
 
 export const PLAY_CREATURE = "PLAY_CREATURE";
-export const playCreature = ({
-  id,
-  privateKey,
-  targets = []
-}) => async dispatch => {
-  await dispatch({
+export const playCreature = ({ boxId }) => async (dispatch, getState) => {
+  const { targets } = getState().client;
+  dispatch({
     type: PLAY_CREATURE,
-    id,
-    privateKey,
+    boxId,
     targets
   });
 };
 
 export const playCreatureReducer = (state, action) => {
-  if (action.type === START_GAME) {
-    return {
-      ...state,
-      game: {
-        ...state.game,
-        allowedActions: {
-          ...state.game.allowedActions,
-          [PLAY_CREATURE]: true
-        }
-      }
-    };
-  }
-
   if (action.type === PLAY_CREATURE) {
     const player = state.game.players[action._sender];
-    const card = player.hand.filter(card => card.id === action.id)[0];
-    const unitId = ssbKeys.unbox(card.box, { private: action.privateKey });
+    const boxId = action.boxId;
+    const unitId = Box.traverse(boxId, state.game.boxes, state.client.keys);
     const unit = state.game.units[unitId];
     return {
       ...state,
@@ -46,8 +28,8 @@ export const playCreatureReducer = (state, action) => {
           [action._sender]: {
             ...player,
             availableMana: player.availableMana - unit.cost,
-            hand: player.hand.filter(c => c !== card),
-            field: [unitId, ...player.field]
+            hand: player.hand.filter(c => c !== boxId),
+            field: [boxId, ...player.field]
           }
         },
         units: { ...state.game.units, [unitId]: { ...unit, canAttack: false } },

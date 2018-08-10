@@ -1,4 +1,4 @@
-import { playCreature } from "@cardcore/game";
+import { playCard } from "@cardcore/game";
 import { Box, target as targetHelper } from "@cardcore/util";
 import ssbKeys from "@streamplace/ssb-keys";
 
@@ -57,13 +57,13 @@ export const registerDropTarget = cb => ref => {
 };
 
 export const CLIENT_PLAY_CREATURE = "CLIENT_PLAY_CREATURE";
-export const clientPlayCreature = card => async (dispatch, getState) => {
+export const clientPlayCreature = boxId => async (dispatch, getState) => {
   const state = getState();
-  const unitId = Box.traverse(card, state.game.boxes, state.client.keys);
-  const unit = getState().game.units[unitId];
+  const unitId = Box.traverse(boxId, state.game.boxes, state.client.keys);
+  const unit = state.game.units[unitId];
   await dispatch({
     type: CLIENT_PLAY_CREATURE,
-    card,
+    boxId,
     unit
   });
 
@@ -75,9 +75,8 @@ export const clientPlayCreatureTarget = card => async (dispatch, getState) => {
 };
 
 export const clientPlayCreatureDone = () => (dispatch, getState) => {
-  const { playingCard, targets } = getState().client;
-  const privateKey = getState().secret[playingCard.id].private;
-  dispatch(playCreature({ id: playingCard.id, privateKey, targets }));
+  const boxId = getState().client.playingBoxId;
+  dispatch(playCard({ boxId }));
 };
 
 export const clientStartTarget = () => (dispatch, getState) => {
