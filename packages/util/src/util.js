@@ -27,6 +27,28 @@ export const rotateArray = (arr, startElem) => {
   return output;
 };
 
+/**
+ * Get the player to the left of this one
+ */
+export const getLeftPlayer = (playerId, players) => {
+  const index = players.indexOf(playerId);
+  if (index === 0) {
+    return players[players.length - 1];
+  }
+  return players[index - 1];
+};
+
+/**
+ * Get the player to the right of this one
+ */
+export const getRightPlayer = (playerId, players) => {
+  const index = players.indexOf(playerId);
+  if (index === players.length - 1) {
+    return players[0];
+  }
+  return players[index + 1];
+};
+
 export const traverseSecret = (secret, secrets) => {
   if (!secret || !secret.secret) {
     return secret;

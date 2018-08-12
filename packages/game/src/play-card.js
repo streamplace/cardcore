@@ -1,23 +1,23 @@
-import { Box } from "@cardcore/util";
+import { Box, getLeftPlayer } from "@cardcore/util";
 import { PLAY_CREATURE } from "./play-creature";
 import { START_GAME } from "./start-game";
 
 export const PLAY_CARD = "PLAY_CARD";
-export const playCard = ({ boxId }) => (dispatch, getState) => {
+export const playCard = ({ boxId }) => ({
+  type: "PLAY_CARD",
+  boxId
+});
+
+export const REVEAL_CARD = "REVEAL_CARD";
+export const revealCard = ({ boxId }) => (dispatch, getState) => {
   const state = getState();
   const me = state.client.keys;
   const box = state.game.boxes[boxId];
-  const keys = state.game.playerOrder.filter(id => id !== me.id).reduce(
-    (keys, playerId) => ({
-      ...keys,
-      [playerId]: Box.addKey(box, me, playerId)
-    }),
-    {}
-  );
+  const privateKey = Box.getPrivate(box, me);
   dispatch({
-    type: "PLAY_CARD",
+    type: "REVEAL_CARD",
     boxId,
-    keys
+    privateKey
   });
 };
 
@@ -37,28 +37,18 @@ export const playCardReducer = (state, action) => {
   }
 
   if (action.type === PLAY_CARD) {
-    const box = state.game.boxes[action.boxId];
-    const playerIds = state.game.playerOrder.filter(
-      id => id !== action._sender
-    );
     return {
       ...state,
       game: {
         ...state.game,
-        boxes: {
-          ...state.game.boxes,
-          [action.boxId]: {
-            ...box,
-            keys: playerIds.reduce(
-              (keys, playerId) => ({
-                ...keys,
-                [playerId]: action.keys[playerId]
-              }),
-              box.keys
-            )
-          }
-        },
         nextActions: [
+          {
+            playerId: getLeftPlayer(action._sender, state.game.playerOrder),
+            action: {
+              type: REVEAL_CARD,
+              boxId: action.boxId
+            }
+          },
           ...state.game.nextActions,
           {
             playerId: action._sender,
@@ -68,6 +58,42 @@ export const playCardReducer = (state, action) => {
             }
           }
         ]
+      }
+    };
+  }
+
+  if (action.type === REVEAL_CARD) {
+    const box = state.game.boxes[action.boxId];
+    const newBox = {
+      ...box,
+      privateKey: action.privateKey
+    };
+    const contents = Box.open(action.boxId, newBox, null);
+    // if there's another box in here, pass to the player on our left
+    let nextActions = state.game.nextActions;
+    if (state.game.boxes[contents]) {
+      nextActions = [
+        {
+          playerId: getLeftPlayer(action._sender, state.game.playerOrder),
+          action: {
+            type: REVEAL_CARD,
+            boxId: contents
+          }
+        },
+        ...nextActions
+      ];
+    } else if (!state.game.units[contents]) {
+      throw new Error(`invalid card: ${contents}`);
+    }
+    return {
+      ...state,
+      game: {
+        ...state.game,
+        boxes: {
+          ...state.game.boxes,
+          [action.boxId]: newBox
+        },
+        nextActions: nextActions
       }
     };
   }

@@ -29,7 +29,7 @@ export const playCreatureReducer = (state, action) => {
             ...player,
             availableMana: player.availableMana - unit.cost,
             hand: player.hand.filter(c => c !== boxId),
-            field: [boxId, ...player.field]
+            field: [unitId, ...player.field]
           }
         },
         units: { ...state.game.units, [unitId]: { ...unit, canAttack: false } },
