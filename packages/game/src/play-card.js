@@ -37,27 +37,33 @@ export const playCardReducer = (state, action) => {
   }
 
   if (action.type === PLAY_CARD) {
+    let nextActions = [
+      ...state.game.nextActions,
+      {
+        playerId: action._sender,
+        action: {
+          type: PLAY_CREATURE,
+          boxId: action.boxId
+        }
+      }
+    ];
+    if (!state.game.units[action.boxId]) {
+      nextActions = [
+        {
+          playerId: getLeftPlayer(action._sender, state.game.playerOrder),
+          action: {
+            type: REVEAL_CARD,
+            boxId: action.boxId
+          }
+        },
+        ...nextActions
+      ];
+    }
     return {
       ...state,
       game: {
         ...state.game,
-        nextActions: [
-          {
-            playerId: getLeftPlayer(action._sender, state.game.playerOrder),
-            action: {
-              type: REVEAL_CARD,
-              boxId: action.boxId
-            }
-          },
-          ...state.game.nextActions,
-          {
-            playerId: action._sender,
-            action: {
-              type: PLAY_CREATURE,
-              boxId: action.boxId
-            }
-          }
-        ]
+        nextActions: nextActions
       }
     };
   }

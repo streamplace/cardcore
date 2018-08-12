@@ -1,5 +1,4 @@
 import { targetArray } from "@cardcore/util";
-import { clientGenerateKey, clientBox } from "@cardcore/client";
 
 export const BOUNCE = "BOUNCE";
 export const bounce = ({ target }) => {
@@ -8,12 +7,9 @@ export const bounce = ({ target }) => {
 
 export const BOUNCE_ENCRYPT = "BOUNCE_ENCRYPT";
 export const bounceEncrypt = ({ unitId }) => async (dispatch, getState) => {
-  const { keys } = await dispatch(clientGenerateKey());
-  const card = await dispatch(clientBox(unitId, keys));
   return dispatch({
     type: "BOUNCE_ENCRYPT",
-    unitId,
-    card
+    unitId
   });
 };
 
@@ -49,7 +45,7 @@ export const bounceReducer = (state, action) => {
           ...state.game.players,
           [action._sender]: {
             ...player,
-            hand: [...player.hand, action.card],
+            hand: [...player.hand, action.unitId],
             field: player.field.filter(unitId => unitId !== action.unitId)
           }
         }
