@@ -36,7 +36,7 @@ export class Sidebar extends React.Component {
               return (
                 <Card
                   card={card}
-                  key={card.id}
+                  key={card}
                   location="hand"
                   playerId={this.props.playerId}
                 />
