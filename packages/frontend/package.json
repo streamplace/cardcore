@@ -39,5 +39,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "main": "package.json"
 }
