@@ -4,6 +4,8 @@ this project uses [mental poker](https://en.wikipedia.org/wiki/Mental_poker) alg
 
 ## development
 
+yarn workspaces seem to be the easiest way to monorepo right now so we're using that.
+
 ```
 yarn install
 npm run start
