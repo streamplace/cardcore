@@ -22,5 +22,8 @@
     "start": "run-p start:dev-proxy start:server",
     "start:dev-proxy": "node-dev --respawn dist/dev-proxy.js",
     "start:server": "node-dev --respawn dist/index.js"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
