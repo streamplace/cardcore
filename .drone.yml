@@ -1,4 +1,3 @@
-
 pipeline:
   test:
     environment:
@@ -17,4 +16,4 @@ pipeline:
       - npm_token
     commands:
       - npm config set '//registry.npmjs.org/:_authToken' $NPM_TOKEN
-      - npx lerna publish --repo-version $(node -p 'require("./lerna.json").version')-${DRONE_COMMIT:0:8} --skip-git --yes --npm-tag $DRONE_BRANCH
+      - npx lerna publish --repo-version $(node -p 'require("./lerna.json").version')-${DRONE_COMMIT:0:8} --skip-git --yes --npm-tag $DRONE_BRANCH --exact
