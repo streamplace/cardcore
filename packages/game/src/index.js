@@ -23,6 +23,7 @@ export const gameReducer = (state, action) => {
     return {
       ...state,
       game: {
+        ...state.game,
         startTime: action.startTime,
         nextActions: [
           {

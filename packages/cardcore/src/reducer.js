@@ -1,5 +1,6 @@
 import * as gameActions from "@cardcore/game";
 import * as clientActions from "@cardcore/client";
+import queueReducer from "./queue-reducer";
 import { rando } from "@cardcore/util";
 
 // automatically find any reducer functions in the actions file and call them
@@ -28,7 +29,9 @@ const secret = function(state = {}, action) {
   return state;
 };
 
-export default function rootReducer(state = {}, action) {
+const DEFAULT_STATE = { game: {} };
+
+export default function rootReducer(state = DEFAULT_STATE, action) {
   let startRandoSeed = state.game && state.game.randoSeed;
   if (state.game && state.game.randoSeed) {
     rando.setSeed(startRandoSeed);
@@ -84,6 +87,9 @@ export default function rootReducer(state = {}, action) {
         randoSeed: rando.seed
       }
     };
+  }
+  if (gameActions[action.type]) {
+    state = queueReducer(state, action);
   }
   rando.clearSeed();
   return state;

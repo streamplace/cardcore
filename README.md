@@ -8,3 +8,13 @@ this project uses [mental poker](https://en.wikipedia.org/wiki/Mental_poker) alg
 yarn install
 npm run start
 ```
+
+## actions
+
+required fields on an action:
+
+- prev (null for CREATE_GAME)
+- next
+- user
+- type
+- signature
