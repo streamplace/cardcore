@@ -101,7 +101,12 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 app.post(hashRegex, async (req, res) => {
   const action = req.body;
   if (req.body.next !== req.params[0]) {
-    return res.sendStatus(400);
+    res.status(400);
+    return res.json({
+      error: "body.next and url don't match",
+      body: req.body,
+      params: req.params
+    });
   }
   const verified = ssbKeys.verifyObj(
     {
@@ -127,7 +132,8 @@ app.post(hashRegex, async (req, res) => {
         }
       }
       if (nextState) {
-        res.sendStatus(410);
+        res.status(410);
+        res.send({ error: "key already exists" });
         return;
       }
     }
@@ -144,8 +150,8 @@ app.post(hashRegex, async (req, res) => {
     await req.store.put(`${action.prev}/next`, stringify(action));
     res.sendStatus(204);
   } catch (err) {
-    console.error(err);
-    res.sendStatus(400);
+    res.status(400);
+    res.send({ error: err.message });
   }
 });
 
