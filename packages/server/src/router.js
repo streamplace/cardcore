@@ -33,9 +33,11 @@ app.head(nextRegex, async (req, res) => {
     if (err.name === "NotFoundError") {
       return res.sendStatus(404);
     }
-    console.error(err);
     res.status(500);
-    res.end();
+    res.json({
+      error: err.message,
+      stack: err.stack
+    });
   }
 });
 
@@ -92,7 +94,10 @@ app.get(nextRegex, async (req, res) => {
     })
     .on("error", err => {
       res.status(500);
-      res.send(err);
+      res.json({
+        error: err.message,
+        stack: err.stack
+      });
     });
 });
 
