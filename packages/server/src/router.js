@@ -152,7 +152,9 @@ app.post(hashRegex, async (req, res) => {
       });
     }
     await req.store.put(newHash, stringify(newState.game));
-    await req.store.put(`${action.prev}/next`, stringify(action));
+    if (action.prev) {
+      await req.store.put(`${action.prev}/next`, stringify(action));
+    }
     res.sendStatus(204);
   } catch (err) {
     res.status(400);
