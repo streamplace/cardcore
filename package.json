@@ -10,6 +10,7 @@
     "start:watch": "run-p start:babel-watch start:packages",
     "start:babel-watch": "NODE_ENV=development lerna exec --concurrency=999 --no-sort --stream -- babel --copy-files -d dist --source-maps true --skip-initial-build --source-root '$PWD'/dist --watch src",
     "start:packages": "lerna run --no-sort --concurrency=999 --stream start",
+    "test": "run-s test:lint test:packages",
     "test:lint": "lerna exec --stream dependency-check ./package.json",
     "test:packages": "lerna run --stream test",
     "prepare": "NODE_ENV=production run-s prepare:babel",
