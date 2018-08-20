@@ -11,7 +11,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@streamplace/ssb-keys": "7.0.18",
+    "@streamplace/ssb-keys": "7.0.20",
     "isomorphic-fetch": "^2.2.1",
     "json-stable-stringify": "^1.0.1"
   }
