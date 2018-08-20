@@ -1,10 +1,9 @@
 // import signalhub from "signalhub";
 import * as gameActions from "@cardcore/game";
 import { CLIENT_LOAD_STATE_DONE, clientPoll } from "@cardcore/client";
-import { hashState } from "@cardcore/util";
+import { hashState, serverFetch } from "@cardcore/util";
 import ssbKeys from "@streamplace/ssb-keys";
 import stringify from "json-stable-stringify";
-import fetch from "isomorphic-fetch";
 
 export const REMOTE_ACTION = Symbol("REMOTE_ACTION");
 
@@ -76,7 +75,7 @@ export function gameMiddleware(store) {
           prev,
           next
         });
-        const res = await fetch(`/${encodeURIComponent(next)}`, {
+        const res = await serverFetch(`/${encodeURIComponent(next)}`, {
           method: "POST",
           body: stringify(signedAction),
           headers: {

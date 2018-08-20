@@ -1,4 +1,4 @@
-import { hashState } from "@cardcore/util";
+import { hashState, serverFetch } from "@cardcore/util";
 import { REMOTE_ACTION } from "cardcore";
 
 // this isn't a redux action really, don't tell anyone
@@ -13,7 +13,7 @@ export const clientGetGameHash = () => (dispatch, getState) => {
 export const CLIENT_LOAD_STATE_START = "CLIENT_LOAD_STATE_START";
 export const CLIENT_LOAD_STATE_DONE = "CLIENT_LOAD_STATE_DONE";
 export const clientLoadState = gameId => async (dispatch, getState) => {
-  const res = await fetch(`/${gameId}.sha256`);
+  const res = await serverFetch(`/${gameId}.sha256`);
   if (res.status !== 200) {
     const err = await res.text();
     console.error(err);
@@ -28,13 +28,13 @@ export const clientLoadState = gameId => async (dispatch, getState) => {
   });
   while (true) {
     const hash = await dispatch(clientGetGameHash());
-    const headRes = await fetch(`/${hash}/next`, {
+    const headRes = await serverFetch(`/${hash}/next`, {
       method: "HEAD"
     });
     if (headRes.status !== 204) {
       break;
     }
-    const actionRes = await fetch(`/${hash}/next`);
+    const actionRes = await serverFetch(`/${hash}/next`);
     const action = await actionRes.json();
     await dispatch({ ...action, [REMOTE_ACTION]: true });
   }
@@ -66,7 +66,7 @@ export const clientPoll = () => async (dispatch, getState) => {
   };
   const poll = async () => {
     const hash = await dispatch(clientGetGameHash());
-    const res = await fetch(`/${hash}/next`);
+    const res = await serverFetch(`/${hash}/next`);
     if (!res.ok || res.status === 204) {
       return backoff();
     }

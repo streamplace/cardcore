@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@streamplace/ssb-keys": "7.0.18",
+    "isomorphic-fetch": "^2.2.1",
     "json-stable-stringify": "^1.0.1"
   }
 }
