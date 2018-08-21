@@ -26,13 +26,13 @@
   },
   "scripts": {
     "start": "run-p start:react start:opn",
-    "start:react": "PORT=3002 BROWSER=none react-scripts start | cat",
-    "start:opn": "sleep 3; opn http://localhost:3000",
+    "start:react": "cross-env PORT=3002 BROWSER=none react-scripts start | cat",
+    "start:opn": "opn http://localhost:3000",
     "production": "run-p production:proxy start:signalhub production:serve",
     "production:serve": "serve -s -l 3002 build",
     "prepare": "react-scripts build",
     "build": "npm run prepare",
-    "test": "CI=true react-scripts test --env=jsdom --forceExit"
+    "test": "cross-env CI=true react-scripts test --env=jsdom --forceExit"
   },
   "devDependencies": {
     "@streamplace/react-scripts": "1.1.4-fork",
