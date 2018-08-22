@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@cardcore/util": "^0.0.1",
+    "buffer": "^5.2.0",
     "crna-make-symlinks-for-yarn-workspaces": "^1.0.1",
     "expo": "^27.0.1",
     "metro-bundler-config-yarn-workspaces": "^1.0.3",

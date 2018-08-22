@@ -2,6 +2,11 @@
   "expo": {
     "sdkVersion": "27.0.0",
     "slug": "cardcore-native",
-    "entryPoint": "./crna-entry.js"
+    "entryPoint": "./crna-entry.js",
+    "ignoreNodeModulesValidation": true,
+    "packagerOpts": {
+      "config": "rn-cli.config.js",
+      "projectRoots": ""
+    }
   }
 }
