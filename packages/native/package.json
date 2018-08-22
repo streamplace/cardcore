@@ -1,14 +1,15 @@
 {
-  "name": "native",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@cardcore/native",
+  "version": "0.0.1",
+  "private": false,
   "devDependencies": {
     "jest-expo": "~27.0.0",
     "react-native-scripts": "1.14.0",
     "react-test-renderer": "16.3.1"
   },
-  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
+  "main": "./crna-entry.js",
   "scripts": {
+    "prestart": "node link-workspaces.js",
     "start": "react-native-scripts start",
     "eject": "react-native-scripts eject",
     "android": "react-native-scripts android",
@@ -20,7 +21,9 @@
   },
   "dependencies": {
     "@cardcore/util": "^0.0.1",
+    "crna-make-symlinks-for-yarn-workspaces": "^1.0.1",
     "expo": "^27.0.1",
+    "metro-bundler-config-yarn-workspaces": "^1.0.3",
     "react": "16.3.1",
     "react-native": "~0.55.2"
   }
