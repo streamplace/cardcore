@@ -1,25 +1,26 @@
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
-import ButtCards from "./butt-cards";
+import { Router as ReactRouter, Route, RouteSwitch } from "@cardcore/elements";
+// import ButtCards from "./butt-cards";
 import FrontPage from "./front-page";
 import { Provider } from "react-redux";
-import { createStore } from "cardcore";
+import { createStore } from "redux";
+// import { createStore } from "cardcore";
 
 export default class Router extends React.Component {
   constructor() {
     super();
-    this.store = createStore();
+    this.store = createStore((state = {}, action) => state);
   }
 
   render() {
     return (
       <Provider store={this.store}>
-        <BrowserRouter>
-          <Switch>
-            <Route path="/game/:gameId" component={ButtCards} />
+        <ReactRouter>
+          <RouteSwitch>
+            {/* <Route path="/game/:gameId" component={ButtCards} /> */}
             <Route path="/" component={FrontPage} />
-          </Switch>
-        </BrowserRouter>
+          </RouteSwitch>
+        </ReactRouter>
       </Provider>
     );
   }
