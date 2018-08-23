@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": false,
   "devDependencies": {
+    "jest": "^23.5.0",
     "jest-expo": "~27.0.0",
     "react-native-scripts": "1.14.0",
     "react-test-renderer": "16.3.1"
@@ -14,11 +15,9 @@
     "eject": "react-native-scripts eject",
     "android": "react-native-scripts android",
     "ios": "react-native-scripts ios",
-    "test": "jest"
+    "test": "jest dist"
   },
-  "jest": {
-    "preset": "jest-expo"
-  },
+  "jest": {},
   "dependencies": {
     "@cardcore/util": "^0.0.1",
     "buffer": "^5.2.0",
