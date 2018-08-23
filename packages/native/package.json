@@ -14,8 +14,7 @@
     "start": "react-native-scripts start",
     "eject": "react-native-scripts eject",
     "android": "react-native-scripts android",
-    "ios": "react-native-scripts ios",
-    "test": "jest dist"
+    "ios": "react-native-scripts ios"
   },
   "jest": {},
   "dependencies": {
