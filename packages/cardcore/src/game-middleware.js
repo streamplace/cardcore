@@ -5,7 +5,8 @@ import { hashState, serverFetch } from "@cardcore/util";
 import ssbKeys from "@streamplace/ssb-keys";
 import stringify from "json-stable-stringify";
 
-export const REMOTE_ACTION = Symbol("REMOTE_ACTION");
+// this used to be a Symbol, but not supported on android?! weird.
+export const REMOTE_ACTION = "__REMOTE_ACTION";
 
 export function gameMiddleware(store) {
   const server = `${document.location.protocol}//${document.location.host}`;

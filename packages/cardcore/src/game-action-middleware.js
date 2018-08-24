@@ -10,9 +10,10 @@
 import * as actions from "@cardcore/game";
 
 const actionMap = {};
-for (const [key, value] of Object.entries(actions)) {
+Object.keys(actions).forEach(key => {
+  const value = actions[key];
   if (typeof value !== "string" || key !== value) {
-    continue;
+    return;
   }
   const camelCase = value
     .split("_")
@@ -22,7 +23,7 @@ for (const [key, value] of Object.entries(actions)) {
   if (actions[actionCreator]) {
     actionMap[value] = actions[actionCreator];
   }
-}
+});
 
 /**
  * two kinds of actions are allowed - you can either be a human that did an action on your turn or you can be a computer handling the most recent action in nextactions

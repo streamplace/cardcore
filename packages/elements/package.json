@@ -10,6 +10,7 @@
   "license": "Apache-2.0",
   "private": false,
   "dependencies": {
+    "open-sans-fontface": "^1.4.0",
     "react-art": "^16.4.2",
     "react-native-web": "^0.8.9",
     "react-router-dom": "^4.3.1",
