@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import styled from "styled-components";
 
 function createElement(name, type) {
   function CreateElement(props) {
@@ -19,7 +20,10 @@ function createElement(name, type) {
   return CreateElement;
 }
 
-const Svg = createElement("Svg", "svg");
+let Svg = createElement("Svg", "svg");
+Svg = styled.svg`
+  user-select: none;
+`;
 
 Svg.Circle = createElement("Circle", "circle");
 Svg.ClipPath = createElement("ClipPath", "clipPath");

@@ -4,7 +4,8 @@ import {
   Route,
   RouteSwitch,
   bootstrap,
-  View
+  View,
+  Events
 } from "@cardcore/elements";
 // import ButtCards from "./butt-cards";
 import FrontPage from "./front-page";
@@ -19,11 +20,23 @@ export default class Router extends React.Component {
     this.state = {
       ready: false
     };
+    this.handleResize = this.handleResize.bind(this);
+  }
+
+  handleResize() {
+    this.setState({
+      resizeTime: Date.now()
+    });
   }
 
   async componentDidMount() {
     await bootstrap();
     this.setState({ ready: true });
+    Events.on("resize", this.handleResize);
+  }
+
+  componentWillUnmount() {
+    Events.off("resize", this.handleResize);
   }
 
   render() {

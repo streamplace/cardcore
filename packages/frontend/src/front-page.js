@@ -35,19 +35,25 @@ class FrontPage extends React.Component {
     const { width } = getDimensions();
     const cards = [
       {
+        name: "Stinky Mouse",
         mana: 1,
         attack: 2,
-        health: 3
+        health: 3,
+        text: ["Sneaky", "ON ENTER: Deal 1 damage to all other creatures."]
       },
       {
+        name: "Stinkier Mouse",
         mana: 4,
         attack: 5,
-        health: 6
+        health: 6,
+        text: ["Charge, Sneaky"]
       },
       {
+        name: "Stinkiest Mouse",
         mana: 10,
         attack: 10,
-        health: 10
+        health: 10,
+        text: ["Sneaky", "WHEN DAMAGED: Deal 1 damage to all other creatures."]
       }
     ];
     return (
