@@ -10,9 +10,10 @@ const HEIGHT = (1024 * 3) / 2;
 
 const IMAGE_BOTTOM = (WIDTH * 5) / 6;
 
-const BOX_WIDTH = 250;
+const BOX_SIZE = 225;
+const MANA_BOX_SIZE = 250;
 
-const OVERHANG_RATIO = 9 / 10;
+const OVERHANG_RATIO = 10 / 10;
 const OVERHANG_WIDTH = OVERHANG_RATIO * WIDTH;
 const OVERHANG_HEIGHT = OVERHANG_RATIO * HEIGHT;
 const OVERHANG_TRANSLATE_X = (WIDTH - OVERHANG_WIDTH) / 2;
@@ -35,7 +36,7 @@ const TEMP_DEFAULT_CARD = {
 
 const NumberBox = props => (
   <Svg.G
-    transform={`translate(${props.x} ${props.y}) scale(${BOX_WIDTH / 1000}) `}
+    transform={`translate(${props.x} ${props.y}) scale(${props.size / 1000}) `}
     width={1000}
     height={1000}
   >
@@ -82,7 +83,7 @@ const CardTextWrapper = styled(View)`
   width: ${props => (OVERHANG_WIDTH - TEXT_MARGIN * 2) * props.scale}px;
   top: ${props => TEXT_BOX_START * props.scale}px;
   height: ${props =>
-    (HEIGHT - TEXT_BOX_START - OVERHANG_TRANSLATE_Y - TEXT_MARGIN - 75) *
+    (HEIGHT - TEXT_BOX_START - OVERHANG_TRANSLATE_Y - TEXT_MARGIN - 175) *
     props.scale}px;
   left: ${props => (OVERHANG_TRANSLATE_X + TEXT_MARGIN) * props.scale}px;
   z-index: 1;
@@ -194,22 +195,30 @@ export class CardSVG extends React.Component {
           </Svg.G>
 
           {/* mana box */}
-          <NumberBox value={card.cost} x={0} y={0} bg="rgb(15, 143, 255)" />
+          <NumberBox
+            size={MANA_BOX_SIZE}
+            value={card.cost}
+            x={0}
+            y={0}
+            bg="rgb(15, 143, 255)"
+          />
 
           {/* attack box */}
           <NumberBox
             value={card.attack}
             x={0}
-            y={HEIGHT - BOX_WIDTH}
+            y={HEIGHT - BOX_SIZE}
             bg="rgb(216, 163, 24)"
+            size={BOX_SIZE}
           />
 
           {/* health box */}
           <NumberBox
             value={card.health}
-            x={WIDTH - BOX_WIDTH}
-            y={HEIGHT - BOX_WIDTH}
+            x={WIDTH - BOX_SIZE}
+            y={HEIGHT - BOX_SIZE}
             bg="#f91717"
+            size={BOX_SIZE}
           />
         </Svg>
       </ViewWrapper>

@@ -6,6 +6,8 @@ import { connect } from "react-redux";
 import Face from "./face";
 import { View } from "@cardcore/elements";
 
+const VERT_PADDING = 10;
+
 const SidebarVert = styled(View)`
   display: flex;
   flex-direction: column;
@@ -18,7 +20,7 @@ const SidebarBox = styled(View)`
   flex-grow: 1;
   display: flex;
   flex-direction: row;
-  padding: 0px 10px;
+  padding: ${VERT_PADDING}px 10px;
 `;
 
 const HandBox = styled(View)`
@@ -41,7 +43,7 @@ export class Sidebar extends React.Component {
                 <Card
                   cardId={cardId}
                   key={cardId}
-                  height={height}
+                  height={height - VERT_PADDING * 2}
                   location="hand"
                   playerId={this.props.playerId}
                 />
