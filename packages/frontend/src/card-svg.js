@@ -1,7 +1,9 @@
 import React from "react";
 import { View, Text, Svg, fonts, isWeb } from "@cardcore/elements";
+import { Box } from "@cardcore/util";
 import mouseSquare from "./mouse_square.png";
 import styled from "styled-components";
+import { connect } from "react-redux";
 
 const WIDTH = 1024;
 const HEIGHT = (1024 * 3) / 2;
@@ -19,9 +21,17 @@ const OVERHANG_TRANSLATE_Y = (HEIGHT - OVERHANG_HEIGHT) / 2;
 const TITLE_SIZE = 100;
 
 const TEXT_BOX_START = IMAGE_BOTTOM + TITLE_SIZE + 50;
-const TEXT_SIZE = 50;
+const TEXT_SIZE = 60;
 const TEXT_MIDDLE = HEIGHT - (HEIGHT - IMAGE_BOTTOM) / 2;
 const TEXT_MARGIN = 30;
+
+const TEMP_DEFAULT_CARD = {
+  name: "Stinky Mouse",
+  cost: 1,
+  attack: 2,
+  health: 3,
+  text: ["Sneaky", "ON ENTER: Deal 1 damage to all other creatures."]
+};
 
 const NumberBox = props => (
   <Svg.G
@@ -51,6 +61,7 @@ const ViewWrapper = styled(View)`
   height: ${props => props.height}px;
   width: ${props => props.width}px;
   ${isWeb() && "user-select: none"};
+  margin: 0 10px;
 `;
 
 const CardTitle = styled(Text)`
@@ -85,7 +96,7 @@ const CardText = styled(Text)`
   color: white;
 `;
 
-export default class CardSVG extends React.Component {
+export class CardSVG extends React.Component {
   componentDidMount() {
     this.timeout = setInterval(
       () => this.setState({ reload: Date.now() }),
@@ -97,6 +108,9 @@ export default class CardSVG extends React.Component {
   }
   render() {
     let { width, height, card } = this.props;
+    if (!card) {
+      card = TEMP_DEFAULT_CARD;
+    }
     if (!width && !height) {
       throw new Error("need width or height for a card");
     }
@@ -135,7 +149,7 @@ export default class CardSVG extends React.Component {
           boxHeight={height}
           scale={width / WIDTH}
         >
-          {card.text.map((line, i) => (
+          {(card.text || []).map((line, i) => (
             <CardText
               key={i}
               x="500"
@@ -144,7 +158,7 @@ export default class CardSVG extends React.Component {
               textAnchor="middle"
               fontFamily={fonts.title}
               fontWeight="600"
-              fontSize={60}
+              fontSize={TEXT_SIZE}
               fill="white"
               boxWidth={width}
               boxHeight={height}
@@ -180,7 +194,7 @@ export default class CardSVG extends React.Component {
           </Svg.G>
 
           {/* mana box */}
-          <NumberBox value={card.mana} x={0} y={0} bg="rgb(15, 143, 255)" />
+          <NumberBox value={card.cost} x={0} y={0} bg="rgb(15, 143, 255)" />
 
           {/* attack box */}
           <NumberBox
@@ -202,3 +216,28 @@ export default class CardSVG extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state, props) => {
+  const cardId = Box.traverse(
+    props.cardId,
+    state.game.boxes,
+    state.client.keys
+  );
+  let card;
+  if (cardId) {
+    card = state.game.units[cardId];
+  }
+  return {
+    card: card,
+    cardId: cardId,
+    targetingUnit: state.client.targetingUnit,
+    targets: state.client.targets,
+    secret: state.secret,
+    player: state.game.players[props.playerId],
+    myTurn: state.client.keys.id === state.game.turn,
+    myUnit: state.client.keys.id === props.playerId,
+    availableTargets: state.client.availableTargets
+  };
+};
+
+export default connect(mapStateToProps)(CardSVG);

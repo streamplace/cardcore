@@ -5,16 +5,14 @@ import styled from "styled-components";
 import { endTurn } from "@cardcore/game";
 
 const FieldBox = styled.div`
-  flex-grow: 2;
-  flex-basis: 0;
-  display: flex;
-  flex-direction: column;
+  height: ${props => props.height}px;
 `;
 
 const Middle = styled.div`
   height: 0px;
   border-bottom: 1px solid black;
   position: relative;
+  top: ${props => props.top}px;
 `;
 
 const EndTurn = styled.button`
@@ -31,14 +29,15 @@ const Loading = styled.div``;
 
 export class Field extends React.Component {
   render() {
+    const { height } = this.props;
     const text = this.props.myTurn ? "End Turn" : "Their Turn";
     const notMe = this.props.playerOrder.filter(
       x => x !== this.props.currentPlayer
     )[0];
     return (
-      <FieldBox>
+      <FieldBox height={height}>
         <FieldSide playerId={notMe} />
-        <Middle>
+        <Middle top={height / 2}>
           <EndTurn
             myTurn={this.props.myTurn}
             onClick={() => {

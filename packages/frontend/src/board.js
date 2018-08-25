@@ -10,23 +10,22 @@ import {
 } from "@cardcore/client";
 import { joinGameStart } from "@cardcore/game";
 import { diff } from "deep-diff";
+import { View, Text, getDimensions } from "@cardcore/elements";
 
-const BoardWrapper = styled.div`
+const BoardWrapper = styled(View)`
   height: 100%;
-  display: flex;
-  flex-direction: column;
   ${props => props.disableSelect && "user-select: none"};
 `;
 
-const DesyncBox = styled.div`
+const DesyncBox = styled(View)`
   user-select: default;
 `;
 
-const BigMessage = styled.p`
+const BigMessage = styled(Text)`
   font-size: 2em;
 `;
 
-const LinkBox = styled.pre`
+const LinkBox = styled(Text)`
   font-size: 2em;
   user-select: all;
   background-color: #ccc;
@@ -34,7 +33,7 @@ const LinkBox = styled.pre`
   padding: 1em;
 `;
 
-const LoadingBox = styled.div`
+const LoadingBox = styled(View)`
   padding: 2em;
 `;
 
@@ -60,8 +59,9 @@ export class Board extends React.Component {
   }
 
   render() {
+    const { height } = this.props.dimensions;
     if (this.props.loading) {
-      return <div />;
+      return <View />;
     }
     if (this.props.started) {
       clearInterval(this.interval);
@@ -90,9 +90,9 @@ export class Board extends React.Component {
     if (!this.props.ready) {
       return (
         <LoadingBox>
-          <p>Waiting for another player...</p>
-          <p>Send your friend this link:</p>
-          <p>{document.location.href}</p>
+          <Text>Waiting for another player...</Text>
+          <Text>Send your friend this link:</Text>
+          <Text>{document.location.href}</Text>
         </LoadingBox>
       );
     }
@@ -101,9 +101,9 @@ export class Board extends React.Component {
     )[0];
     return (
       <BoardWrapper disableSelect={true}>
-        <Sidebar playerId={notMe} />
-        <Field />
-        <Sidebar playerId={this.props.currentPlayer} />
+        <Sidebar height={height / 4} playerId={notMe} />
+        <Field height={height / 2} />
+        <Sidebar height={height / 4} playerId={this.props.currentPlayer} />
       </BoardWrapper>
     );
   }

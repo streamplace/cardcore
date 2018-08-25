@@ -29,7 +29,10 @@ class ButtCards extends React.Component {
     return (
       <AppContainer>
         <VersionOverlay>v{pkg.version}</VersionOverlay>
-        <Board gameId={this.props.match.params.gameId} />
+        <Board
+          dimensions={this.props.dimensions}
+          gameId={this.props.match.params.gameId}
+        />
       </AppContainer>
     );
   }

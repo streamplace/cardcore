@@ -5,27 +5,28 @@ import {
   RouteSwitch,
   bootstrap,
   View,
-  Events
+  Events,
+  getDimensions
 } from "@cardcore/elements";
-// import ButtCards from "./butt-cards";
+import ButtCards from "./butt-cards";
 import FrontPage from "./front-page";
 import { Provider } from "react-redux";
-import { createStore } from "redux";
-// import { createStore } from "cardcore";
+import { createStore } from "cardcore";
 
 export default class Router extends React.Component {
   constructor() {
     super();
     this.store = createStore((state = {}, action) => state);
     this.state = {
-      ready: false
+      ready: false,
+      dimensions: getDimensions()
     };
     this.handleResize = this.handleResize.bind(this);
   }
 
   handleResize() {
     this.setState({
-      resizeTime: Date.now()
+      dimensions: getDimensions()
     });
   }
 
@@ -47,7 +48,12 @@ export default class Router extends React.Component {
       <Provider store={this.store}>
         <ReactRouter>
           <RouteSwitch>
-            {/* <Route path="/game/:gameId" component={ButtCards} /> */}
+            <Route
+              path="/game/:gameId"
+              render={props => (
+                <ButtCards dimensions={this.state.dimensions} {...props} />
+              )}
+            />
             <Route path="/" component={FrontPage} />
           </RouteSwitch>
         </ReactRouter>

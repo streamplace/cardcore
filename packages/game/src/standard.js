@@ -9,7 +9,7 @@ export function standard(cost) {
     health: cost,
     type: "creature",
     name: `Standard ${cost}-${cost}`,
-    text: "",
+    text: [],
     onSummon: [],
     onDeath: [],
     onEndOfTurn: [],
@@ -23,7 +23,7 @@ export const onSummonSummon = {
   ...standard(2),
   emoji: "",
   name: "Summon Dude",
-  text: "onSummon: summon a 1/1 creature",
+  text: ["onSummon: summon a 1/1 creature"],
   onSummon: [
     {
       type: "SUMMON_CREATURE",
@@ -37,7 +37,7 @@ export const onSummonBounce = {
   ...standard(1),
   emoji: "",
   name: "Bouncer",
-  text: "onSummon: choose a friendly creature to return to your hand",
+  text: ["onSummon: choose a friendly creature to return to your hand"],
   onSummon: [
     {
       type: "BOUNCE",
@@ -53,7 +53,7 @@ export function threeMaster(cost) {
     health: cost,
     type: "creature",
     name: "Three Master",
-    text: `onSummon: Set all other creatures' Attack and Health to 3`,
+    text: [`onSummon: Set all other creatures' Attack and Health to 3`],
     onSummon: [
       {
         type: "CHANGE_ATTACK",
@@ -77,7 +77,7 @@ export function cardDraw(cost) {
     health: cost,
     type: "creature",
     name: "Card Drawer",
-    text: `onSummon: draw a card`,
+    text: [`onSummon: draw a card`],
     onSummon: [
       {
         type: "DRAW_CARD",
@@ -94,7 +94,7 @@ export const onSummonDamageOwnHero = {
   attack: 3,
   health: 2,
   name: "Owner Damager",
-  text: `onSummon: Deal 3 damage to your hero`,
+  text: [`onSummon: Deal 3 damage to your hero`],
   onSummon: [
     {
       type: "DAMAGE",
@@ -112,7 +112,7 @@ export function damageCreature(cost) {
     health: cost,
     type: "creature",
     name: "Creature Damager",
-    text: `onSummon: deal 1 damage to three target creatures`,
+    text: [`onSummon: deal 1 damage to three target creatures`],
     onSummon: [
       {
         type: "DAMAGE",
@@ -136,7 +136,7 @@ export function damageCreature(cost) {
 export const onSummonRandomDamage = {
   ...standard(2),
   name: "Random Creature Damager",
-  text: `onSummon: deal 1 random damage to three target creatures`,
+  text: [`onSummon: deal 1 random damage to three target creatures`],
   onSummon: [
     {
       type: "DAMAGE",
