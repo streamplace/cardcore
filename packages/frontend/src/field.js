@@ -10,22 +10,27 @@ const FieldBox = styled(View)`
 `;
 
 const Middle = styled(View)`
-  height: 0px;
+  height: 1px;
+  width: 100%;
   border-bottom-width: 1px;
   border-bottom-color: black;
   position: absolute;
   top: ${props => props.top}px;
+  z-index: 2;
 `;
 
 const EndTurn = styled(TouchableOpacity)`
   position: absolute;
-  font-size: 24px;
   right: 10px;
-  top: -20px;
+  background-color: white;
+  top: -15px;
   z-index: 2;
   height: 30px;
+`;
 
+const EndTurnText = styled(Text)`
   color: ${props => (props.myTurn ? "black" : "#555")};
+  font-size: 24px;
 `;
 
 const Loading = styled(View)``;
@@ -47,7 +52,9 @@ export class Field extends React.Component {
               this.props.dispatch(endTurn());
             }}
           >
-            <Text>{this.props.loading ? "Loading..." : text}</Text>
+            <EndTurnText>
+              {this.props.loading ? "Loading..." : text}
+            </EndTurnText>
           </EndTurn>
         </Middle>
         <FieldSide playerId={this.props.currentPlayer} />
