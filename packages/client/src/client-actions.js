@@ -1,6 +1,7 @@
 import { playCard } from "@cardcore/game";
 import { Box, target as targetHelper } from "@cardcore/util";
 import ssbKeys from "@streamplace/ssb-keys";
+import { Storage } from "@cardcore/elements";
 
 export * from "./client-poll";
 
@@ -109,35 +110,25 @@ export const CLIENT_START_TARGET = "CLIENT_START_TARGET";
 export const CLIENT_PICK_TARGET = "CLIENT_PICK_TARGET";
 export const CLIENT_GENERATE_IDENTITY = "CLIENT_GENERATE_IDENTITY";
 const CARDCORE_IDENTITY = "CARDCORE_IDENTITY";
-export const clientGenerateIdentity = () => {
-  let storage;
-  if (typeof localStorage === "object") {
-    storage = localStorage;
-  } else {
-    // noop i guess? idk this only happens in jsdom?
-    storage = {
-      getItem: () => null,
-      setItem: () => null,
-      removeItem: () => null
-    };
-  }
+export const clientGenerateIdentity = () => async dispatch => {
+  const storedItem = await Storage.getItem(CARDCORE_IDENTITY);
   let keys;
-  if (storage.getItem(CARDCORE_IDENTITY)) {
+  if (storedItem) {
     try {
-      keys = JSON.parse(storage.getItem(CARDCORE_IDENTITY));
+      keys = JSON.parse(storedItem);
     } catch (e) {
       console.error("error parsing cardcore identity, clearing", e);
-      storage.removeItem(CARDCORE_IDENTITY);
+      await Storage.removeItem(CARDCORE_IDENTITY);
     }
   }
   if (!keys) {
     keys = ssbKeys.generate();
-    storage.setItem(CARDCORE_IDENTITY, JSON.stringify(keys));
+    await Storage.setItem(CARDCORE_IDENTITY, JSON.stringify(keys));
   }
-  return {
+  dispatch({
     type: CLIENT_GENERATE_IDENTITY,
     keys
-  };
+  });
 };
 
 export const CLIENT_GENERATE_KEY = "CLIENT_GENERATE_KEY";

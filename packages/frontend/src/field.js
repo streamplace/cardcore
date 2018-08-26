@@ -3,29 +3,32 @@ import FieldSide from "./field-side";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { endTurn } from "@cardcore/game";
+import { View, TouchableOpacity, Text } from "@cardcore/elements";
 
-const FieldBox = styled.div`
+const FieldBox = styled(View)`
   height: ${props => props.height}px;
 `;
 
-const Middle = styled.div`
+const Middle = styled(View)`
   height: 0px;
-  border-bottom: 1px solid black;
-  position: relative;
+  border-bottom-width: 1px;
+  border-bottom-color: black;
+  position: absolute;
   top: ${props => props.top}px;
 `;
 
-const EndTurn = styled.button`
+const EndTurn = styled(TouchableOpacity)`
   position: absolute;
-  font-size: 2em;
+  font-size: 24px;
   right: 10px;
   top: -20px;
   z-index: 2;
+  height: 30px;
 
   color: ${props => (props.myTurn ? "black" : "#555")};
 `;
 
-const Loading = styled.div``;
+const Loading = styled(View)``;
 
 export class Field extends React.Component {
   render() {
@@ -40,11 +43,11 @@ export class Field extends React.Component {
         <Middle top={height / 2}>
           <EndTurn
             myTurn={this.props.myTurn}
-            onClick={() => {
+            onPress={() => {
               this.props.dispatch(endTurn());
             }}
           >
-            {this.props.loading ? <Loading>Loading...</Loading> : text}
+            <Text>{this.props.loading ? "Loading..." : text}</Text>
           </EndTurn>
         </Middle>
         <FieldSide playerId={this.props.currentPlayer} />

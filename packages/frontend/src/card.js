@@ -87,11 +87,11 @@ const NameText = styled.span`
   font-style: italic;
 `;
 const CardText = styled.span`
-  font-size: 0.7em;
+  font-size: 24px;
 `;
 export const Number = styled.span`
   position: absolute;
-  font-size: 2em;
+  font-size: 24px;
   font-weight: bold;
 `;
 const Attack = styled(Number)`

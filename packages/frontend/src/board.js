@@ -10,31 +10,31 @@ import {
 } from "@cardcore/client";
 import { joinGameStart } from "@cardcore/game";
 import { diff } from "deep-diff";
-import { View, Text, getDimensions } from "@cardcore/elements";
+import { View, Text, getServer, isWeb } from "@cardcore/elements";
 
 const BoardWrapper = styled(View)`
   height: 100%;
-  ${props => props.disableSelect && "user-select: none"};
+  ${props => props.disableSelect && isWeb() && "user-select: none"};
 `;
 
 const DesyncBox = styled(View)`
-  user-select: default;
+  ${isWeb() && "user-select: default"};
 `;
 
 const BigMessage = styled(Text)`
-  font-size: 2em;
+  font-size: 24px;
 `;
 
 const LinkBox = styled(Text)`
-  font-size: 2em;
-  user-select: all;
+  font-size: 24px;
+  ${isWeb() && "user-select: all"};
   background-color: #ccc;
   border-radius: 10px;
   padding: 1em;
 `;
 
 const LoadingBox = styled(View)`
-  padding: 2em;
+  padding: 24px;
 `;
 
 export class Board extends React.Component {
@@ -88,11 +88,13 @@ export class Board extends React.Component {
       );
     }
     if (!this.props.ready) {
+      const gameUrl = `${getServer()}/game/${this.props.gameId}`;
+      console.log(gameUrl);
       return (
         <LoadingBox>
           <Text>Waiting for another player...</Text>
           <Text>Send your friend this link:</Text>
-          <Text>{document.location.href}</Text>
+          <Text>{gameUrl}</Text>
         </LoadingBox>
       );
     }

@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import Card from "./card-svg";
-import Deck from "./deck";
+// import Deck from "./deck";
 import { connect } from "react-redux";
-import Face from "./face";
+// import Face from "./face";
 import { View } from "@cardcore/elements";
 
 const VERT_PADDING = 10;
@@ -36,7 +36,7 @@ export class Sidebar extends React.Component {
     return (
       <SidebarVert height={height}>
         <SidebarBox>
-          <Face playerId={this.props.playerId} />
+          {/* <Face playerId={this.props.playerId} /> */}
           <HandBox>
             {this.props.player.hand.map(cardId => {
               return (
@@ -50,7 +50,7 @@ export class Sidebar extends React.Component {
               );
             })}
           </HandBox>
-          <Deck playerId={this.props.playerId} />
+          {/* <Deck playerId={this.props.playerId} /> */}
         </SidebarBox>
       </SidebarVert>
     );

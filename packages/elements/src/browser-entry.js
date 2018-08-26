@@ -16,6 +16,10 @@ export function getDimensions() {
   };
 }
 
+export const getServer = () => {
+  return `${document.location.protocol}//${document.location.host}`;
+};
+
 export const isWeb = () => true;
 export const isNative = () => false;
 
@@ -30,3 +34,13 @@ class BrowserEvents extends EE {
 }
 
 export const Events = new BrowserEvents();
+
+export const Storage = {
+  getItem: key => {
+    return Promise.resolve(localStorage.getItem(key));
+  },
+
+  setItem: async (key, value) => {
+    return Promise.resolve(localStorage.setItem(key, value));
+  }
+};
