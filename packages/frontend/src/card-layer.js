@@ -16,37 +16,45 @@ const CardLayerBox = styled(View)`
   z-index: 100;
 `;
 
+const CARD_PADDING = 5;
+
+const CardLine = props => {
+  const cardHeight = props.height / 4 - CARD_PADDING * 2;
+  const cardWidth = (cardHeight * 3) / 4;
+  const allCardsWidth = cardWidth * props.cardIds.length;
+  const leftOffset = (props.width - allCardsWidth) / 2;
+  let y =
+    props.top !== undefined
+      ? props.top
+      : props.height - cardHeight - props.bottom;
+  return props.cardIds.map((cardId, i) => (
+    <Card
+      key={cardId}
+      cardId={cardId}
+      height={cardHeight}
+      x={i * cardWidth + leftOffset}
+      y={y}
+    />
+  ));
+};
+
 export class Sidebar extends React.Component {
   render() {
     const { height, width, players, topPlayerId, bottomPlayerId } = this.props;
     return (
       <CardLayerBox pointerEvents="box-none" height={height} width={width}>
-        {players[topPlayerId].hand.map((cardId, i) => {
-          const cardHeight = height / 4 - 10;
-          const cardWidth = (cardHeight * 3) / 4;
-          return (
-            <Card
-              key={cardId}
-              cardId={cardId}
-              height={cardHeight}
-              x={i * cardWidth}
-              y={5}
-            />
-          );
-        })}
-        {players[bottomPlayerId].hand.map((cardId, i) => {
-          const cardHeight = height / 4 - 10;
-          const cardWidth = (cardHeight * 3) / 4;
-          return (
-            <Card
-              key={cardId}
-              cardId={cardId}
-              height={cardHeight}
-              x={i * cardWidth}
-              y={height - cardHeight - 5}
-            />
-          );
-        })}
+        <CardLine
+          cardIds={players[topPlayerId].hand}
+          top={CARD_PADDING}
+          height={height}
+          width={width}
+        />
+        <CardLine
+          cardIds={players[bottomPlayerId].hand}
+          bottom={CARD_PADDING}
+          height={height}
+          width={width}
+        />
       </CardLayerBox>
     );
   }
