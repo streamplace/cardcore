@@ -18,7 +18,7 @@ const CardLayerBox = styled(View)`
 
 const CARD_PADDING = 5;
 
-const CardLine = props => {
+const getCardLine = props => {
   const cardHeight = props.height / 4 - CARD_PADDING * 2;
   const cardWidth = (cardHeight * 3) / 4;
   const allCardsWidth = cardWidth * props.cardIds.length;
@@ -41,20 +41,23 @@ const CardLine = props => {
 export class Sidebar extends React.Component {
   render() {
     const { height, width, players, topPlayerId, bottomPlayerId } = this.props;
+    const cards = [
+      ...getCardLine({
+        cardIds: players[topPlayerId].hand,
+        top: CARD_PADDING,
+        height,
+        width
+      }),
+      ...getCardLine({
+        cardIds: players[bottomPlayerId].hand,
+        bottom: CARD_PADDING,
+        height,
+        width
+      })
+    ];
     return (
       <CardLayerBox pointerEvents="box-none" height={height} width={width}>
-        <CardLine
-          cardIds={players[topPlayerId].hand}
-          top={CARD_PADDING}
-          height={height}
-          width={width}
-        />
-        <CardLine
-          cardIds={players[bottomPlayerId].hand}
-          bottom={CARD_PADDING}
-          height={height}
-          width={width}
-        />
+        {cards}
       </CardLayerBox>
     );
   }
