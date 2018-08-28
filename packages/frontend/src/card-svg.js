@@ -70,7 +70,7 @@ const NumberBox = props => (
 const ViewWrapper = styled(Animated.View)`
   ${isWeb() && "user-select: none"};
   margin: 0 10px;
-  z-index: 100;
+  z-index: ${props => (props.dragging ? 101 : 100)};
   position: absolute;
   left: ${props => props.x}px;
   top: ${props => props.y}px;
@@ -115,23 +115,22 @@ const CardSide = styled(Animated.View)`
   left: 0px;
 `;
 
-let toggle = false;
-
 export class CardSVG extends React.Component {
   constructor() {
     super();
     this.spinValue = new Animated.Value(1);
-    this.toggle = toggle;
-    toggle = !toggle;
     this.pan = new Animated.ValueXY();
+    this.state = { dragging: false };
     // Initialize PanResponder with move handling
     this.panResponder = PanResponder.create({
       onStartShouldSetPanResponder: (e, gesture) => true,
+      onPanResponderGrant: () => this.setState({ dragging: true }),
       onPanResponderMove: Animated.event([
         null,
         { dx: this.pan.x, dy: this.pan.y }
       ]),
       onPanResponderRelease: () => {
+        this.setState({ dragging: false });
         this.pan.setValue({ x: 0, y: 0 });
       }
     });
@@ -189,6 +188,7 @@ export class CardSVG extends React.Component {
       // <ViewWrapper> is a bit of a shame, I'd love for this to be pure SVG
       <ViewWrapper
         {...this.panResponder.panHandlers}
+        dragging={this.state.dragging}
         style={{
           width: width,
           height: height,

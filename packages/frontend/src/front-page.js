@@ -31,7 +31,7 @@ class FrontPage extends React.Component {
     await this.props.dispatch(clientGenerateIdentity());
     // remove this
     this.props.history.push(
-      "/game/qeYqG3KlRDTMzW1mAxVpP1nc5Zjp0v~kbJwdSCKlnyc"
+      "/game/DVlBUgWf3~hPeuIBLap5Wch7s7BtyIwoGgCE6nKgNbo"
     );
   }
 
