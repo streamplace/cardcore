@@ -258,6 +258,10 @@ export class CardSVG extends React.Component {
                 width="1024"
                 height={IMAGE_BOTTOM}
                 preserveAspectRatio="xMidYMid slice"
+                draggable={false}
+                style={{ userDrag: "none" }}
+                // needed to avoid image ghost dragging in firefox:
+                onDragStart={e => e.preventDefault()}
               />
             </Svg.G>
 
