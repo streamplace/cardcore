@@ -39,12 +39,16 @@ export class Field extends React.Component {
   render() {
     const { height } = this.props;
     const text = this.props.myTurn ? "End Turn" : "Their Turn";
-    const notMe = this.props.playerOrder.filter(
-      x => x !== this.props.currentPlayer
-    )[0];
+    let [topPlayerId, bottomPlayerId] = this.props.playerOrder;
+    if (this.props.playerOrder.includes(this.props.currentPlayer)) {
+      topPlayerId = this.props.playerOrder.find(
+        id => id !== this.props.currentPlayer
+      );
+      bottomPlayerId = this.props.currentPlayer;
+    }
     return (
       <FieldBox height={height}>
-        <FieldSide playerId={notMe} />
+        <FieldSide playerId={topPlayerId} />
         <Middle top={height / 2}>
           <EndTurn
             myTurn={this.props.myTurn}
@@ -57,7 +61,7 @@ export class Field extends React.Component {
             </EndTurnText>
           </EndTurn>
         </Middle>
-        <FieldSide playerId={this.props.currentPlayer} />
+        <FieldSide playerId={bottomPlayerId} />
       </FieldBox>
     );
   }

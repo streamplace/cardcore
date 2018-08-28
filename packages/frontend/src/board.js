@@ -98,14 +98,18 @@ export class Board extends React.Component {
         </LoadingBox>
       );
     }
-    const notMe = this.props.playerOrder.filter(
-      x => x !== this.props.currentPlayer
-    )[0];
+    let [topPlayerId, bottomPlayerId] = this.props.playerOrder;
+    if (this.props.playerOrder.includes(this.props.currentPlayer)) {
+      topPlayerId = this.props.playerOrder.find(
+        id => id !== this.props.currentPlayer
+      );
+      bottomPlayerId = this.props.currentPlayer;
+    }
     return (
       <BoardWrapper disableSelect={true}>
-        <Sidebar height={height / 4} playerId={notMe} />
+        <Sidebar height={height / 4} playerId={topPlayerId} />
         <Field height={height / 2} />
-        <Sidebar height={height / 4} playerId={this.props.currentPlayer} />
+        <Sidebar height={height / 4} playerId={bottomPlayerId} />
       </BoardWrapper>
     );
   }

@@ -1,5 +1,13 @@
 import React from "react";
-import { View, Text, Svg, fonts, isWeb } from "@cardcore/elements";
+import {
+  View,
+  Text,
+  Svg,
+  fonts,
+  isWeb,
+  Animated,
+  Easing
+} from "@cardcore/elements";
 import { Box } from "@cardcore/util";
 import mouseSquare from "./mouse_square.png";
 import styled from "styled-components";
@@ -58,16 +66,14 @@ const NumberBox = props => (
   </Svg.G>
 );
 
-const ViewWrapper = styled(View)`
-  height: ${props => props.height}px;
-  width: ${props => props.width}px;
+const ViewWrapper = styled(Animated.View)`
   ${isWeb() && "user-select: none"};
   margin: 0 10px;
 `;
 
 const CardTitle = styled(Text)`
-  width: ${props => props.myWidth * (props.boxWidth / WIDTH)}px;
-  font-size: ${props => props.fontSize * (props.boxWidth / WIDTH)}px;
+  width: ${props => OVERHANG_WIDTH * props.scale}px;
+  font-size: ${props => props.fontSize * props.scale}px;
   color: white;
   position: absolute;
   z-index: 1;
@@ -97,16 +103,45 @@ const CardText = styled(Text)`
   color: white;
 `;
 
+const CardSide = styled(Animated.View)`
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+`;
+
+let toggle = false;
+
 export class CardSVG extends React.Component {
+  constructor() {
+    super();
+    this.spinValue = new Animated.Value(1);
+    this.toggle = toggle;
+    toggle = !toggle;
+  }
+
   componentDidMount() {
-    this.timeout = setInterval(
-      () => this.setState({ reload: Date.now() }),
-      1000
-    );
+    this.spinValue.setValue(1);
+    if (this.props.cardId) {
+      this.flipFront();
+    }
   }
-  componentWillUnmount() {
-    clearInterval(this.timeout);
+
+  componentDidUpdate(prevProps) {
+    if (!prevProps.cardId && !!this.props.cardId) {
+      this.flipFront();
+    }
   }
+
+  flipFront() {
+    Animated.timing(this.spinValue, {
+      toValue: 0,
+      duration: 500,
+      easing: Easing.ease,
+      useNativeDriver: true
+    }).start(() => {});
+  }
+
   render() {
     let { width, height, card } = this.props;
     if (!card) {
@@ -121,106 +156,124 @@ export class CardSVG extends React.Component {
     if (!height) {
       height = (width * 3) / 2;
     }
-
+    const spin = this.spinValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["0deg", "180deg"]
+    });
+    const backSpin = this.spinValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["180deg", "0deg"]
+    });
     return (
       // can't use custom fonts in SVG yet, so we're forced to overlay <Text>
       // https://github.com/expo/expo/issues/1450
       // <ViewWrapper> is a bit of a shame, I'd love for this to be pure SVG
-      <ViewWrapper width={width} height={height}>
-        {/* name */}
-        <CardTitle
-          boxWidth={width}
-          boxHeight={height}
-          x={OVERHANG_TRANSLATE_X}
-          y={IMAGE_BOTTOM}
-          myWidth={OVERHANG_WIDTH}
-          textAnchor="middle"
-          fontFamily={fonts.title}
-          fontWeight="600"
-          fontSize={TITLE_SIZE}
-          fill="white"
-          stroke="black"
-          strokeWidth={5}
-          scale={width / WIDTH}
+      <ViewWrapper
+        style={{
+          width: width,
+          height: height
+        }}
+      >
+        <CardSide
+          style={{
+            width: width,
+            height: height,
+            transform: [{ rotateY: spin }]
+          }}
         >
-          {card.name}
-        </CardTitle>
-        <CardTextWrapper
-          boxWidth={width}
-          boxHeight={height}
-          scale={width / WIDTH}
-        >
-          {(card.text || []).map((line, i) => (
-            <CardText
-              key={i}
-              x="500"
-              y={TEXT_MIDDLE}
-              myWidth={OVERHANG_WIDTH}
-              textAnchor="middle"
-              fontFamily={fonts.title}
-              fontWeight="600"
-              fontSize={TEXT_SIZE}
-              fill="white"
-              boxWidth={width}
-              boxHeight={height}
-              scale={width / WIDTH}
-            >
-              {line}
-            </CardText>
-          ))}
-        </CardTextWrapper>
-        <Svg
-          width={width}
-          height={height}
-          viewBox="0 0 1024 1536"
-          style={{ zIndex: 0 }}
-        >
-          {/* inner card group, excluding number boxes */}
-          <Svg.G
-            transform={`scale(${OVERHANG_RATIO}) translate(${OVERHANG_TRANSLATE_X} ${OVERHANG_TRANSLATE_Y})`}
-            width={WIDTH / 5}
-            height={1382}
-            viewBox="0 0 1024 1536"
+          {/* name */}
+          <CardTitle
+            x={OVERHANG_TRANSLATE_X}
+            y={IMAGE_BOTTOM}
+            textAnchor="middle"
+            fontFamily={fonts.title}
+            fontWeight="600"
+            fontSize={TITLE_SIZE}
+            fill="white"
+            stroke="black"
+            strokeWidth={5}
+            scale={width / WIDTH}
           >
-            {/* dark grey background */}
-            <Svg.Rect width="1024" height="1536" fill="rgb(32, 32, 32)" />
+            {card.name}
+          </CardTitle>
+          <CardTextWrapper scale={width / WIDTH}>
+            {(card.text || []).map((line, i) => (
+              <CardText
+                key={i}
+                x="500"
+                y={TEXT_MIDDLE}
+                textAnchor="middle"
+                fontFamily={fonts.title}
+                fontWeight="600"
+                fontSize={TEXT_SIZE}
+                fill="white"
+                scale={width / WIDTH}
+              >
+                {line}
+              </CardText>
+            ))}
+          </CardTextWrapper>
+          <Svg
+            width={width}
+            height={height}
+            viewBox="0 0 1024 1536"
+            style={{ zIndex: 0 }}
+          >
+            {/* inner card group, excluding number boxes */}
+            <Svg.G
+              transform={`scale(${OVERHANG_RATIO}) translate(${OVERHANG_TRANSLATE_X} ${OVERHANG_TRANSLATE_Y})`}
+              width={WIDTH / 5}
+              height={1382}
+              viewBox="0 0 1024 1536"
+            >
+              {/* dark grey background */}
+              <Svg.Rect width="1024" height="1536" fill="rgb(32, 32, 32)" />
 
-            {/* portrait */}
-            <Svg.Image
-              href={mouseSquare}
-              width="1024"
-              height={IMAGE_BOTTOM}
-              preserveAspectRatio="xMidYMid slice"
+              {/* portrait */}
+              <Svg.Image
+                href={mouseSquare}
+                width="1024"
+                height={IMAGE_BOTTOM}
+                preserveAspectRatio="xMidYMid slice"
+              />
+            </Svg.G>
+
+            {/* mana box */}
+            <NumberBox
+              size={MANA_BOX_SIZE}
+              value={card.cost}
+              x={0}
+              y={0}
+              bg="rgb(15, 143, 255)"
             />
-          </Svg.G>
 
-          {/* mana box */}
-          <NumberBox
-            size={MANA_BOX_SIZE}
-            value={card.cost}
-            x={0}
-            y={0}
-            bg="rgb(15, 143, 255)"
-          />
+            {/* attack box */}
+            <NumberBox
+              value={card.attack}
+              x={0}
+              y={HEIGHT - BOX_SIZE}
+              bg="rgb(216, 163, 24)"
+              size={BOX_SIZE}
+            />
 
-          {/* attack box */}
-          <NumberBox
-            value={card.attack}
-            x={0}
-            y={HEIGHT - BOX_SIZE}
-            bg="rgb(216, 163, 24)"
-            size={BOX_SIZE}
-          />
-
-          {/* health box */}
-          <NumberBox
-            value={card.health}
-            x={WIDTH - BOX_SIZE}
-            y={HEIGHT - BOX_SIZE}
-            bg="#f91717"
-            size={BOX_SIZE}
-          />
-        </Svg>
+            {/* health box */}
+            <NumberBox
+              value={card.health}
+              x={WIDTH - BOX_SIZE}
+              y={HEIGHT - BOX_SIZE}
+              bg="#f91717"
+              size={BOX_SIZE}
+            />
+          </Svg>
+        </CardSide>
+        <CardSide
+          style={{
+            width: width,
+            height: height,
+            backgroundColor: "rgb(32, 32, 32)",
+            transform: [{ rotateY: backSpin }]
+          }}
+        />
       </ViewWrapper>
     );
   }
