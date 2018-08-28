@@ -6,7 +6,8 @@ import {
   fonts,
   isWeb,
   Animated,
-  Easing
+  Easing,
+  PanResponder
 } from "@cardcore/elements";
 import { Box } from "@cardcore/util";
 import mouseSquare from "./mouse_square.png";
@@ -69,6 +70,10 @@ const NumberBox = props => (
 const ViewWrapper = styled(Animated.View)`
   ${isWeb() && "user-select: none"};
   margin: 0 10px;
+  z-index: 100;
+  position: absolute;
+  left: ${props => props.x}px;
+  top: ${props => props.y}px;
 `;
 
 const CardTitle = styled(Text)`
@@ -118,6 +123,20 @@ export class CardSVG extends React.Component {
     this.spinValue = new Animated.Value(1);
     this.toggle = toggle;
     toggle = !toggle;
+    this.pan = new Animated.ValueXY();
+    // Initialize PanResponder with move handling
+    this.panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: (e, gesture) => true,
+      onPanResponderMove: Animated.event([
+        null,
+        { dx: this.pan.x, dy: this.pan.y }
+      ]),
+      onPanResponderRelease: () => {
+        this.pan.setValue({ x: 0, y: 0 });
+      }
+    });
+    // adjusting delta value
+    this.pan.setValue({ x: 0, y: 0 });
   }
 
   componentDidMount() {
@@ -169,10 +188,14 @@ export class CardSVG extends React.Component {
       // https://github.com/expo/expo/issues/1450
       // <ViewWrapper> is a bit of a shame, I'd love for this to be pure SVG
       <ViewWrapper
+        {...this.panResponder.panHandlers}
         style={{
           width: width,
-          height: height
+          height: height,
+          transform: this.pan.getTranslateTransform()
         }}
+        x={this.props.x}
+        y={this.props.y}
       >
         <CardSide
           style={{

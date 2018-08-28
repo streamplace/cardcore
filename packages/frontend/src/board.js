@@ -11,6 +11,7 @@ import {
 import { joinGameStart } from "@cardcore/game";
 import { diff } from "deep-diff";
 import { View, Text, getServer, isWeb } from "@cardcore/elements";
+import CardLayer from "./card-layer";
 
 const BoardWrapper = styled(View)`
   height: 100%;
@@ -59,7 +60,7 @@ export class Board extends React.Component {
   }
 
   render() {
-    const { height } = this.props.dimensions;
+    const { height, width } = this.props.dimensions;
     if (this.props.loading) {
       return <View />;
     }
@@ -107,6 +108,7 @@ export class Board extends React.Component {
     }
     return (
       <BoardWrapper disableSelect={true}>
+        <CardLayer height={height} width={width} />
         <Sidebar height={height / 4} playerId={topPlayerId} />
         <Field height={height / 2} />
         <Sidebar height={height / 4} playerId={bottomPlayerId} />

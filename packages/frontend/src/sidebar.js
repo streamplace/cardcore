@@ -37,19 +37,7 @@ export class Sidebar extends React.Component {
       <SidebarVert height={height}>
         <SidebarBox>
           {/* <Face playerId={this.props.playerId} /> */}
-          <HandBox>
-            {this.props.player.hand.map(cardId => {
-              return (
-                <Card
-                  cardId={cardId}
-                  key={cardId}
-                  height={height - VERT_PADDING * 2}
-                  location="hand"
-                  playerId={this.props.playerId}
-                />
-              );
-            })}
-          </HandBox>
+          <HandBox />
           {/* <Deck playerId={this.props.playerId} /> */}
         </SidebarBox>
       </SidebarVert>
