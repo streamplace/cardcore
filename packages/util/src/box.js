@@ -1,5 +1,7 @@
 import ssbKeys from "@streamplace/ssb-keys";
 
+const boxCache = {};
+
 const Box = {
   open(boxId, box, me) {
     let privateKey;
@@ -23,6 +25,17 @@ const Box = {
   },
 
   traverse(boxId, boxes, me) {
+    if (boxCache[boxId]) {
+      return boxCache[boxId];
+    }
+    const result = this._traverse(boxId, boxes, me);
+    if (result) {
+      boxCache[boxId] = result;
+    }
+    return result;
+  },
+
+  _traverse(boxId, boxes, me) {
     if (!boxes[boxId]) {
       return boxId; // idk maybe a unitId or something
     }

@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 // // import Face from "./face";
 import { View } from "@cardcore/elements";
 import Card from "./card-svg";
+import { Box } from "@cardcore/util";
 
 const CardLayerBox = styled(View)`
   position: absolute;
@@ -19,23 +20,39 @@ const CardLayerBox = styled(View)`
 const CARD_PADDING = 5;
 
 const getCardLine = props => {
+  const player = props.players[props.playerId];
+  const cardIds = player[props.location];
   const cardHeight = props.height / 4 - CARD_PADDING * 2;
   const cardWidth = (cardHeight * 3) / 4;
-  const allCardsWidth = cardWidth * props.cardIds.length;
+  const allCardsWidth = cardWidth * cardIds.length;
   const leftOffset = (props.width - allCardsWidth) / 2;
   let y =
     props.top !== undefined
       ? props.top
       : props.height - cardHeight - props.bottom;
-  return props.cardIds.map((cardId, i) => (
-    <Card
-      key={cardId}
-      cardId={cardId}
-      height={cardHeight}
-      x={i * cardWidth + leftOffset}
-      y={y}
-    />
-  ));
+  return cardIds.map((cardId, i) => {
+    const decryptedId = Box.traverse(cardId, props.boxes, props.keys);
+    let active = false;
+    let draggable = false;
+    if (decryptedId) {
+      const card = props.units[decryptedId];
+      if (player.availableMana >= card.cost) {
+        active = true;
+        draggable = true;
+      }
+    }
+    return (
+      <Card
+        key={cardId}
+        active={active}
+        draggable={draggable}
+        cardId={cardId}
+        height={cardHeight}
+        x={i * cardWidth + leftOffset}
+        y={y}
+      />
+    );
+  });
 };
 
 export class Sidebar extends React.Component {
@@ -43,16 +60,16 @@ export class Sidebar extends React.Component {
     const { height, width, players, topPlayerId, bottomPlayerId } = this.props;
     const cards = [
       ...getCardLine({
-        cardIds: players[topPlayerId].hand,
-        top: CARD_PADDING,
-        height,
-        width
+        ...this.props,
+        playerId: topPlayerId,
+        location: "hand",
+        top: CARD_PADDING
       }),
       ...getCardLine({
-        cardIds: players[bottomPlayerId].hand,
-        bottom: CARD_PADDING,
-        height,
-        width
+        ...this.props,
+        playerId: bottomPlayerId,
+        location: "hand",
+        bottom: CARD_PADDING
       })
     ];
     return (
@@ -71,7 +88,15 @@ const mapStateToProps = (state, props) => {
     );
     bottomPlayerId = state.client.keys.id;
   }
-  return { players: state.game.players, topPlayerId, bottomPlayerId };
+  return {
+    players: state.game.players,
+    boxes: state.game.boxes,
+    keys: state.client.keys,
+    topPlayerId,
+    bottomPlayerId,
+    currentPlayer: state.client.keys.id,
+    units: state.game.units
+  };
 };
 
 export default connect(mapStateToProps)(Sidebar);

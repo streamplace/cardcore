@@ -13,6 +13,7 @@ import { Box } from "@cardcore/util";
 import mouseSquare from "./mouse_square.png";
 import styled from "styled-components";
 import { connect } from "react-redux";
+import { desaturate } from "polished";
 
 const WIDTH = 1024;
 const HEIGHT = (1024 * 3) / 2;
@@ -27,6 +28,11 @@ const OVERHANG_WIDTH = OVERHANG_RATIO * WIDTH;
 const OVERHANG_HEIGHT = OVERHANG_RATIO * HEIGHT;
 const OVERHANG_TRANSLATE_X = (WIDTH - OVERHANG_WIDTH) / 2;
 const OVERHANG_TRANSLATE_Y = (HEIGHT - OVERHANG_HEIGHT) / 2;
+
+const MANA_COLOR = "rgb(15, 143, 255)";
+const MANA_COLOR_INACTIVE = desaturate(1, MANA_COLOR);
+
+const PLAYABLE_BAR_HEIGHT = 50;
 
 const TITLE_SIZE = 100;
 
@@ -162,6 +168,7 @@ export class CardSVG extends React.Component {
 
   render() {
     let { width, height, card } = this.props;
+    const manaColor = this.props.active ? MANA_COLOR : MANA_COLOR_INACTIVE;
     if (!card) {
       card = TEMP_DEFAULT_CARD;
     }
@@ -263,6 +270,11 @@ export class CardSVG extends React.Component {
                 // needed to avoid image ghost dragging in firefox:
                 onDragStart={e => e.preventDefault()}
               />
+              <Svg.Rect
+                width="1024"
+                height={PLAYABLE_BAR_HEIGHT}
+                fill={manaColor}
+              />
             </Svg.G>
 
             {/* mana box */}
@@ -270,8 +282,8 @@ export class CardSVG extends React.Component {
               size={MANA_BOX_SIZE}
               value={card.cost}
               x={0}
-              y={0}
-              bg="rgb(15, 143, 255)"
+              y={PLAYABLE_BAR_HEIGHT - 10}
+              bg={manaColor}
             />
 
             {/* attack box */}
