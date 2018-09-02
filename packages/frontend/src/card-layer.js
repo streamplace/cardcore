@@ -1,12 +1,17 @@
 import React from "react";
 import styled from "styled-components";
-// import Card from "./card-svg";
 // // import Deck from "./deck";
 import { connect } from "react-redux";
 // // import Face from "./face";
 import { View } from "@cardcore/elements";
 import Card from "./card-svg";
 import { Box } from "@cardcore/util";
+import {
+  TOP_SIDEBOARD,
+  TOP_FIELD,
+  BOTTOM_FIELD,
+  BOTTOM_SIDEBOARD
+} from "./board-regions";
 
 const CardLayerBox = styled(View)`
   position: absolute;
@@ -34,24 +39,27 @@ const getCardLine = props => {
     const decryptedId = Box.traverse(cardId, props.boxes, props.keys);
     let active = false;
     let draggable = false;
-    if (decryptedId) {
+    if (decryptedId && props.location === "hand") {
       const card = props.units[decryptedId];
       if (player.availableMana >= card.cost) {
         active = true;
-        draggable = true;
+        if (props.turn === props.currentPlayer) {
+          draggable = true;
+        }
       }
     }
-    return (
+    const x = (
       <Card
         key={cardId}
         active={active}
         draggable={draggable}
-        cardId={cardId}
+        boxId={cardId}
         height={cardHeight}
         x={i * cardWidth + leftOffset}
-        y={y}
+        y={y + CARD_PADDING}
       />
     );
+    return x;
   });
 };
 
@@ -63,13 +71,25 @@ export class Sidebar extends React.Component {
         ...this.props,
         playerId: topPlayerId,
         location: "hand",
-        top: CARD_PADDING
+        top: height * TOP_SIDEBOARD.y
+      }),
+      ...getCardLine({
+        ...this.props,
+        playerId: topPlayerId,
+        location: "field",
+        top: height * TOP_FIELD.y
+      }),
+      ...getCardLine({
+        ...this.props,
+        playerId: bottomPlayerId,
+        location: "field",
+        top: height * BOTTOM_FIELD.y
       }),
       ...getCardLine({
         ...this.props,
         playerId: bottomPlayerId,
         location: "hand",
-        bottom: CARD_PADDING
+        top: height * BOTTOM_SIDEBOARD.y
       })
     ];
     return (
@@ -95,6 +115,7 @@ const mapStateToProps = (state, props) => {
     topPlayerId,
     bottomPlayerId,
     currentPlayer: state.client.keys.id,
+    turn: state.game.turn,
     units: state.game.units
   };
 };

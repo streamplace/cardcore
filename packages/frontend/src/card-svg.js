@@ -14,6 +14,7 @@ import mouseSquare from "./mouse_square.png";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { desaturate } from "polished";
+import { frontendCardDrop } from "./frontend-actions";
 
 const WIDTH = 1024;
 const HEIGHT = (1024 * 3) / 2;
@@ -129,18 +130,20 @@ export class CardSVG extends React.Component {
     this.state = { dragging: false };
     // Initialize PanResponder with move handling
     this.panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: (e, gesture) => true,
+      onStartShouldSetPanResponder: (e, gesture) => this.props.draggable,
       onPanResponderGrant: () => this.setState({ dragging: true }),
       onPanResponderMove: Animated.event([
         null,
         { dx: this.pan.x, dy: this.pan.y }
       ]),
-      onPanResponderRelease: () => {
+      onPanResponderRelease: (e, { moveX, moveY }) => {
+        this.props.dispatch(
+          frontendCardDrop({ boxId: this.props.boxId, x: moveX, y: moveY })
+        );
         this.setState({ dragging: false });
         this.pan.setValue({ x: 0, y: 0 });
       }
     });
-    // adjusting delta value
     this.pan.setValue({ x: 0, y: 0 });
   }
 
@@ -319,11 +322,7 @@ export class CardSVG extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-  const cardId = Box.traverse(
-    props.cardId,
-    state.game.boxes,
-    state.client.keys
-  );
+  const cardId = Box.traverse(props.boxId, state.game.boxes, state.client.keys);
   let card;
   if (cardId) {
     card = state.game.units[cardId];
