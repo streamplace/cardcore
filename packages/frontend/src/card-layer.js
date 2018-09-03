@@ -49,9 +49,11 @@ const getCardLine = props => {
           }
         }
       } else if (props.location === "field") {
-        if (props.turn === props.currentPlayer && card.canAttack) {
+        if (card.canAttack) {
           active = true;
-          draggable = true;
+          if (props.turn === props.currentPlayer) {
+            draggable = true;
+          }
         }
       }
     }
