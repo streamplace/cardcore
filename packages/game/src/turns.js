@@ -1,5 +1,6 @@
 import { DRAW_CARD } from "./draw-card";
 import { START_GAME } from "./start-game";
+import { Box } from "@cardcore/util";
 
 export const START_TURN = "START_TURN";
 export const startTurn = () => async dispatch => {
@@ -35,7 +36,8 @@ export function turnReducer(state, action) {
       newMana = 10;
     }
     const newUnits = {};
-    player.field.forEach(unitId => {
+    player.field.forEach(boxId => {
+      const unitId = Box.traverse(state, boxId);
       newUnits[unitId] = {
         ...state.game.units[unitId],
         canAttack: true

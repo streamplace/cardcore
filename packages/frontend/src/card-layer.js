@@ -39,11 +39,18 @@ const getCardLine = props => {
     const decryptedId = Box.traverse(cardId, props.boxes, props.keys);
     let active = false;
     let draggable = false;
-    if (decryptedId && props.location === "hand") {
+    if (decryptedId) {
       const card = props.units[decryptedId];
-      if (player.availableMana >= card.cost) {
-        active = true;
-        if (props.turn === props.currentPlayer) {
+      if (props.location === "hand") {
+        if (player.availableMana >= card.cost) {
+          active = true;
+          if (props.turn === props.currentPlayer) {
+            draggable = true;
+          }
+        }
+      } else if (props.location === "field") {
+        if (props.turn === props.currentPlayer && card.canAttack) {
+          active = true;
           draggable = true;
         }
       }
