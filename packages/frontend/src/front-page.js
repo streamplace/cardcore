@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { withRouter, View, Button, getDimensions } from "@cardcore/elements";
+import { withRouter, View, Button, Storage } from "@cardcore/elements";
 import { createGame } from "@cardcore/game";
 import { clientGenerateIdentity, clientGetGameHash } from "@cardcore/client";
 import { connect } from "react-redux";
@@ -29,10 +29,10 @@ class FrontPage extends React.Component {
 
   async componentDidMount() {
     await this.props.dispatch(clientGenerateIdentity());
-    // remove this
-    this.props.history.push(
-      "/game/AFVG-YaoyXEsEF8eR9xyrWBpbG9DZE7skdQM8Gy57KA"
-    );
+    let currentGame = await Storage.getItem("CURRENT_GAME");
+    if (currentGame) {
+      this.props.history.push(`/game/${currentGame}`);
+    }
   }
 
   render() {

@@ -10,7 +10,15 @@ import {
 } from "@cardcore/client";
 import { joinGameStart } from "@cardcore/game";
 import { diff } from "deep-diff";
-import { View, Text, getServer, isWeb } from "@cardcore/elements";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  getServer,
+  isWeb,
+  Storage,
+  withRouter
+} from "@cardcore/elements";
 import CardLayer from "./card-layer";
 import {
   TOP_SIDEBOARD,
@@ -44,6 +52,17 @@ const LoadingBox = styled(View)`
   padding: 24px;
 `;
 
+const LeaveGame = styled(TouchableOpacity)`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 200;
+`;
+
+const LeaveGameText = styled(Text)`
+  font-size: 24px;
+`;
+
 export class Board extends React.Component {
   constructor(props) {
     super();
@@ -58,11 +77,17 @@ export class Board extends React.Component {
     if (this.props.loading) {
       await this.props.dispatch(clientLoadState(this.props.gameId));
     }
+    await Storage.setItem("CURRENT_GAME", this.props.gameId);
     await this.props.dispatch(clientPoll());
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
+  }
+
+  async handleLeaveGame() {
+    await Storage.removeItem("CURRENT_GAME");
+    this.props.history.push("/");
   }
 
   render() {
@@ -114,6 +139,9 @@ export class Board extends React.Component {
     }
     return (
       <BoardWrapper disableSelect={true}>
+        <LeaveGame onPress={() => this.handleLeaveGame()}>
+          <LeaveGameText>X</LeaveGameText>
+        </LeaveGame>
         <CardLayer height={height} width={width} />
         <Sidebar
           height={height * TOP_SIDEBOARD.height}
@@ -150,4 +178,4 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-export default connect(mapStateToProps)(Board);
+export default withRouter(connect(mapStateToProps)(Board));

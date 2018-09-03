@@ -24,7 +24,19 @@ const Box = {
     return ssbKeys.unbox(box.keys[me.id], me);
   },
 
-  traverse(boxId, boxes, me) {
+  traverse(state, boxId, _me) {
+    let boxes;
+    let me;
+    if (typeof state === "string") {
+      // deprecated
+      boxes = boxId;
+      me = _me;
+      boxId = state;
+    } else {
+      boxes = state.game.boxes;
+      me = state.client.keys;
+    }
+
     if (boxCache[boxId]) {
       return boxCache[boxId];
     }
@@ -46,7 +58,7 @@ const Box = {
     }
     if (boxes[boxContents]) {
       // hey, this box had a box in it! keep going!
-      return Box.traverse(boxContents, boxes, me);
+      return Box._traverse(boxContents, boxes, me);
     }
     // got something that wasn't a box — we're done!
     return boxContents;

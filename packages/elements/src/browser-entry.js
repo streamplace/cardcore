@@ -42,5 +42,9 @@ export const Storage = {
 
   setItem: async (key, value) => {
     return Promise.resolve(localStorage.setItem(key, value));
+  },
+
+  removeItem: key => {
+    return Promise.resolve(localStorage.removeItem(key));
   }
 };
