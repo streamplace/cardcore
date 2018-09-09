@@ -1,4 +1,5 @@
-import { hashState, serverFetch } from "@cardcore/util";
+import { hashState } from "@cardcore/util";
+import { serverFetch } from "@cardcore/elements";
 import { REMOTE_ACTION } from "cardcore";
 
 // this isn't a redux action really, don't tell anyone

@@ -1,7 +1,8 @@
 // import signalhub from "signalhub";
 import * as gameActions from "@cardcore/game";
 import { CLIENT_LOAD_STATE_DONE, clientPoll } from "@cardcore/client";
-import { hashState, serverFetch } from "@cardcore/util";
+import { hashState } from "@cardcore/util";
+import { serverFetch } from "@cardcore/elements";
 import ssbKeys from "@streamplace/ssb-keys";
 import stringify from "json-stable-stringify";
 

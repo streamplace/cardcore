@@ -1,6 +1,7 @@
 import "./fonts/stylesheet.css";
 import EE from "wolfy87-eventemitter";
 import { throttle } from "underscore";
+import fetch from "isomorphic-fetch";
 
 export { BrowserRouter as Router } from "react-router-dom";
 export { Route, Switch as RouteSwitch, withRouter } from "react-router-dom";
@@ -48,3 +49,7 @@ export const Storage = {
     return Promise.resolve(localStorage.removeItem(key));
   }
 };
+
+export function serverFetch(url, ...args) {
+  return fetch(`${getServer()}${url}`, ...args);
+}

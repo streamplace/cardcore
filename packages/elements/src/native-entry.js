@@ -2,6 +2,7 @@ import { Font, Util } from "expo";
 import { fonts } from "./shared";
 import { Dimensions, Platform, BackHandler, AsyncStorage } from "react-native";
 import EE from "wolfy87-eventemitter";
+import fetch from "isomorphic-fetch";
 
 export { NativeRouter as Router } from "react-router-native";
 export { Route, Switch as RouteSwitch, withRouter } from "react-router-native";
@@ -73,3 +74,7 @@ export const Storage = {
     return await AsyncStorage.removeItem(key);
   }
 };
+
+export function serverFetch(url, ...args) {
+  return fetch(`${getServer()}${url}`, ...args);
+}

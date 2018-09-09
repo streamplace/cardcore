@@ -4,10 +4,3 @@ export * from "./util";
 export * from "./constants";
 export { default as Box } from "./box";
 export { default as hashState } from "./hash-state";
-import fetch from "isomorphic-fetch";
-
-// todo: this should be in the client, not here
-import { getServer } from "@cardcore/elements";
-export function serverFetch(url, ...args) {
-  return fetch(`${getServer()}${url}`, ...args);
-}
