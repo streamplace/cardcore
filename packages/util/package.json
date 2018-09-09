@@ -11,7 +11,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@cardcore/elements": "0.0.1",
     "@streamplace/ssb-keys": "7.0.21",
     "isomorphic-fetch": "^2.2.1",
     "json-stable-stringify": "^1.0.1"
