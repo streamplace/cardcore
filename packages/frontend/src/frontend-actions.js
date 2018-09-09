@@ -25,6 +25,9 @@ export const frontendCardDrop = ({ boxId, x, y }) => (dispatch, getState) => {
     region: regionName
   });
   if (boardRegions[regionName] === boardRegions.BOTTOM_FIELD) {
-    dispatch(clientPlayCreature(boxId));
+    const state = getState();
+    if (state.game.players[state.client.keys.id].hand.includes(boxId)) {
+      dispatch(clientPlayCreature(boxId));
+    }
   }
 };
