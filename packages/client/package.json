@@ -11,6 +11,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@cardcore/elements": "^0.0.1",
     "@cardcore/game": "^0.0.1",
     "@cardcore/util": "^0.0.1",
     "@streamplace/ssb-keys": "7.0.21",
