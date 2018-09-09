@@ -33,8 +33,6 @@ const EndTurnText = styled(Text)`
   font-size: 24px;
 `;
 
-const Loading = styled(View)``;
-
 export class Field extends React.Component {
   render() {
     const { height } = this.props;

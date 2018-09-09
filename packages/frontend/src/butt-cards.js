@@ -1,8 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Board from "./board";
-import pkg from "../package.json";
-import { View, Text } from "@cardcore/elements";
+import { View } from "@cardcore/elements";
 
 const AppContainer = styled(View)`
   height: 100%;

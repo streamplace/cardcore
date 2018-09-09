@@ -4,7 +4,6 @@ import { withRouter, View, Button, Storage } from "@cardcore/elements";
 import { createGame } from "@cardcore/game";
 import { clientGenerateIdentity, clientGetGameHash } from "@cardcore/client";
 import { connect } from "react-redux";
-import CardSVG from "./card-svg";
 
 const FrontPageBox = styled(View)`
   width: 100%;

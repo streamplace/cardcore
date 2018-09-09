@@ -74,7 +74,7 @@ const getCardLine = props => {
 
 export class Sidebar extends React.Component {
   render() {
-    const { height, width, players, topPlayerId, bottomPlayerId } = this.props;
+    const { height, width, topPlayerId, bottomPlayerId } = this.props;
     const cards = [
       ...getCardLine({
         ...this.props,

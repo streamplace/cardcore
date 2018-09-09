@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import Card from "./card-svg";
 // import Deck from "./deck";
 import { connect } from "react-redux";
 // import Face from "./face";
