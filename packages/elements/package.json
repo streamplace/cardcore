@@ -9,6 +9,9 @@
   "author": "Streamplace",
   "license": "Apache-2.0",
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "open-sans-fontface": "^1.4.0",
     "react-art": "^16.4.2",
