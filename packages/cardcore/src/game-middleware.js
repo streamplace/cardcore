@@ -1,28 +1,15 @@
 // import signalhub from "signalhub";
 import * as gameActions from "@cardcore/game";
 import { CLIENT_LOAD_STATE_DONE, clientPoll } from "@cardcore/client";
-import { hashState, serverFetch } from "@cardcore/util";
+import { hashState } from "@cardcore/util";
+import { serverFetch } from "@cardcore/elements";
 import ssbKeys from "@streamplace/ssb-keys";
 import stringify from "json-stable-stringify";
 
-export const REMOTE_ACTION = Symbol("REMOTE_ACTION");
+// this used to be a Symbol, but not supported on android?! weird.
+export const REMOTE_ACTION = "__REMOTE_ACTION";
 
 export function gameMiddleware(store) {
-  const server = `${document.location.protocol}//${document.location.host}`;
-  const channelName = document.location.pathname.slice(1);
-  // const hub = signalhub("butt-card", [server]);
-  // hub.subscribe(channelName).on("data", async action => {
-  //   const me = store.getState().client.keys;
-  //   if (action._sender === me.id) {
-  //     return;
-  //   }
-  //   action = {
-  //     ...action,
-  //     [REMOTE_ACTION]: true
-  //   };
-  //   store.dispatch(action);
-  // });
-
   const promises = new WeakMap();
 
   return next => {

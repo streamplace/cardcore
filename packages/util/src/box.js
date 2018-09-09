@@ -1,5 +1,7 @@
 import ssbKeys from "@streamplace/ssb-keys";
 
+const boxCache = {};
+
 const Box = {
   open(boxId, box, me) {
     let privateKey;
@@ -22,7 +24,30 @@ const Box = {
     return ssbKeys.unbox(box.keys[me.id], me);
   },
 
-  traverse(boxId, boxes, me) {
+  traverse(state, boxId, _me) {
+    let boxes;
+    let me;
+    if (typeof state === "string") {
+      // deprecated
+      boxes = boxId;
+      me = _me;
+      boxId = state;
+    } else {
+      boxes = state.game.boxes;
+      me = state.client.keys;
+    }
+
+    if (boxCache[boxId]) {
+      return boxCache[boxId];
+    }
+    const result = this._traverse(boxId, boxes, me);
+    if (result) {
+      boxCache[boxId] = result;
+    }
+    return result;
+  },
+
+  _traverse(boxId, boxes, me) {
     if (!boxes[boxId]) {
       return boxId; // idk maybe a unitId or something
     }
@@ -33,7 +58,7 @@ const Box = {
     }
     if (boxes[boxContents]) {
       // hey, this box had a box in it! keep going!
-      return Box.traverse(boxContents, boxes, me);
+      return Box._traverse(boxContents, boxes, me);
     }
     // got something that wasn't a box — we're done!
     return boxContents;

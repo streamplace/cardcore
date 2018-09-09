@@ -10,32 +10,57 @@ import {
 } from "@cardcore/client";
 import { joinGameStart } from "@cardcore/game";
 import { diff } from "deep-diff";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  getServer,
+  isWeb,
+  Storage,
+  withRouter
+} from "@cardcore/elements";
+import CardLayer from "./card-layer";
+import {
+  TOP_SIDEBOARD,
+  TOP_FIELD,
+  BOTTOM_FIELD,
+  BOTTOM_SIDEBOARD
+} from "./board-regions";
 
-const BoardWrapper = styled.div`
+const BoardWrapper = styled(View)`
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  ${props => props.disableSelect && "user-select: none"};
+  ${props => props.disableSelect && isWeb() && "user-select: none"};
 `;
 
-const DesyncBox = styled.div`
-  user-select: default;
+const DesyncBox = styled(View)`
+  ${isWeb() && "user-select: default"};
 `;
 
-const BigMessage = styled.p`
-  font-size: 2em;
+const BigMessage = styled(Text)`
+  font-size: 24px;
 `;
 
-const LinkBox = styled.pre`
-  font-size: 2em;
-  user-select: all;
+const LinkBox = styled(Text)`
+  font-size: 24px;
+  ${isWeb() && "user-select: all"};
   background-color: #ccc;
   border-radius: 10px;
   padding: 1em;
 `;
 
-const LoadingBox = styled.div`
-  padding: 2em;
+const LoadingBox = styled(View)`
+  padding: 24px;
+`;
+
+const LeaveGame = styled(TouchableOpacity)`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 200;
+`;
+
+const LeaveGameText = styled(Text)`
+  font-size: 24px;
 `;
 
 export class Board extends React.Component {
@@ -52,6 +77,7 @@ export class Board extends React.Component {
     if (this.props.loading) {
       await this.props.dispatch(clientLoadState(this.props.gameId));
     }
+    await Storage.setItem("CURRENT_GAME", this.props.gameId);
     await this.props.dispatch(clientPoll());
   }
 
@@ -59,9 +85,15 @@ export class Board extends React.Component {
     clearInterval(this.interval);
   }
 
+  async handleLeaveGame() {
+    await Storage.removeItem("CURRENT_GAME");
+    this.props.history.push("/");
+  }
+
   render() {
+    const { height, width } = this.props;
     if (this.props.loading) {
-      return <div />;
+      return <View />;
     }
     if (this.props.started) {
       clearInterval(this.interval);
@@ -88,22 +120,38 @@ export class Board extends React.Component {
       );
     }
     if (!this.props.ready) {
+      const gameUrl = `${getServer()}/game/${this.props.gameId}`;
+      console.log(gameUrl);
       return (
         <LoadingBox>
-          <p>Waiting for another player...</p>
-          <p>Send your friend this link:</p>
-          <p>{document.location.href}</p>
+          <Text>Waiting for another player...</Text>
+          <Text>Send your friend this link:</Text>
+          <Text>{gameUrl}</Text>
         </LoadingBox>
       );
     }
-    const notMe = this.props.playerOrder.filter(
-      x => x !== this.props.currentPlayer
-    )[0];
+    let [topPlayerId, bottomPlayerId] = this.props.playerOrder;
+    if (this.props.playerOrder.includes(this.props.currentPlayer)) {
+      topPlayerId = this.props.playerOrder.find(
+        id => id !== this.props.currentPlayer
+      );
+      bottomPlayerId = this.props.currentPlayer;
+    }
     return (
       <BoardWrapper disableSelect={true}>
-        <Sidebar playerId={notMe} />
-        <Field />
-        <Sidebar playerId={this.props.currentPlayer} />
+        <LeaveGame onPress={() => this.handleLeaveGame()}>
+          <LeaveGameText>X</LeaveGameText>
+        </LeaveGame>
+        <CardLayer height={height} width={width} />
+        <Sidebar
+          height={height * TOP_SIDEBOARD.height}
+          playerId={topPlayerId}
+        />
+        <Field height={height * (TOP_FIELD.height + BOTTOM_FIELD.height)} />
+        <Sidebar
+          height={height * BOTTOM_SIDEBOARD.height}
+          playerId={bottomPlayerId}
+        />
       </BoardWrapper>
     );
   }
@@ -126,8 +174,10 @@ const mapStateToProps = (state, props) => {
       state.game.playerOrder.every(
         playerId => state.game.players[playerId].unitId
       ),
-    playerOrder: state.game.playerOrder
+    playerOrder: state.game.playerOrder,
+    height: state.frontend.height,
+    width: state.frontend.width
   };
 };
 
-export default connect(mapStateToProps)(Board);
+export default withRouter(connect(mapStateToProps)(Board));
