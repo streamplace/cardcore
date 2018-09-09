@@ -2,6 +2,9 @@
   "name": "@cardcore/native",
   "version": "0.0.1",
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "jest": "^23.5.0",
     "jest-expo": "~27.0.0",
