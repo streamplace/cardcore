@@ -1,5 +1,5 @@
 import { Box } from "@cardcore/util";
-import * as boardRegions from "./board-regions";
+import * as boardRegions from "../board-regions";
 import { getDimensions } from "@cardcore/elements";
 import { clientPlayCreature } from "@cardcore/client";
 

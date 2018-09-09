@@ -14,7 +14,7 @@ import mouseSquare from "./mouse_square.png";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { desaturate } from "polished";
-import { frontendCardDrop } from "./frontend-actions";
+import { frontendCardDrop } from "./actions";
 
 const WIDTH = 1024;
 const HEIGHT = (1024 * 3) / 2;

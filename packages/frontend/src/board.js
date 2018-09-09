@@ -91,7 +91,7 @@ export class Board extends React.Component {
   }
 
   render() {
-    const { height, width } = this.props.dimensions;
+    const { height, width } = this.props;
     if (this.props.loading) {
       return <View />;
     }
@@ -174,7 +174,9 @@ const mapStateToProps = (state, props) => {
       state.game.playerOrder.every(
         playerId => state.game.players[playerId].unitId
       ),
-    playerOrder: state.game.playerOrder
+    playerOrder: state.game.playerOrder,
+    height: state.frontend.height,
+    width: state.frontend.width
   };
 };
 

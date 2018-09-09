@@ -12,25 +12,24 @@ import ButtCards from "./butt-cards";
 import FrontPage from "./front-page";
 import { Provider } from "react-redux";
 import { createStore } from "cardcore";
+import * as frontendActions from "./actions";
 
 export default class Router extends React.Component {
   constructor() {
     super();
-    this.store = createStore((state = {}, action) => state);
+    this.store = createStore(frontendActions);
     this.state = {
-      ready: false,
-      dimensions: getDimensions()
+      ready: false
     };
     this.handleResize = this.handleResize.bind(this);
   }
 
   handleResize() {
-    this.setState({
-      dimensions: getDimensions()
-    });
+    return this.store.dispatch(frontendActions.frontendResize(getDimensions()));
   }
 
   async componentDidMount() {
+    await this.handleResize();
     await bootstrap();
     this.setState({ ready: true });
     Events.on("resize", this.handleResize);
@@ -50,9 +49,7 @@ export default class Router extends React.Component {
           <RouteSwitch>
             <Route
               path="/game/:gameId"
-              render={props => (
-                <ButtCards dimensions={this.state.dimensions} {...props} />
-              )}
+              render={props => <ButtCards {...props} />}
             />
             <Route path="/" component={FrontPage} />
           </RouteSwitch>
