@@ -27,6 +27,8 @@ export const BOTTOM_SIDEBOARD = {
 };
 
 export const CARD_PADDING = 5;
+export const REGION_Z_INDEX = 10;
+export const CARD_Z_INDEX = 100;
 
 export function layoutReducer(state) {
   const layout = [];
@@ -76,6 +78,15 @@ export function layoutReducer(state) {
       region: BOTTOM_SIDEBOARD
     }
   ].forEach(({ playerId, location, region }) => {
+    layout.push({
+      type: "region",
+      region,
+      x: width * region.x,
+      y: height * region.y,
+      width: width * region.width,
+      height: height * region.height,
+      zIndex: REGION_Z_INDEX
+    });
     const player = state.game.players[playerId];
     const boxIds = player[location];
     const cardHeight = height * region.height - CARD_PADDING * 2;
@@ -89,10 +100,12 @@ export function layoutReducer(state) {
         key: boxId,
         boxId: boxId,
         height: cardHeight,
+        width: cardWidth,
         x: i * cardWidth + leftOffset,
         y: y,
         playerId,
-        location
+        location,
+        zIndex: CARD_Z_INDEX
       });
     });
   });
