@@ -1,4 +1,4 @@
-import * as boardRegions from "../board-regions";
+import * as boardRegions from "./layout";
 import { getDimensions } from "@cardcore/elements";
 import { clientPlayCreature } from "@cardcore/client";
 
@@ -7,6 +7,9 @@ export const frontendCardDrop = ({ boxId, x, y }) => (dispatch, getState) => {
   const { width, height } = getDimensions();
   const regionName = Object.keys(boardRegions).find(regionName => {
     const region = boardRegions[regionName];
+    if (typeof region.x !== "number") {
+      return false;
+    }
     const startX = region.x * width;
     const startY = region.y * height;
     const endX = region.width * width + startX;

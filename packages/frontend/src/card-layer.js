@@ -6,12 +6,6 @@ import { connect } from "react-redux";
 import { View } from "@cardcore/elements";
 import Card from "./card-svg";
 import { Box } from "@cardcore/util";
-import {
-  TOP_SIDEBOARD,
-  TOP_FIELD,
-  BOTTOM_FIELD,
-  BOTTOM_SIDEBOARD
-} from "./board-regions";
 
 const CardLayerBox = styled(View)`
   position: absolute;
@@ -22,110 +16,62 @@ const CardLayerBox = styled(View)`
   z-index: 100;
 `;
 
-const CARD_PADDING = 5;
-
-const getCardLine = props => {
-  const player = props.players[props.playerId];
-  const cardIds = player[props.location];
-  const cardHeight = props.height / 4 - CARD_PADDING * 2;
-  const cardWidth = (cardHeight * 3) / 4;
-  const allCardsWidth = cardWidth * cardIds.length;
-  const leftOffset = (props.width - allCardsWidth) / 2;
-  let y =
-    props.top !== undefined
-      ? props.top
-      : props.height - cardHeight - props.bottom;
-  return cardIds.map((cardId, i) => {
-    const decryptedId = Box.traverse(cardId, props.boxes, props.keys);
-    let active = false;
-    let draggable = false;
-    if (decryptedId) {
-      const card = props.units[decryptedId];
-      if (props.location === "hand") {
-        if (player.availableMana >= card.cost) {
-          active = true;
-          if (props.turn === props.currentPlayer) {
-            draggable = true;
-          }
-        }
-      } else if (props.location === "field") {
-        if (card.canAttack) {
-          active = true;
-          if (props.turn === props.currentPlayer) {
-            draggable = true;
-          }
-        }
-      }
-    }
-    const x = (
-      <Card
-        key={cardId}
-        active={active}
-        draggable={draggable}
-        boxId={cardId}
-        height={cardHeight}
-        x={i * cardWidth + leftOffset}
-        y={y + CARD_PADDING}
-      />
-    );
-    return x;
-  });
-};
-
 export class Sidebar extends React.Component {
   render() {
-    const { height, width, topPlayerId, bottomPlayerId } = this.props;
-    const cards = [
-      ...getCardLine({
-        ...this.props,
-        playerId: topPlayerId,
-        location: "hand",
-        top: height * TOP_SIDEBOARD.y
-      }),
-      ...getCardLine({
-        ...this.props,
-        playerId: topPlayerId,
-        location: "field",
-        top: height * TOP_FIELD.y
-      }),
-      ...getCardLine({
-        ...this.props,
-        playerId: bottomPlayerId,
-        location: "field",
-        top: height * BOTTOM_FIELD.y
-      }),
-      ...getCardLine({
-        ...this.props,
-        playerId: bottomPlayerId,
-        location: "hand",
-        top: height * BOTTOM_SIDEBOARD.y
-      })
-    ];
+    const { height, width } = this.props;
     return (
       <CardLayerBox pointerEvents="box-none" height={height} width={width}>
-        {cards}
+        {this.props.cards.map(layout => {
+          const cardId = this.props.boxTraverse(layout.boxId);
+          const player = this.props.players[layout.playerId];
+          let active = false;
+          let draggable = false;
+          if (cardId) {
+            const card = this.props.units[cardId];
+            if (layout.location === "hand") {
+              if (player.availableMana >= card.cost) {
+                active = true;
+                if (this.props.turn === this.props.currentPlayer) {
+                  draggable = true;
+                }
+              }
+            } else if (layout.location === "field") {
+              if (card.canAttack) {
+                active = true;
+                if (this.props.turn === this.props.currentPlayer) {
+                  draggable = true;
+                }
+              }
+            }
+          }
+          return (
+            <Card
+              key={layout.boxId}
+              active={active}
+              draggable={draggable}
+              boxId={layout.boxId}
+              height={layout.height}
+              x={layout.x}
+              y={layout.y}
+            />
+          );
+        })}
       </CardLayerBox>
     );
   }
 }
 
 const mapStateToProps = (state, props) => {
-  let [topPlayerId, bottomPlayerId] = state.game.playerOrder;
-  if (state.game.playerOrder.includes(state.client.keys.id)) {
-    topPlayerId = state.game.playerOrder.find(
-      id => id !== state.client.keys.id
-    );
-    bottomPlayerId = state.client.keys.id;
-  }
   return {
     players: state.game.players,
     boxes: state.game.boxes,
     keys: state.client.keys,
-    topPlayerId,
-    bottomPlayerId,
     currentPlayer: state.client.keys.id,
     turn: state.game.turn,
-    units: state.game.units
+    units: state.game.units,
+    cards: state.frontend.layout.filter(elem => elem.type === "card"),
+    boxTraverse: Box.traverse.bind(Box, state),
+    state: state
   };
 };
 

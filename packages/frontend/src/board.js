@@ -25,7 +25,7 @@ import {
   TOP_FIELD,
   BOTTOM_FIELD,
   BOTTOM_SIDEBOARD
-} from "./board-regions";
+} from "./actions/layout";
 
 const BoardWrapper = styled(View)`
   height: 100%;
