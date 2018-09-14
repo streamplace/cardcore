@@ -123,28 +123,51 @@ const CardSide = styled(Animated.View)`
 `;
 
 export class CardSVG extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
     this.spinValue = new Animated.Value(1);
     this.pan = new Animated.ValueXY();
+    this.panOffset = new Animated.ValueXY();
     this.state = { dragging: false };
     // Initialize PanResponder with move handling
     this.panResponder = PanResponder.create({
       onStartShouldSetPanResponder: (e, gesture) => this.props.draggable,
-      onPanResponderGrant: () => this.setState({ dragging: true }),
-      onPanResponderMove: Animated.event([
-        null,
-        { dx: this.pan.x, dy: this.pan.y }
-      ]),
+      onPanResponderGrant: (e, gesture) => {
+        this.panOffset.setValue({
+          x: -e.nativeEvent.locationX,
+          y: -e.nativeEvent.locationY
+        });
+        this.pan.setValue({
+          x: this.props.x + e.nativeEvent.locationX,
+          y: this.props.y + e.nativeEvent.locationY
+        });
+        this.setState({
+          dragging: true,
+          anchorX: this.props.x,
+          anchorY: this.props.y
+        });
+      },
+      onPanResponderMove: Animated.event(
+        [
+          null,
+          {
+            moveX: this.pan.x,
+            moveY: this.pan.y
+          }
+        ],
+        true
+      ),
       onPanResponderRelease: (e, { moveX, moveY }) => {
         this.props.dispatch(
           frontendCardDrop({ boxId: this.props.boxId, x: moveX, y: moveY })
         );
         this.setState({ dragging: false });
-        this.pan.setValue({ x: 0, y: 0 });
+        this.pan.setValue({ x: this.props.x, y: this.props.y });
+        this.panOffset.setValue({ x: 0, y: 0 });
       }
     });
-    this.pan.setValue({ x: 0, y: 0 });
+    this.pan.setValue({ x: props.x, y: props.y });
+    this.panOffset.setValue({ x: 0, y: 0 });
   }
 
   componentDidMount() {
@@ -158,6 +181,26 @@ export class CardSVG extends React.Component {
     if (!prevProps.cardId && !!this.props.cardId) {
       this.flipFront();
     }
+    if (prevProps.x !== this.props.x || prevProps.y !== this.props.y) {
+      this.handleMove();
+    }
+  }
+
+  handleMove() {
+    if (this.moveAnim) {
+      this.moveAnim.stop();
+    }
+    this.moveAnim = Animated.timing(this.pan, {
+      toValue: { x: this.props.x, y: this.props.y },
+      duration: 500,
+      easing: Easing.ease,
+      useNativeDriver: true
+    });
+    this.moveAnim.start(({ finished }) => {
+      if (finished) {
+        this.moveAnim = null;
+      }
+    });
   }
 
   flipFront() {
@@ -192,6 +235,7 @@ export class CardSVG extends React.Component {
       inputRange: [0, 1],
       outputRange: ["180deg", "0deg"]
     });
+    const location = Animated.add(this.pan, this.panOffset);
     return (
       // can't use custom fonts in SVG yet, so we're forced to overlay <Text>
       // https://github.com/expo/expo/issues/1450
@@ -202,12 +246,20 @@ export class CardSVG extends React.Component {
         style={{
           width: width,
           height: height,
-          transform: this.pan.getTranslateTransform()
+          transform: [
+            {
+              translateX: Animated.add(this.pan.x, this.panOffset.x)
+            },
+            {
+              translateY: Animated.add(this.pan.y, this.panOffset.y)
+            }
+          ]
         }}
-        x={this.props.x}
-        y={this.props.y}
+        x={0}
+        y={0}
       >
         <CardSide
+          pointerEvents="none"
           style={{
             width: width,
             height: height,
@@ -309,6 +361,7 @@ export class CardSVG extends React.Component {
           </Svg>
         </CardSide>
         <CardSide
+          pointerEvents="none"
           style={{
             width: width,
             height: height,
