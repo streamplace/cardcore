@@ -7,7 +7,6 @@ import { attack } from "@cardcore/game";
 export const FRONTEND_CARD_DROP = "FRONTEND_CARD_DROP";
 export const frontendCardDrop = ({ boxId, x, y }) => (dispatch, getState) => {
   const state = getState();
-  const { width, height } = getDimensions();
 
   // find everything that's below where we dropped the card
   const matches = state.frontend.layout

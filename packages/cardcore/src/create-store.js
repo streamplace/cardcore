@@ -11,7 +11,7 @@ export default function(...modules) {
   return createStore(
     createReducer(...modules),
     composeEnhancers(
-      applyMiddleware(invariant(), gameActionMiddleware, thunk, gameMiddleware)
+      applyMiddleware(gameActionMiddleware, thunk, gameMiddleware)
     )
   );
 }
