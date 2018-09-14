@@ -235,7 +235,6 @@ export class CardSVG extends React.Component {
       inputRange: [0, 1],
       outputRange: ["180deg", "0deg"]
     });
-    const location = Animated.add(this.pan, this.panOffset);
     return (
       // can't use custom fonts in SVG yet, so we're forced to overlay <Text>
       // https://github.com/expo/expo/issues/1450

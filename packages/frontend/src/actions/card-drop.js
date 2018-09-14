@@ -1,5 +1,4 @@
 import { BOTTOM_FIELD } from "./layout";
-import { getDimensions } from "@cardcore/elements";
 import { clientPlayCreature } from "@cardcore/client";
 import { Box } from "@cardcore/util";
 import { attack } from "@cardcore/game";
