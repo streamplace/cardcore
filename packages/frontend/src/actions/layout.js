@@ -110,5 +110,32 @@ export function layoutReducer(state) {
     });
   });
 
+  // faces
+  [
+    {
+      region: TOP_SIDEBOARD,
+      playerId: topPlayerId
+    },
+    {
+      region: BOTTOM_SIDEBOARD,
+      playerId: bottomPlayerId
+    }
+  ].forEach(({ region, playerId }) => {
+    const cardHeight = height * region.height - CARD_PADDING * 2;
+    const cardWidth = (cardHeight * 3) / 4;
+    const player = state.game.players[playerId];
+    layout.push({
+      type: "face",
+      boxId: player.unitId,
+      key: player.unitId,
+      x: region.x * width + CARD_PADDING,
+      y: region.y * height + CARD_PADDING,
+      width: cardWidth,
+      height: cardHeight,
+      zIndex: CARD_Z_INDEX,
+      availableMana: player.availableMana
+    });
+  });
+
   return { ...state, frontend: { ...state.frontend, layout } };
 }

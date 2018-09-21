@@ -218,6 +218,7 @@ export class CardSVG extends React.Component {
     if (!card) {
       card = TEMP_DEFAULT_CARD;
     }
+    card = { ...card, ...this.props.cardOverride };
     if (!width && !height) {
       throw new Error("need width or height for a card");
     }
@@ -388,7 +389,8 @@ const mapStateToProps = (state, props) => {
     player: state.game.players[props.playerId],
     myTurn: state.client.keys.id === state.game.turn,
     myUnit: state.client.keys.id === props.playerId,
-    availableTargets: state.client.availableTargets
+    availableTargets: state.client.availableTargets,
+    cardOverride: props.cardOverride || {}
   };
 };
 

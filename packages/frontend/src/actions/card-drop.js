@@ -26,18 +26,26 @@ export const frontendCardDrop = ({ boxId, x, y }) => (dispatch, getState) => {
         return dispatch(clientPlayCreature(boxId));
       }
     }
-    if (elem.type === "card") {
+    if (elem.type === "card" || elem.type === "face") {
       const otherPlayerId = state.game.playerOrder.find(
         pid => pid !== state.client.keys.id
       );
-      // if we drag our canAttack field card onto theirs, it's an attack!
-      if (!state.game.players[state.client.keys.id].field.includes(boxId)) {
-        // dragged card isn't ours
-        continue;
+      if (elem.type === "card") {
+        // if we drag our canAttack field card onto theirs, it's an attack!
+        if (!state.game.players[state.client.keys.id].field.includes(boxId)) {
+          // dragged card isn't ours
+          continue;
+        }
+        if (!state.game.players[otherPlayerId].field.includes(elem.boxId)) {
+          // target card isn't theirs
+          continue;
+        }
       }
-      if (!state.game.players[otherPlayerId].field.includes(elem.boxId)) {
-        // target card isn't theirs
-        continue;
+      if (elem.type === "face") {
+        if (!state.game.players[otherPlayerId].unitId === boxId) {
+          // i attacked my own face? don't do that, weirdo.
+          continue;
+        }
       }
       const myCardId = Box.traverse(state, boxId);
       if (!state.game.units[myCardId].canAttack) {

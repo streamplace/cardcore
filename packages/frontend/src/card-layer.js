@@ -56,6 +56,20 @@ export class Sidebar extends React.Component {
             />
           );
         })}
+        {this.props.faces.map(layout => {
+          return (
+            <Card
+              key={layout.boxId}
+              active={false}
+              draggable={false}
+              boxId={layout.boxId}
+              height={layout.height}
+              x={layout.x}
+              y={layout.y}
+              cardOverride={{ cost: layout.availableMana }}
+            />
+          );
+        })}
       </CardLayerBox>
     );
   }
@@ -70,6 +84,7 @@ const mapStateToProps = (state, props) => {
     turn: state.game.turn,
     units: state.game.units,
     cards: state.frontend.layout.filter(elem => elem.type === "card"),
+    faces: state.frontend.layout.filter(elem => elem.type === "face"),
     boxTraverse: Box.traverse.bind(Box, state),
     state: state
   };
