@@ -1,6 +1,7 @@
 import ssbKeys from "@streamplace/ssb-keys";
 import { clientGenerateKey } from "@cardcore/client";
-import { rando } from "@cardcore/util";
+import { rando, Box } from "@cardcore/util";
+import { BOX_OPEN } from "./box";
 
 export const SEED_RNG = "SEED_RNG";
 export const seedRng = action => {
@@ -9,27 +10,18 @@ export const seedRng = action => {
 
 export const SEED_RNG_ENCRYPT = "SEED_RNG_ENCRYPT";
 export const seedRngEncrypt = () => async (dispatch, getState) => {
-  const { keys } = await dispatch(clientGenerateKey());
-  // idk just hash a key
+  const me = getState().client.keys;
+  // idk just hash a key, good enough
   const randoSecret = ssbKeys.hash(ssbKeys.generate().id);
-  const boxed = ssbKeys.box(randoSecret, [keys]);
+  const { boxId, box } = Box.new(randoSecret, me.id);
   return dispatch({
     type: SEED_RNG_ENCRYPT,
-    id: keys.id,
-    box: boxed
+    boxId,
+    box
   });
 };
 
-export const SEED_RNG_DECRYPT = "SEED_RNG_DECRYPT";
-export const seedRngDecrypt = () => async (dispatch, getState) => {
-  const state = getState();
-  const mySeed = state.game.randoSeeds[state.client.keys.id];
-  const privateKey = state.secret[mySeed.id].private;
-  return dispatch({
-    type: SEED_RNG_DECRYPT,
-    privateKey: privateKey
-  });
-};
+export const SEED_RNG_COMBINE = "SEED_RNG_COMBINE";
 
 // these actions should all happen in lexical order rather than playerOrder because they're used to // seed the RNG prior to playerOrder existing
 export const seedRngReducer = (state, action) => {
@@ -46,6 +38,12 @@ export const seedRngReducer = (state, action) => {
               type: SEED_RNG_ENCRYPT
             }
           },
+          {
+            playerId: action._sender,
+            action: {
+              type: SEED_RNG_COMBINE
+            }
+          },
           ...state.game.nextActions
         ]
       }
@@ -58,14 +56,13 @@ export const seedRngReducer = (state, action) => {
       ...state,
       game: {
         ...state.game,
+        boxes: {
+          ...state.game.boxes,
+          [action.boxId]: action.box
+        },
         randoSeeds: {
           ...state.game.randoSeeds,
-          [action._sender]: {
-            secret: true,
-            id: action.id,
-            box: action.box,
-            playerId: action._sender
-          }
+          [action._sender]: action.boxId
         }
       }
     };
@@ -80,7 +77,8 @@ export const seedRngReducer = (state, action) => {
             ...orderedPlayers.map(playerId => ({
               playerId: playerId,
               action: {
-                type: SEED_RNG_DECRYPT
+                type: BOX_OPEN,
+                boxId: state.game.randoSeeds[playerId]
               }
             })),
             ...state.game.nextActions
@@ -108,39 +106,14 @@ export const seedRngReducer = (state, action) => {
     }
   }
 
-  if (action.type === SEED_RNG_DECRYPT) {
-    const orderedPlayers = Object.keys(state.game.players).sort();
-    const randoSeed = state.game.randoSeeds[action._sender];
-    let newSecret = state.secret;
-    if (state.secret[randoSeed.id]) {
-      newSecret = { ...state.secret };
-      delete newSecret[randoSeed.id];
-    }
-    state = {
-      ...state,
-      game: {
-        ...state.game,
-        randoSeeds: {
-          ...state.game.randoSeeds,
-          [action._sender]: ssbKeys.unbox(
-            state.game.randoSeeds[action._sender].box,
-            { private: action.privateKey }
-          )
-        }
-      }
-    };
-    // if we're done, clear out randoSeeds
-    if (
-      !Object.values(state.game.randoSeeds).every(
-        val => typeof val === "string"
-      )
-    ) {
-      return state;
-    }
-    const finalSeed = ssbKeys.hash(
-      orderedPlayers.map(playerId => state.game.randoSeeds[playerId]).concat("")
-    );
-    rando.setSeed(finalSeed);
+  if (action.type === SEED_RNG_COMBINE) {
+    let finalSeed = Object.keys(state.game.players)
+      .sort()
+      .map(playerId => {
+        return Box.traverse(state, state.game.randoSeeds[playerId]);
+      })
+      .join("");
+    finalSeed = ssbKeys.hash(finalSeed);
     return {
       ...state,
       game: {

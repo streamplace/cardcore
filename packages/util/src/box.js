@@ -3,12 +3,13 @@ import ssbKeys from "@streamplace/ssb-keys";
 const boxCache = {};
 
 const Box = {
-  open(boxId, box, me) {
+  open(state, boxId) {
+    const box = state.game.boxes[boxId];
     let privateKey;
     if (box.privateKey) {
       privateKey = box.privateKey;
-    } else if (box.keys[me.id]) {
-      privateKey = Box.getPrivate(box, me);
+    } else if (box.keys[state.client.keys.id]) {
+      privateKey = Box.getPrivate(state, boxId);
     }
     if (!privateKey) {
       return null;
@@ -20,45 +21,39 @@ const Box = {
     });
   },
 
-  getPrivate(box, me) {
+  getPrivate(state, boxId) {
+    const box = state.game.boxes[boxId];
+    const me = state.client.keys;
     return ssbKeys.unbox(box.keys[me.id], me);
   },
 
-  traverse(state, boxId, _me) {
-    let boxes;
-    let me;
+  traverse(state, boxId) {
     if (typeof state === "string") {
-      // deprecated
-      boxes = boxId;
-      me = _me;
-      boxId = state;
-    } else {
-      boxes = state.game.boxes;
-      me = state.client.keys;
+      throw new Error("deprecated call to Box.traverse");
     }
 
     if (boxCache[boxId]) {
       return boxCache[boxId];
     }
-    const result = this._traverse(boxId, boxes, me);
+    const result = this._traverse(state, boxId);
     if (result) {
       boxCache[boxId] = result;
     }
     return result;
   },
 
-  _traverse(boxId, boxes, me) {
-    if (!boxes[boxId]) {
+  _traverse(state, boxId) {
+    if (!state.game.boxes[boxId]) {
       return boxId; // idk maybe a unitId or something
     }
-    const boxContents = Box.open(boxId, boxes[boxId], me);
+    const boxContents = Box.open(state, boxId);
     if (!boxContents) {
       // dang, couldn't open it. done!
       return null;
     }
-    if (boxes[boxContents]) {
+    if (state.game.boxes[boxContents]) {
       // hey, this box had a box in it! keep going!
-      return Box._traverse(boxContents, boxes, me);
+      return Box._traverse(state, boxContents);
     }
     // got something that wasn't a box — we're done!
     return boxContents;
@@ -83,8 +78,8 @@ const Box = {
     return { boxId: keys.id, box };
   },
 
-  addKey(box, me, ownerId) {
-    const boxMasterPrivateKey = ssbKeys.unbox(box.keys[me.id], me);
+  addKey(state, boxId, ownerId) {
+    const boxMasterPrivateKey = this.getPrivate(state, boxId);
     return ssbKeys.box(boxMasterPrivateKey, [
       {
         id: ownerId,

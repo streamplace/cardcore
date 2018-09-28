@@ -17,7 +17,7 @@ export const playCreatureReducer = (state, action) => {
   if (action.type === PLAY_CREATURE) {
     const player = state.game.players[action._sender];
     const boxId = action.boxId;
-    const unitId = Box.traverse(boxId, state.game.boxes, state.client.keys);
+    const unitId = Box.traverse(state, boxId);
     const unit = state.game.units[unitId];
     return {
       ...state,
@@ -42,9 +42,7 @@ export const playCreatureReducer = (state, action) => {
           },
           ...unit.onSummon
             .filter((onSummon, i) => {
-              if (
-                Object.keys(target(state.game, onSummon.target)).length === 0
-              ) {
+              if (Object.keys(target(state, onSummon.target)).length === 0) {
                 return false;
               }
               return true;
