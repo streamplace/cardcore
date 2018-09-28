@@ -121,7 +121,7 @@ export class Board extends React.Component {
     }
     if (!this.props.ready) {
       const gameUrl = `${getServer()}/game/${this.props.gameId}`;
-      console.log(gameUrl);
+      console.log("game url: " + gameUrl);
       return (
         <LoadingBox>
           <Text>Waiting for another player...</Text>
