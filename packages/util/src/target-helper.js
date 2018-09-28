@@ -7,7 +7,7 @@ import {
   PLAYER_ENEMY
 } from "./constants";
 import { rando } from "./random-util";
-import { Box } from "@cardcore/util";
+import { Box } from "./box";
 
 const noop = x => x;
 
