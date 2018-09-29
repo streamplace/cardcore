@@ -12,7 +12,7 @@ export * from "./client-poll";
 export const CLIENT_PLAY_CREATURE = "CLIENT_PLAY_CREATURE";
 export const clientPlayCreature = boxId => async (dispatch, getState) => {
   const state = getState();
-  const unitId = Box.traverse(boxId, state.game.boxes, state.client.keys);
+  const unitId = Box.traverse(state, boxId);
   const unit = state.game.units[unitId];
   await dispatch({
     type: CLIENT_PLAY_CREATURE,
@@ -41,7 +41,7 @@ export const clientStartTarget = () => (dispatch, getState) => {
   if (target.random || target.count === undefined) {
     return dispatch(clientPickTarget(null));
   }
-  const availableTargets = Object.keys(targetHelper(state.game, target));
+  const availableTargets = Object.keys(targetHelper(state, target));
   if (availableTargets.length === 0) {
     return dispatch(clientPickTarget(null));
   }

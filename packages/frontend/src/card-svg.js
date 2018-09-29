@@ -375,7 +375,7 @@ export class CardSVG extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-  const cardId = Box.traverse(props.boxId, state.game.boxes, state.client.keys);
+  const cardId = Box.traverse(state, props.boxId);
   let card;
   if (cardId) {
     card = state.game.units[cardId];

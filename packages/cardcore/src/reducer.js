@@ -8,27 +8,6 @@ const gameReducers = Object.keys(gameActions)
   .filter(key => key.endsWith("Reducer"))
   .map(key => gameActions[key]);
 
-const secret = function(state = {}, action) {
-  if (action.type === clientActions.CLIENT_GENERATE_KEY) {
-    return {
-      ...state,
-      [action.keys.id]: action.keys
-    };
-  }
-
-  if (action.type === clientActions.CLIENT_BOX) {
-    return {
-      ...state,
-      [action.id]: {
-        ...state[action.id],
-        contents: action.contents
-      }
-    };
-  }
-
-  return state;
-};
-
 const DEFAULT_STATE = { game: {} };
 
 export function createReducer(...modules) {
@@ -44,7 +23,7 @@ export function createReducer(...modules) {
     if (state.game && state.game.randoSeed) {
       rando.setSeed(startRandoSeed);
     }
-    const reducers = { client: clientActions.clientReducer, secret };
+    const reducers = { client: clientActions.clientReducer };
     // temporary hacky game init logic
     if (action.type === clientActions.CLIENT_LOAD_STATE_START) {
       state = {

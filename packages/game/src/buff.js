@@ -11,7 +11,7 @@ export const buffReducer = (state, action) => {
         ...state.game,
         units: {
           ...state.game.units,
-          ...target(state.game, action.target, unit => {
+          ...target(state, action.target, unit => {
             return {
               ...unit,
               attack: action.value
@@ -29,7 +29,7 @@ export const buffReducer = (state, action) => {
         ...state.game,
         units: {
           ...state.game.units,
-          ...target(state.game, action.target, unit => {
+          ...target(state, action.target, unit => {
             return {
               ...unit,
               health: action.value

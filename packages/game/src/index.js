@@ -1,5 +1,6 @@
 export * from "./attack";
 export * from "./bounce";
+export * from "./box";
 export * from "./buff";
 export * from "./check-death";
 export * from "./damage";

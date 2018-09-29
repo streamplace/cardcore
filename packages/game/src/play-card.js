@@ -10,10 +10,7 @@ export const playCard = ({ boxId }) => ({
 
 export const REVEAL_CARD = "REVEAL_CARD";
 export const revealCard = ({ boxId }) => (dispatch, getState) => {
-  const state = getState();
-  const me = state.client.keys;
-  const box = state.game.boxes[boxId];
-  const privateKey = Box.getPrivate(box, me);
+  const privateKey = Box.getPrivate(getState(), boxId);
   dispatch({
     type: "REVEAL_CARD",
     boxId,
@@ -74,7 +71,17 @@ export const playCardReducer = (state, action) => {
       ...box,
       privateKey: action.privateKey
     };
-    const contents = Box.open(action.boxId, newBox, null);
+    state = {
+      ...state,
+      game: {
+        ...state.game,
+        boxes: {
+          ...state.game.boxes,
+          [action.boxId]: newBox
+        }
+      }
+    };
+    const contents = Box.open(state, action.boxId);
     // if there's another box in here, pass to the player on our left
     let nextActions = state.game.nextActions;
     if (state.game.boxes[contents]) {
@@ -95,10 +102,6 @@ export const playCardReducer = (state, action) => {
       ...state,
       game: {
         ...state.game,
-        boxes: {
-          ...state.game.boxes,
-          [action.boxId]: newBox
-        },
         nextActions: nextActions
       }
     };

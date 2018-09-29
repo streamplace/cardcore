@@ -7,6 +7,7 @@ import {
   PLAYER_ENEMY
 } from "./constants";
 import { rando } from "./random-util";
+import { Box } from "./box";
 
 const noop = x => x;
 
@@ -14,7 +15,7 @@ const noop = x => x;
  * Returns an object of {unitId: unit}
  *
  * @export
- * @param {object} state
+ * @param {object} game
  * @param {object} target
  * @property {string} target.player
  * @property {string} target.location
@@ -23,21 +24,23 @@ const noop = x => x;
  * @property {boolean} target.type
  */
 export function target(state, target, func = noop) {
+  const hasFullState = !!state.game;
+  let game = hasFullState ? state.game : state;
   let units = {};
   const owners = {};
   if (target.unitId) {
-    units[target.unitId] = state.units[target.unitId];
-    owners[target.unitId] = Object.keys(state.players).find(playerId => {
-      return state.players[playerId].field.includes(target.unitId);
+    units[target.unitId] = game.units[target.unitId];
+    owners[target.unitId] = Object.keys(game.players).find(playerId => {
+      return game.players[playerId].field.includes(target.unitId);
     });
   } else {
     let players;
     if (!target.player) {
-      players = state.playerOrder;
+      players = game.playerOrder;
     } else if (target.player === PLAYER_SELF) {
-      players = [state.turn];
+      players = [game.turn];
     } else if (target.player === PLAYER_ENEMY) {
-      players = state.playerOrder.filter(p => p !== state.turn);
+      players = game.playerOrder.filter(p => p !== game.turn);
     } else {
       players = [target.player];
     }
@@ -46,20 +49,34 @@ export function target(state, target, func = noop) {
     const types = target.type ? [target.type] : ALL_TYPES;
     const owners = {};
 
-    for (const [playerId, player] of Object.entries(state.players)) {
+    for (const [playerId, player] of Object.entries(game.players)) {
       if (!players.includes(playerId)) {
         continue;
       }
       if (types.includes(TYPE_FACE)) {
-        units[player.unitId] = state.units[player.unitId];
+        units[player.unitId] = game.units[player.unitId];
         owners[player.unitId] = playerId;
       }
       if (!types.includes(TYPE_CREATURE)) {
         continue;
       }
       for (const location of locations) {
-        for (const unitId of player[location]) {
-          units[unitId] = state.units[unitId];
+        for (const boxId of player[location]) {
+          if (!hasFullState) {
+            throw new Error("Deprecated call to target(), need full state");
+          }
+          const unitId = Box.traverse(state, boxId);
+          if (!unitId) {
+            console.error(
+              `Tried to target something I can't decrypt, ${JSON.stringify({
+                location,
+                boxId,
+                playerId
+              })}`
+            );
+            continue;
+          }
+          units[unitId] = game.units[unitId];
           owners[unitId] = playerId;
         }
       }
@@ -83,9 +100,9 @@ export function target(state, target, func = noop) {
   return units;
 }
 
-export function targetArray(state, action) {
+export function targetArray(game, action) {
   return Object.values(
-    target(state, action, (unit, details) => {
+    target(game, action, (unit, details) => {
       return { ...details, unit };
     })
   );
