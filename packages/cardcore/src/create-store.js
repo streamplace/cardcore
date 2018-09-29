@@ -1,17 +1,21 @@
 import { createStore, compose, applyMiddleware } from "redux";
-import gameActionMiddleware from "./game-action-middleware";
-import { gameMiddleware } from "./game-middleware";
-import invariant from "redux-immutable-state-invariant";
+import createGameActionMiddleware from "./game-action-middleware";
+import createGameMiddleware from "./game-middleware";
+// import invariant from "redux-immutable-state-invariant";
 import { createReducer } from "./reducer";
 import thunk from "redux-thunk";
 
-export default function(...modules) {
+export default function(gameModules, clientModules) {
   const composeEnhancers =
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
   return createStore(
-    createReducer(...modules),
+    createReducer(gameModules, clientModules),
     composeEnhancers(
-      applyMiddleware(gameActionMiddleware, thunk, gameMiddleware)
+      applyMiddleware(
+        createGameActionMiddleware(gameModules),
+        thunk,
+        createGameMiddleware(gameModules, clientModules)
+      )
     )
   );
 }

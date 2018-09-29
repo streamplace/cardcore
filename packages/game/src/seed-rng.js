@@ -1,5 +1,4 @@
 import ssbKeys from "@streamplace/ssb-keys";
-import { clientGenerateKey } from "@cardcore/client";
 import { rando, Box } from "@cardcore/util";
 import { BOX_OPEN } from "./box";
 

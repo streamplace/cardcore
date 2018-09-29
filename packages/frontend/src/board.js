@@ -90,10 +90,18 @@ export class Board extends React.Component {
     this.props.history.push("/");
   }
 
+  renderLeaveGame() {
+    return (
+      <LeaveGame onPress={() => this.handleLeaveGame()}>
+        <LeaveGameText>X</LeaveGameText>
+      </LeaveGame>
+    );
+  }
+
   render() {
     const { height, width } = this.props;
     if (this.props.loading) {
-      return <View />;
+      return <View>{this.renderLeaveGame()}</View>;
     }
     if (this.props.started) {
       clearInterval(this.interval);
@@ -109,6 +117,7 @@ export class Board extends React.Component {
       }
       return (
         <BoardWrapper>
+          {this.renderLeaveGame()}
           <BigMessage>fatal error: desync</BigMessage>
           <BigMessage>
             if you wanna help, send someone this blob of data:
@@ -124,6 +133,7 @@ export class Board extends React.Component {
       console.log("game url: " + gameUrl);
       return (
         <LoadingBox>
+          {this.renderLeaveGame()}
           <Text>Waiting for another player...</Text>
           <Text>Send your friend this link:</Text>
           <Text>{gameUrl}</Text>
@@ -139,9 +149,7 @@ export class Board extends React.Component {
     }
     return (
       <BoardWrapper disableSelect={true}>
-        <LeaveGame onPress={() => this.handleLeaveGame()}>
-          <LeaveGameText>X</LeaveGameText>
-        </LeaveGame>
+        {this.renderLeaveGame()}
         <CardLayer height={height} width={width} />
         <Sidebar
           height={height * TOP_SIDEBOARD.height}

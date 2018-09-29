@@ -36,7 +36,9 @@ export function layoutReducer(state) {
     !state.frontend ||
     typeof state.frontend.width !== "number" ||
     !state.game ||
-    !state.game.playerOrder
+    !state.game.playerOrder ||
+    !state.client ||
+    !state.client.keys
   ) {
     return state;
   }

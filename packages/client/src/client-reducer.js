@@ -12,64 +12,91 @@ const INITIAL_STATE = {
   loadingState: true
 };
 
-export default function reducer(state = INITIAL_STATE, action) {
+export default function clientReducer(state, action) {
+  if (state.client === undefined) {
+    state = {
+      ...state,
+      client: INITIAL_STATE
+    };
+  }
   if (action.type === actions.JOIN_GAME_ACCEPT) {
     return {
       ...state,
-      started: true
+      client: {
+        ...state.client,
+        started: true
+      }
     };
   }
   if (action.type === clientActions.CLIENT_GENERATE_IDENTITY) {
-    return { ...state, keys: action.keys };
+    return { ...state, client: { ...state.client, keys: action.keys } };
   }
 
   if (action.type === clientActions.CLIENT_PLAY_CREATURE) {
     return {
       ...state,
-      targetQueue: action.unit.onSummon.map(onSummon => onSummon.target),
-      playingBoxId: action.boxId
+      client: {
+        ...state.client,
+        targetQueue: action.unit.onSummon.map(onSummon => onSummon.target),
+        playingBoxId: action.boxId
+      }
     };
   }
 
   if (action.type === clientActions.CLIENT_TARGET_CANCEL) {
     return {
       ...state,
-      targetQueue: [],
-      targets: [],
-      availableTargets: null,
-      playingBoxId: null
+      client: {
+        ...state.client,
+        targetQueue: [],
+        targets: [],
+        availableTargets: null,
+        playingBoxId: null
+      }
     };
   }
 
   if (action.type === actions.DESYNC) {
     return {
       ...state,
-      sync: false,
-      desyncStates: {
-        ...state.desyncStates,
-        [action.user]: action.state
+      client: {
+        ...state.client,
+        sync: false,
+        desyncStates: {
+          ...state.client.desyncStates,
+          [action.user]: action.state
+        }
       }
     };
   }
   if (action.type === clientActions.CLIENT_START_TARGET) {
     return {
       ...state,
-      availableTargets: action.availableTargets
+      client: {
+        ...state.client,
+        availableTargets: action.availableTargets
+      }
     };
   }
 
   if (action.type === clientActions.CLIENT_PICK_TARGET) {
     return {
       ...state,
-      targetQueue: state.targetQueue.slice(1),
-      targets: [...state.targets, action.unitId]
+      client: {
+        ...state.client,
+        targetQueue: state.client.targetQueue.slice(1),
+        targets: [...state.client.targets, action.unitId]
+      }
     };
   }
 
   if (action.type === clientActions.CLIENT_LOAD_STATE_START) {
     return {
       ...state,
-      loadingState: true
+      client: {
+        ...state.client,
+        loadingState: true
+      }
     };
   }
 
@@ -79,15 +106,21 @@ export default function reducer(state = INITIAL_STATE, action) {
   ) {
     return {
       ...state,
-      loadingState: false
+      client: {
+        ...state.client,
+        loadingState: false
+      }
     };
   }
 
   if (action.type === actions.PLAY_CREATURE) {
     return {
       ...state,
-      availableTargets: null,
-      targets: []
+      client: {
+        ...state.client,
+        availableTargets: null,
+        targets: []
+      }
     };
   }
 

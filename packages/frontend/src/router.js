@@ -12,12 +12,17 @@ import ButtCards from "./butt-cards";
 import FrontPage from "./front-page";
 import { Provider } from "react-redux";
 import { createStore } from "cardcore";
-import * as frontendActions from "./actions";
+import * as gameModules from "@cardcore/game";
+import * as clientModules from "@cardcore/client";
+import * as frontendModules from "./actions";
 
 export default class Router extends React.Component {
   constructor() {
     super();
-    this.store = createStore(frontendActions);
+    this.store = createStore(gameModules, {
+      ...clientModules,
+      ...frontendModules
+    });
     this.state = {
       ready: false
     };
@@ -25,7 +30,7 @@ export default class Router extends React.Component {
   }
 
   handleResize() {
-    return this.store.dispatch(frontendActions.frontendResize(getDimensions()));
+    return this.store.dispatch(frontendModules.frontendResize(getDimensions()));
   }
 
   async componentDidMount() {
