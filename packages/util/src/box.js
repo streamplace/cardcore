@@ -8,7 +8,11 @@ const Box = {
     let privateKey;
     if (box.privateKey) {
       privateKey = box.privateKey;
-    } else if (box.keys[state.client.keys.id]) {
+    } else if (
+      state.client &&
+      state.client.keys &&
+      box.keys[state.client.keys.id]
+    ) {
       privateKey = Box.getPrivate(state, boxId);
     }
     if (!privateKey) {

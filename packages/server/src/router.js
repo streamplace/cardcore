@@ -160,8 +160,8 @@ app.post(hashRegex, async (req, res) => {
     }
     res.sendStatus(204);
   } catch (err) {
-    res.status(400);
-    res.send({ error: err.message });
+    res.status(500);
+    res.send({ error: err.message, stack: err.stack });
   }
 });
 
