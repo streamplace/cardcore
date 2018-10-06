@@ -67,7 +67,7 @@ export function target(state, target, func = noop) {
           }
           const unitId = Box.traverse(state, boxId);
           if (!unitId) {
-            console.error(
+            console.warn(
               `Tried to target something I can't decrypt, ${JSON.stringify({
                 location,
                 boxId,
