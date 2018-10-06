@@ -61,13 +61,25 @@ export default function createGameActionMiddleware(actions) {
     return next => {
       return action => {
         const state = store.getState();
+        let { dispatch, getState } = store;
         checkActionAllowed(state, action);
         if (
           !state.client.loadingState &&
           actionMap[action.type] &&
-          action._fromQueue
+          action._fromQueue &&
+          !action._dispatchedFromQueue
         ) {
           action = actionMap[action.type](action);
+          dispatch = action =>
+            store.dispatch({
+              ...action,
+              _fromQueue: true,
+              _dispatchedFromQueue: true
+            });
+        }
+        // implement thunk
+        if (typeof action === "function") {
+          return action(dispatch, getState);
         }
         return next(action);
       };

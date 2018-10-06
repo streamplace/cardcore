@@ -3,7 +3,6 @@ import createGameActionMiddleware from "./game-action-middleware";
 import createGameMiddleware from "./game-middleware";
 // import invariant from "redux-immutable-state-invariant";
 import { createReducer } from "./reducer";
-import thunk from "redux-thunk";
 
 export default function(gameModules, clientModules) {
   const composeEnhancers =
@@ -13,7 +12,6 @@ export default function(gameModules, clientModules) {
     composeEnhancers(
       applyMiddleware(
         createGameActionMiddleware(gameModules),
-        thunk,
         createGameMiddleware(gameModules, clientModules)
       )
     )

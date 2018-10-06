@@ -71,7 +71,7 @@ const mapStateToProps = (state, props) => {
     myTurn: state.client.keys.id === state.game.turn,
     playerOrder: state.game.playerOrder,
     currentPlayer: state.client.keys.id,
-    loading: state.game.nextActions.length !== 0
+    loading: state.game.nextActions.length !== 0 || state.client.loadingState
   };
 };
 
