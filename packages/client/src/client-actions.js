@@ -105,3 +105,6 @@ export const clientBox = (data, keys) => (dispatch, getState) => {
     box: ssbKeys.box(data, [keys])
   };
 };
+
+export const CLIENT_CLOSE = "CLIENT_CLOSE";
+export const clientClose = () => ({ type: CLIENT_CLOSE });

@@ -44,20 +44,17 @@ export const clientLoadState = gameId => async (dispatch, getState) => {
   });
 };
 
-let polling = false;
-
 const BACKOFF_INTERVALS = [50, 150, 500, 1000, 2000];
 
+export const CLIENT_POLL = "CLIENT_POLL";
 export const clientPoll = () => async (dispatch, getState) => {
-  if (polling) {
-    return;
-  }
-  if (getState().client.loadingState) {
+  const { client } = getState();
+  if (client.loadingState || client.polling || client.closed) {
     return;
   }
   let handle;
   let backoffIdx = 0;
-  polling = true;
+  await dispatch({ type: "CLIENT_POLL", polling: true });
   const backoff = () => {
     handle = setTimeout(poll, BACKOFF_INTERVALS[backoffIdx]);
     if (BACKOFF_INTERVALS[backoffIdx + 1]) {
@@ -68,6 +65,9 @@ export const clientPoll = () => async (dispatch, getState) => {
   const poll = async () => {
     const hash = await dispatch(clientGetGameHash());
     const res = await serverFetch(`/${hash}/next`);
+    if (getState().client.closed) {
+      return;
+    }
     if (!res.ok || res.status === 204) {
       return backoff();
     }
@@ -76,8 +76,8 @@ export const clientPoll = () => async (dispatch, getState) => {
     if (action._sender === me.id) {
       return backoff();
     }
-    polling = false;
     dispatch({ ...action, [REMOTE_ACTION]: true });
+    await dispatch({ type: "CLIENT_POLL", polling: false });
   };
   poll();
 };

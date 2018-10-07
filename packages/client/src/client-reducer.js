@@ -9,7 +9,8 @@ const INITIAL_STATE = {
   targets: [],
   keys: {},
   started: false,
-  loadingState: true
+  loadingState: true,
+  closed: false
 };
 
 export default function clientReducer(state, action) {
@@ -120,6 +121,26 @@ export default function clientReducer(state, action) {
         ...state.client,
         availableTargets: null,
         targets: []
+      }
+    };
+  }
+
+  if (action.type === actions.CLIENT_POLL) {
+    return {
+      ...state,
+      client: {
+        ...state.client,
+        polling: action.polling
+      }
+    };
+  }
+
+  if (action.type === actions.CLIENT_CLOSE) {
+    return {
+      ...state,
+      client: {
+        ...state.client,
+        closed: true
       }
     };
   }

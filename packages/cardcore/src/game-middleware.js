@@ -21,6 +21,9 @@ export default function createGameMiddleware(gameActions, clientActions) {
         if (running) {
           return;
         }
+        if (store.getState().client.closed) {
+          return;
+        }
         if (queue.length === 0) {
           store.dispatch(clientPoll());
           return;
@@ -68,6 +71,11 @@ export default function createGameMiddleware(gameActions, clientActions) {
               "content-type": "application/json"
             }
           });
+          // We might have been closed since we did this
+          if (store.getState().client.closed) {
+            return;
+          }
+
           if (res.status === 409) {
             sync = false;
             store.dispatch(gameActions.desync("client", store.getState().game));

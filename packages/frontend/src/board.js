@@ -6,7 +6,8 @@ import { connect } from "react-redux";
 import {
   clientGenerateIdentity,
   clientPoll,
-  clientLoadState
+  clientLoadState,
+  clientClose
 } from "@cardcore/client";
 import { joinGameStart } from "@cardcore/game";
 import { diff } from "deep-diff";
@@ -83,6 +84,7 @@ export class Board extends React.Component {
 
   componentWillUnmount() {
     clearInterval(this.interval);
+    this.props.dispatch(clientClose());
   }
 
   async handleLeaveGame() {
