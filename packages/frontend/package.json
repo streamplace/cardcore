@@ -34,8 +34,7 @@
     "production": "run-p production:proxy start:signalhub production:serve",
     "production:serve": "serve -s -l 3002 build",
     "prepare": "react-scripts build",
-    "build": "npm run prepare",
-    "test": "cross-env CI=true react-scripts test --env=jsdom --forceExit"
+    "build": "npm run prepare"
   },
   "devDependencies": {
     "@streamplace/react-scripts": "1.1.4-fork",

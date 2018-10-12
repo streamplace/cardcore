@@ -38,7 +38,7 @@ export const seedRngReducer = (state, action) => {
             }
           },
           {
-            playerId: action._sender,
+            playerId: action.agent,
             action: {
               type: SEED_RNG_COMBINE
             }
@@ -61,7 +61,7 @@ export const seedRngReducer = (state, action) => {
         },
         randoSeeds: {
           ...state.game.randoSeeds,
-          [action._sender]: action.boxId
+          [action.agent]: action.boxId
         }
       }
     };

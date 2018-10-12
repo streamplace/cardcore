@@ -36,7 +36,7 @@ export default function createGameActionMiddleware(actions) {
     if (!state.game || !state.game.turn) {
       return;
     }
-    const sender = action._sender || state.client.keys.id;
+    const sender = action.agent || state.client.keys.id;
     if (state.game.nextActions.length > 0) {
       const queueUser = state.game.nextActions[0].playerId;
       if (sender !== queueUser) {

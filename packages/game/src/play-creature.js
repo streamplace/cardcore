@@ -15,7 +15,7 @@ export const playCreature = ({ boxId }) => async (dispatch, getState) => {
 
 export const playCreatureReducer = (state, action) => {
   if (action.type === PLAY_CREATURE) {
-    const player = state.game.players[action._sender];
+    const player = state.game.players[action.agent];
     const boxId = action.boxId;
     const unitId = Box.traverse(state, boxId);
     const unit = state.game.units[unitId];
@@ -25,7 +25,7 @@ export const playCreatureReducer = (state, action) => {
         ...state.game,
         players: {
           ...state.game.players,
-          [action._sender]: {
+          [action.agent]: {
             ...player,
             availableMana: player.availableMana - unit.cost,
             hand: player.hand.filter(c => c !== boxId),
@@ -35,7 +35,7 @@ export const playCreatureReducer = (state, action) => {
         units: { ...state.game.units, [unitId]: { ...unit, canAttack: false } },
         nextActions: [
           {
-            playerId: action._sender,
+            playerId: action.agent,
             action: {
               type: SEED_RNG
             }
@@ -49,7 +49,7 @@ export const playCreatureReducer = (state, action) => {
             })
             .map((onSummon, i) => {
               return {
-                playerId: action._sender,
+                playerId: action.agent,
                 action: {
                   ...onSummon,
                   target: {
@@ -62,7 +62,7 @@ export const playCreatureReducer = (state, action) => {
                 }
               };
             }),
-          { playerId: action._sender, action: { type: CHECK_DEATH } },
+          { playerId: action.agent, action: { type: CHECK_DEATH } },
           ...state.game.nextActions
         ]
       }

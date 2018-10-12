@@ -46,7 +46,7 @@ export const attackReducer = (state, action) => {
         },
         nextActions: [
           {
-            playerId: action._sender,
+            playerId: action.agent,
             action: {
               type: CHECK_DEATH
             }

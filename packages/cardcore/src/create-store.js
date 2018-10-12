@@ -10,10 +10,7 @@ export default function(gameModules, clientModules) {
   return createStore(
     createReducer(gameModules, clientModules),
     composeEnhancers(
-      applyMiddleware(
-        createGameActionMiddleware(gameModules),
-        createGameMiddleware(gameModules, clientModules)
-      )
+      applyMiddleware(createGameMiddleware(gameModules, clientModules))
     )
   );
 }

@@ -29,7 +29,7 @@ export function startGameReducer(state, action) {
   if (action.type === JOIN_GAME) {
     let lexicalPlayers = [
       ...Object.keys(state.game.players),
-      action._sender
+      action.agent
     ].sort();
     return {
       ...state,
@@ -37,7 +37,7 @@ export function startGameReducer(state, action) {
         ...state.game,
         players: {
           ...state.game.players,
-          [action._sender]: {}
+          [action.agent]: {}
         },
         nextActions: [
           {
@@ -88,7 +88,7 @@ export function startGameReducer(state, action) {
     const playerUnitId = uid();
     const deck = [];
     newUnits[playerUnitId] = {
-      emoji: getStandardEmoji()[playerOrder.indexOf(action._sender)],
+      emoji: getStandardEmoji()[playerOrder.indexOf(action.agent)],
       health: 30,
       attack: 0,
       mana: 0
@@ -108,7 +108,7 @@ export function startGameReducer(state, action) {
         },
         players: {
           ...state.game.players,
-          [action._sender]: {
+          [action.agent]: {
             ...INITIAL_PLAYER,
             unitId: playerUnitId,
             deck
@@ -116,18 +116,18 @@ export function startGameReducer(state, action) {
         },
         nextActions: [
           {
-            playerId: action._sender,
+            playerId: action.agent,
             action: {
               type: SHUFFLE_DECK,
-              playerId: action._sender
+              playerId: action.agent
             }
           },
           ...range(state.game.params.startDraw).map(() => ({
-            playerId: action._sender,
+            playerId: action.agent,
             action: {
               type: DRAW_CARD,
               target: {
-                player: action._sender
+                player: action.agent
               }
             }
           })),

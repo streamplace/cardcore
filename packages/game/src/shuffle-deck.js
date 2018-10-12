@@ -84,7 +84,7 @@ export const shuffleDeckReducer = (state, action) => {
             [boxId]: {
               contents: action.boxes[boxId].contents,
               keys: {
-                [action._sender]: action.boxes[boxId].keys[action._sender]
+                [action.agent]: action.boxes[boxId].keys[action.agent]
               }
             }
           }),

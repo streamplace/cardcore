@@ -29,8 +29,8 @@ export function createReducer(gameModules, clientModules = {}) {
       state.game &&
       state.game.nextActions &&
       state.game.nextActions[0] &&
-      (action._sender === state.game.nextActions[0].playerId ||
-        action._sender !== state.game.nextActions[0].notPlayerId) && // omfg hack
+      (action.agent === state.game.nextActions[0].playerId ||
+        action.agent !== state.game.nextActions[0].notPlayerId) && // omfg hack
       action.type === state.game.nextActions[0].action.type
     ) {
       state = {
