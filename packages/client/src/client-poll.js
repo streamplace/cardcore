@@ -1,6 +1,8 @@
 import { hashState } from "@cardcore/util";
-import { serverFetch } from "@cardcore/elements";
+import { gameNoop } from "@cardcore/game";
+import { clientFetch } from "./client-fetch";
 import { REMOTE_ACTION } from "cardcore";
+import { clientNext } from "./client-next";
 
 // this isn't a redux action really, don't tell anyone
 export const clientGetGameHash = () => (dispatch, getState) => {
@@ -14,7 +16,7 @@ export const clientGetGameHash = () => (dispatch, getState) => {
 export const CLIENT_LOAD_STATE_START = "CLIENT_LOAD_STATE_START";
 export const CLIENT_LOAD_STATE_DONE = "CLIENT_LOAD_STATE_DONE";
 export const clientLoadState = gameId => async (dispatch, getState) => {
-  const res = await serverFetch(`/${gameId}.sha256`);
+  const res = await dispatch(clientFetch(`/${gameId}.sha256`));
   if (res.status !== 200) {
     const err = await res.text();
     console.error(err);
@@ -29,45 +31,53 @@ export const clientLoadState = gameId => async (dispatch, getState) => {
   });
   while (true) {
     const hash = await dispatch(clientGetGameHash());
-    const headRes = await serverFetch(`/${hash}/next`, {
-      method: "HEAD"
-    });
+    const headRes = await dispatch(
+      clientFetch(`/${hash}/next`, {
+        method: "HEAD"
+      })
+    );
     if (headRes.status !== 204) {
       break;
     }
-    const actionRes = await serverFetch(`/${hash}/next`);
+    const actionRes = await dispatch(clientFetch(`/${hash}/next`));
     const action = await actionRes.json();
     await dispatch({ ...action, [REMOTE_ACTION]: true });
   }
   await dispatch({
     type: "CLIENT_LOAD_STATE_DONE"
   });
+  console.log("client next");
+  await dispatch(clientNext());
 };
-
-let polling = false;
 
 const BACKOFF_INTERVALS = [50, 150, 500, 1000, 2000];
 
+export const CLIENT_POLL = "CLIENT_POLL";
 export const clientPoll = () => async (dispatch, getState) => {
-  if (polling) {
+  if (getState().client.polling) {
     return;
   }
   if (getState().client.loadingState) {
     return;
   }
-  let handle;
   let backoffIdx = 0;
-  polling = true;
+  await dispatch({
+    type: CLIENT_POLL,
+    polling: true
+  });
   const backoff = () => {
-    handle = setTimeout(poll, BACKOFF_INTERVALS[backoffIdx]);
+    setTimeout(poll, BACKOFF_INTERVALS[backoffIdx]);
     if (BACKOFF_INTERVALS[backoffIdx + 1]) {
       backoffIdx += 1;
     }
     return;
   };
   const poll = async () => {
+    if (getState().client.closed || getState().client.polling) {
+      return;
+    }
     const hash = await dispatch(clientGetGameHash());
-    const res = await serverFetch(`/${hash}/next`);
+    const res = await dispatch(clientFetch(`/${hash}/next`));
     if (!res.ok || res.status === 204) {
       return backoff();
     }
@@ -76,7 +86,10 @@ export const clientPoll = () => async (dispatch, getState) => {
     if (action._sender === me.id) {
       return backoff();
     }
-    polling = false;
+    await dispatch({
+      type: CLIENT_POLL,
+      polling: false
+    });
     dispatch({ ...action, [REMOTE_ACTION]: true });
   };
   poll();

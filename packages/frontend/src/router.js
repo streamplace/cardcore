@@ -4,44 +4,23 @@ import {
   Route,
   RouteSwitch,
   bootstrap,
-  View,
-  Events,
-  getDimensions
+  View
 } from "@cardcore/elements";
 import ButtCards from "./butt-cards";
 import FrontPage from "./front-page";
-import { Provider } from "react-redux";
-import { createStore } from "cardcore";
-import * as gameModules from "@cardcore/game";
-import * as clientModules from "@cardcore/client";
-import * as frontendModules from "./actions";
+import GameProvider from "./game-provider";
 
 export default class Router extends React.Component {
   constructor() {
     super();
-    this.store = createStore(gameModules, {
-      ...clientModules,
-      ...frontendModules
-    });
     this.state = {
       ready: false
     };
-    this.handleResize = this.handleResize.bind(this);
-  }
-
-  handleResize() {
-    return this.store.dispatch(frontendModules.frontendResize(getDimensions()));
   }
 
   async componentDidMount() {
-    await this.handleResize();
     await bootstrap();
     this.setState({ ready: true });
-    Events.on("resize", this.handleResize);
-  }
-
-  componentWillUnmount() {
-    Events.off("resize", this.handleResize);
   }
 
   render() {
@@ -49,17 +28,26 @@ export default class Router extends React.Component {
       return <View />;
     }
     return (
-      <Provider store={this.store}>
-        <ReactRouter>
-          <RouteSwitch>
-            <Route
-              path="/game/:gameId"
-              render={props => <ButtCards {...props} />}
-            />
-            <Route path="/" component={FrontPage} />
-          </RouteSwitch>
-        </ReactRouter>
-      </Provider>
+      <ReactRouter>
+        <RouteSwitch>
+          <Route
+            path="/game/:gameId"
+            render={props => (
+              <GameProvider key="foo">
+                <ButtCards {...props} />
+              </GameProvider>
+            )}
+          />
+          <Route
+            path="/"
+            render={props => (
+              <GameProvider key="bar">
+                <FrontPage {...props} />
+              </GameProvider>
+            )}
+          />
+        </RouteSwitch>
+      </ReactRouter>
     );
   }
 }

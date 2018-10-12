@@ -118,9 +118,9 @@ app.post(hashRegex, async (req, res) => {
   }
   const verified = ssbKeys.verifyObj(
     {
-      id: req.body._sender,
+      id: req.body.agent,
       curve: "ed25519",
-      public: req.body._sender.slice(1)
+      public: req.body.agent.slice(1)
     },
     action
   );

@@ -4,6 +4,8 @@ import ssbKeys from "@streamplace/ssb-keys";
 import { Storage } from "@cardcore/elements";
 
 export * from "./client-poll";
+export * from "./client-fetch";
+export * from "./client-next";
 
 /**
  * This file should contain web-specific actions extranious to the game state
@@ -105,3 +107,8 @@ export const clientBox = (data, keys) => (dispatch, getState) => {
     box: ssbKeys.box(data, [keys])
   };
 };
+
+export const CLIENT_CLOSE = "CLIENT_CLOSE";
+export const clientClose = () => ({
+  type: CLIENT_CLOSE
+});

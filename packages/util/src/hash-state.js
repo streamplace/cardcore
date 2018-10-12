@@ -5,6 +5,9 @@ export default function hashState(game) {
   if (!game) {
     return null;
   }
+  if (game.game) {
+    game = game.game;
+  }
   return (
     hash(stringify(game))
       // switch up the two url-unsafe characters in base64

@@ -1,3 +1,5 @@
+export const REMOTE_ACTION = "__REMOTE_ACTION";
+
 export const LOCATION_FIELD = "field";
 export const LOCATION_DECK = "deck";
 export const LOCATION_HAND = "hand";

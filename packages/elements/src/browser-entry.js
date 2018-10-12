@@ -49,7 +49,3 @@ export const Storage = {
     return Promise.resolve(localStorage.removeItem(key));
   }
 };
-
-export function serverFetch(url, ...args) {
-  return fetch(`${getServer()}${url}`, ...args);
-}

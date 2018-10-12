@@ -74,7 +74,3 @@ export const Storage = {
     return await AsyncStorage.removeItem(key);
   }
 };
-
-export function serverFetch(url, ...args) {
-  return fetch(`${getServer()}${url}`, ...args);
-}

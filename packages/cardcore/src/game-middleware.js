@@ -1,135 +1,85 @@
-import { hashState } from "@cardcore/util";
-import { serverFetch } from "@cardcore/elements";
-import ssbKeys from "@streamplace/ssb-keys";
-import stringify from "json-stable-stringify";
-
-// this used to be a Symbol, but not supported on android?! weird.
-export const REMOTE_ACTION = "__REMOTE_ACTION";
+import { REMOTE_ACTION, hashState, Keys } from "@cardcore/util";
 
 export default function createGameMiddleware(gameActions, clientActions) {
-  const { CLIENT_LOAD_STATE_DONE, clientPoll } = clientActions;
+  const { clientFetch, clientPoll, clientNext } = clientActions;
+
   return function gameMiddleware(store) {
-    const promises = new WeakMap();
-
     return next => {
-      const queue = [];
-      let running = false;
-      let sync = true;
-      let prevHash = null;
+      return async action => {
+        // Hacky, but we need this in the store before anything.
 
-      const runNext = async () => {
-        if (running) {
-          return;
+        // First thing first... implement thunk.
+        if (typeof action === "function") {
+          return action(store.dispatch, store.getState);
         }
-        if (queue.length === 0) {
-          store.dispatch(clientPoll());
-          return;
+
+        // Next... if it's not a game action, pass through as a promise.
+        if (!gameActions[action.type]) {
+          return Promise.resolve(next(action));
         }
-        const action = queue.shift();
-        if (!sync && action.type !== gameActions.DESYNC) {
-          // if we lost sync, the only thing we accept is desync reports
-          running = false;
-          return;
+
+        // Okay, it's a game action. Great! Let's handle some special cases first.
+
+        // Special case: we're loading the state from the server. Pass through.
+
+        // Resolve the action.
+        const prevState = store.getState();
+        const me = prevState.client.keys.id;
+        let prevHash = null;
+        // Special case until we have an actual blockchain to build on
+        if (action.type !== gameActions.CREATE_GAME) {
+          prevHash = hashState(prevState);
         }
-        running = true;
-        const me = store.getState().client.keys;
-        const isGameAction = !!gameActions[action.type];
-        const ret = await next({
+        action = {
           ...action,
-          _me: me && me.id,
-          prev: isGameAction ? prevHash : undefined
-        });
-        const hash = await hashState(store.getState().game);
-        if (action[REMOTE_ACTION]) {
-          prevHash = hash;
-          // we just completed a remote action, assert states match
-          if (sync && hash !== action.next) {
-            // very bad and extremely fatal for now - perhaps someday we recover
-            sync = false;
-            store.dispatch(gameActions.desync(me.id, store.getState().game));
-          }
-        } else if (
-          gameActions[action.type] &&
-          action.type !== gameActions.DESYNC
-        ) {
-          const prev = prevHash;
-          prevHash = hash;
-          // tell everyone else the action happened and the resulting hash
-          const next = hash;
-          const signedAction = ssbKeys.signObj(me, {
+          prev: prevHash
+        };
+        next(action);
+        const nextState = store.getState();
+        const nextHash = hashState(nextState);
+        action = {
+          ...action,
+          next: nextHash
+        };
+
+        // Resolved. Are we the user making this action? Neato! Let's tell the server about it.
+        if (!action[REMOTE_ACTION]) {
+          const signedAction = Keys.signAction(prevState, {
             ...action,
-            prev,
-            next
+            agent: me
           });
-          const res = await serverFetch(`/${encodeURIComponent(next)}`, {
-            method: "POST",
-            body: stringify(signedAction),
-            headers: {
-              "content-type": "application/json"
-            }
-          });
-          if (res.status === 409) {
-            sync = false;
-            store.dispatch(gameActions.desync("client", store.getState().game));
-            const server = await res.json();
-            store.dispatch(gameActions.desync("server", server.state.game));
-          }
-        }
-        const [resolve] = promises.get(action); // hack, maybe should reject?
-        running = false;
-        const state = store.getState();
-        const nextActions = state.game && state.game.nextActions;
-        // only dequeue if a game action just happened - client actions don't count
-        if (
-          nextActions &&
-          nextActions.length > 0 &&
-          (gameActions[action.type] ||
-            action.type === CLIENT_LOAD_STATE_DONE) &&
-          !state.client.loadingState
-        ) {
-          const { playerId, notPlayerId, action } = nextActions[0];
-          if (!gameActions[action.type]) {
+          let res;
+          try {
+            res = await store.dispatch(
+              clientFetch(`/${encodeURIComponent(nextHash)}`, {
+                method: "POST",
+                body: signedAction,
+                headers: {
+                  "content-type": "application/json"
+                }
+              })
+            );
+          } catch (e) {
             throw new Error(
-              `${action.type} is queued but we don't have a definition`
+              "Failed to create an action. We should probably handle this error."
             );
           }
-          if (
-            (playerId && playerId === me.id) ||
-            (notPlayerId && notPlayerId !== me.id) // hack hack hack
-          ) {
-            await store.dispatch({
-              ...action,
-              _fromQueue: true,
-              _sender: me.id
-            });
+          if (!res.ok) {
+            throw new Error(await res.text());
           }
         }
-        resolve(ret);
-        runNext();
-      };
 
-      return action => {
-        if (!action[REMOTE_ACTION]) {
-          action = { ...action, _sender: store.getState().client.keys.id };
+        // Are we _not_ the user making this action? Okay, let's verify it.
+        else {
+          if (!Keys.verifyAction(prevState, action)) {
+            throw new Error(
+              `Remote action failed to verify: ${JSON.stringify(action)}`
+            );
+          }
         }
-        const state = store.getState();
-        // disregard non-queue game actions - you're playing out of turn!
-        if (
-          !action._fromQueue &&
-          state.game &&
-          state.game.nextActions &&
-          state.game.nextActions.length > 0 &&
-          gameActions[action.type] &&
-          !state.client.loadingState
-        ) {
-          return;
-        }
-        queue.push(action);
-        const prom = new Promise((resolve, reject) => {
-          promises.set(action, [resolve, reject]);
-        });
-        setTimeout(runNext, 0);
-        return prom;
+
+        await store.dispatch(clientNext());
+        store.dispatch(clientPoll());
       };
     };
   };
