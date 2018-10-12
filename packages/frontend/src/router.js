@@ -6,7 +6,7 @@ import {
   bootstrap,
   View
 } from "@cardcore/elements";
-import ButtCards from "./butt-cards";
+import Board from "./board";
 import FrontPage from "./front-page";
 import GameProvider from "./game-provider";
 
@@ -34,7 +34,7 @@ export default class Router extends React.Component {
             path="/game/:gameId"
             render={props => (
               <GameProvider key="foo">
-                <ButtCards {...props} />
+                <Board {...props} gameId={props.match.params.gameId} />
               </GameProvider>
             )}
           />

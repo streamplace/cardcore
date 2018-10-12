@@ -6,8 +6,7 @@ import { connect } from "react-redux";
 import {
   clientGenerateIdentity,
   clientPoll,
-  clientLoadState,
-  clientClose
+  clientLoadState
 } from "@cardcore/client";
 import { joinGameStart } from "@cardcore/game";
 import { diff } from "deep-diff";

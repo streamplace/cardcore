@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  Router as ReactRouter,
-  View,
-  Events,
-  getDimensions
-} from "@cardcore/elements";
+import { View, Events, getDimensions } from "@cardcore/elements";
 import { Provider } from "react-redux";
 import { createStore } from "cardcore";
 import * as gameModules from "@cardcore/game";
