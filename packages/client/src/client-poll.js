@@ -1,7 +1,6 @@
-import { hashState } from "@cardcore/util";
+import { hashState, REMOTE_ACTION } from "@cardcore/util";
 import { gameNoop } from "@cardcore/game";
 import { clientFetch } from "./client-fetch";
-import { REMOTE_ACTION } from "cardcore";
 import { clientNext } from "./client-next";
 
 // this isn't a redux action really, don't tell anyone
@@ -41,12 +40,17 @@ export const clientLoadState = gameId => async (dispatch, getState) => {
     }
     const actionRes = await dispatch(clientFetch(`/${hash}/next`));
     const action = await actionRes.json();
-    await dispatch({ ...action, [REMOTE_ACTION]: true });
+    // we don't want REMOTE_ACTION to muck up our verification, so...
+    const newAct = { ...action };
+    Object.defineProperty(newAct, REMOTE_ACTION, {
+      value: true,
+      enumerable: false
+    });
+    await dispatch(newAct);
   }
   await dispatch({
     type: "CLIENT_LOAD_STATE_DONE"
   });
-  console.log("client next");
   await dispatch(clientNext());
 };
 
@@ -73,7 +77,7 @@ export const clientPoll = () => async (dispatch, getState) => {
     return;
   };
   const poll = async () => {
-    if (getState().client.closed || getState().client.polling) {
+    if (getState().client.closed) {
       return;
     }
     const hash = await dispatch(clientGetGameHash());
@@ -83,7 +87,7 @@ export const clientPoll = () => async (dispatch, getState) => {
     }
     const action = await res.json();
     const me = getState().client.keys;
-    if (action._sender === me.id) {
+    if (action.agent === me.id) {
       return backoff();
     }
     await dispatch({

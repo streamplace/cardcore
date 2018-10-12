@@ -1,5 +1,6 @@
 import ssbKeys from "@streamplace/ssb-keys";
 import stringify from "json-stable-stringify";
+import { REMOTE_ACTION } from "./constants";
 
 // Returns a stringified, signed action
 export const signAction = (state, action) => {
@@ -7,15 +8,15 @@ export const signAction = (state, action) => {
 };
 
 export const verifyAction = (state, action) => {
-  if (!state.game.players[req.body._sender]) {
-    return false;
-  }
   return ssbKeys.verifyObj(
     {
-      id: req.body._sender,
+      id: action.agent,
       curve: "ed25519",
-      public: req.body._sender.slice(1)
+      public: action.agent.slice(1)
     },
-    action
+    {
+      ...action,
+      [REMOTE_ACTION]: undefined
+    }
   );
 };

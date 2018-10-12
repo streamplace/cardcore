@@ -30,7 +30,7 @@ export const gameReducer = (state, action) => {
           {
             action: { type: JOIN_GAME },
             // lol lol lol hack hack hack
-            notPlayerId: action._sender
+            notPlayerId: action.agent
           }
         ],
         allowedActions: {},
@@ -40,7 +40,7 @@ export const gameReducer = (state, action) => {
         },
         started: false,
         players: {
-          [action._sender]: {}
+          [action.agent]: {}
         },
         units: {},
         randoSeeds: {},

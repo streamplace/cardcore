@@ -149,7 +149,7 @@ app.post(hashRegex, async (req, res) => {
     const newHash = hashState(newState.game);
     if (newHash !== req.params[0] || newHash !== req.body.next) {
       res.status(409);
-      res.json({
+      return res.json({
         state: newState,
         hash: newHash
       });

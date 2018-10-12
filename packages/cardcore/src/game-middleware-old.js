@@ -101,7 +101,7 @@ export default function createGameMiddleware(gameActions, clientActions) {
             await store.dispatch({
               ...action,
               _fromQueue: true,
-              _sender: me.id
+              agent: me.id
             });
           }
         }
@@ -111,7 +111,7 @@ export default function createGameMiddleware(gameActions, clientActions) {
 
       return action => {
         if (!action[REMOTE_ACTION]) {
-          action = { ...action, _sender: store.getState().client.keys.id };
+          action = { ...action, agent: store.getState().client.keys.id };
         }
         const state = store.getState();
         // disregard non-queue game actions - you're playing out of turn!

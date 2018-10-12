@@ -139,7 +139,7 @@ export default function clientReducer(state, action) {
       ...state,
       client: {
         ...state.client,
-        closed: action.polling
+        polling: action.polling
       }
     };
   }

@@ -37,7 +37,7 @@ export const playCardReducer = (state, action) => {
     let nextActions = [
       ...state.game.nextActions,
       {
-        playerId: action._sender,
+        playerId: action.agent,
         action: {
           type: PLAY_CREATURE,
           boxId: action.boxId
@@ -47,7 +47,7 @@ export const playCardReducer = (state, action) => {
     if (!state.game.units[action.boxId]) {
       nextActions = [
         {
-          playerId: getLeftPlayer(action._sender, state.game.playerOrder),
+          playerId: getLeftPlayer(action.agent, state.game.playerOrder),
           action: {
             type: REVEAL_CARD,
             boxId: action.boxId
@@ -87,7 +87,7 @@ export const playCardReducer = (state, action) => {
     if (state.game.boxes[contents]) {
       nextActions = [
         {
-          playerId: getLeftPlayer(action._sender, state.game.playerOrder),
+          playerId: getLeftPlayer(action.agent, state.game.playerOrder),
           action: {
             type: REVEAL_CARD,
             boxId: contents

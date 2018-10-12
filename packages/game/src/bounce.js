@@ -36,14 +36,14 @@ export const bounceReducer = (state, action) => {
     };
   }
   if (action.type === BOUNCE_ENCRYPT) {
-    const player = state.game.players[action._sender];
+    const player = state.game.players[action.agent];
     return {
       ...state,
       game: {
         ...state.game,
         players: {
           ...state.game.players,
-          [action._sender]: {
+          [action.agent]: {
             ...player,
             hand: [...player.hand, action.unitId],
             field: player.field.filter(unitId => unitId !== action.unitId)

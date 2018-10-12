@@ -30,24 +30,35 @@ export default function createGameMiddleware(gameActions, clientActions) {
         if (action.type !== gameActions.CREATE_GAME) {
           prevHash = hashState(prevState);
         }
-        action = {
-          ...action,
-          prev: prevHash
-        };
+        if (!action[REMOTE_ACTION]) {
+          action = {
+            ...action,
+            agent: me,
+            prev: prevHash
+          };
+        } else {
+          if (action.prev !== prevHash) {
+            throw new Error(`hash mismatch, ${action.next} !== ${nextHash}`);
+          }
+        }
         next(action);
         const nextState = store.getState();
         const nextHash = hashState(nextState);
-        action = {
-          ...action,
-          next: nextHash
-        };
+
+        if (action[REMOTE_ACTION]) {
+          if (action.next !== nextHash) {
+            throw new Error(`hash mismatch, ${action.next} !== ${nextHash}`);
+          }
+        } else {
+          action = {
+            ...action,
+            next: nextHash
+          };
+        }
 
         // Resolved. Are we the user making this action? Neato! Let's tell the server about it.
         if (!action[REMOTE_ACTION]) {
-          const signedAction = Keys.signAction(prevState, {
-            ...action,
-            agent: me
-          });
+          const signedAction = Keys.signAction(prevState, action);
           let res;
           try {
             res = await store.dispatch(
