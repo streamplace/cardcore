@@ -13,6 +13,7 @@
     "test": "run-s test:lint test:packages",
     "test:lint": "lerna exec --stream dependency-check ./package.json",
     "test:packages": "lerna run --stream test",
+    "pre-commit:lint-staged": "lint-staged",
     "prepare": "cross-env NODE_ENV=production run-s prepare:babel prepare:build",
     "prepare:build": "lerna run --stream build",
     "prepare:babel": "lerna exec --stream -- babel --copy-files -d dist --source-maps true src",
@@ -36,5 +37,20 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "husky": "^1.1.2",
+    "lint-staged": "^7.3.0"
+  },
+  "lint-staged": {
+    "*.{js,css,md}": [
+      "prettier --prose-wrap always --write",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "run-s test pre-commit:lint-staged"
+    }
   }
 }
