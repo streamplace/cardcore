@@ -47,10 +47,13 @@ app.head(nextRegex, async (req, res) => {
 const POLL_FREQUENCY = 500;
 const TIMEOUT = 14000;
 
+const allPollers = {};
+
 class Poller extends EE {
   constructor(key, store) {
     super();
     this.key = key;
+    allPollers[this.key] = this;
     this.store = store;
     this.done = false;
     this.pollHandle = setTimeout(() => this._poll(), 0);
@@ -61,11 +64,7 @@ class Poller extends EE {
     this.store
       .get(this.key)
       .then(data => {
-        if (this.done) {
-          return;
-        }
-        this.emit("data", data);
-        clearTimeout(this.timeoutHandle);
+        this.data(data);
       })
       .catch(err => {
         if (err.name === "NotFoundError") {
@@ -77,11 +76,26 @@ class Poller extends EE {
       });
   }
 
+  data(data) {
+    if (this.done) {
+      return;
+    }
+    this.emit("data", data);
+    this.cleanup();
+  }
+
   cancel() {
+    if (this.done) {
+      return;
+    }
+    this.emit("nodata");
+  }
+
+  cleanup() {
+    this.done = true;
+    delete allPollers[this.key];
     clearTimeout(this.pollHandle);
     clearTimeout(this.timeoutHandle);
-    this.done = true;
-    this.emit("nodata");
   }
 }
 
@@ -154,9 +168,14 @@ app.post(hashRegex, async (req, res) => {
         hash: newHash
       });
     }
-    await req.store.put(newHash, stringify(newState.game));
+    const nextKey = `${action.prev}/next`;
+    const putPromises = [req.store.put(newHash, stringify(newState.game))];
     if (action.prev) {
-      await req.store.put(`${action.prev}/next`, stringify(action));
+      putPromises.push(req.store.put(nextKey, stringify(action)));
+    }
+    await Promise.all(putPromises);
+    if (allPollers[nextKey]) {
+      allPollers[nextKey].data(action);
     }
     res.sendStatus(204);
   } catch (err) {
