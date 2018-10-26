@@ -1,6 +1,7 @@
+import { Box, makeSchema } from "@cardcore/util";
 import { DRAW_CARD } from "./draw-card";
 import { START_GAME } from "./start-game";
-import { Box, makeSchema } from "@cardcore/util";
+import { STANDARD_ACTION } from "./standard-action";
 
 export const START_TURN = "START_TURN";
 export const startTurn = () => async dispatch => {
@@ -64,6 +65,10 @@ export function turnReducer(state, action) {
             playerId: state.game.turn,
             action: { type: DRAW_CARD, target: { player: state.game.turn } }
           },
+          {
+            playerId: state.game.turn,
+            action: { type: STANDARD_ACTION }
+          },
           ...state.game.nextActions
         ],
         queue: [
@@ -80,6 +85,10 @@ export function turnReducer(state, action) {
                 }
               }
             }
+          }),
+          makeSchema({
+            type: STANDARD_ACTION,
+            agent: state.game.turn
           }),
           ...state.game.queue
         ]
@@ -104,6 +113,12 @@ export function turnReducer(state, action) {
               type: START_TURN
             }
           }
+        ],
+        queue: [
+          makeSchema({
+            type: START_TURN,
+            agent: playerId
+          })
         ]
       }
     };

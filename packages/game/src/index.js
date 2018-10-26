@@ -10,6 +10,7 @@ export * from "./play-card";
 export * from "./play-creature";
 export * from "./seed-rng";
 export * from "./shuffle-deck";
+export * from "./standard-action";
 export * from "./start-game";
 export * from "./summon-creature";
 export * from "./turns";

@@ -73,6 +73,7 @@ const ActionLayer = styled(View)`
   flex-direction: column;
   align-items: bottom;
   width: 100%;
+  pointer-events: none;
 `;
 
 const ActionLayerInner = styled(View)`

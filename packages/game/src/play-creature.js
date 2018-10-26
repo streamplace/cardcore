@@ -1,6 +1,6 @@
 import { SEED_RNG } from "./seed-rng";
 import { CHECK_DEATH } from "./check-death";
-import { target, Box } from "@cardcore/util";
+import { target, Box, makeSchema } from "@cardcore/util";
 import { START_GAME } from "./start-game";
 
 export const PLAY_CREATURE = "PLAY_CREATURE";
@@ -64,6 +64,17 @@ export const playCreatureReducer = (state, action) => {
             }),
           { playerId: action.agent, action: { type: CHECK_DEATH } },
           ...state.game.nextActions
+        ],
+        queue: [
+          makeSchema({
+            type: SEED_RNG,
+            agent: action.agent
+          }),
+          makeSchema({
+            type: CHECK_DEATH,
+            agent: action.agent
+          }),
+          ...state.game.queue
         ]
       }
     };

@@ -25,7 +25,9 @@ export default function queueReducer(state, action) {
   delete action.__REMOTE_ACTION;
   const schema = state.game.queue[0];
   if (!schema) {
-    throw new Error("empty queue! game over!");
+    throw new Error(
+      JSON.stringify({ errorType: "EMPTY_QUEUE", action }, null, 2)
+    );
   }
   // const validate = ajv.compile(schema);
 
@@ -54,7 +56,6 @@ export default function queueReducer(state, action) {
   }
 
   // cool, this action validated, we can remove it now
-
   return {
     ...state,
     game: {

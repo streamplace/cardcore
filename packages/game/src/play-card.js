@@ -1,6 +1,7 @@
-import { Box, getLeftPlayer } from "@cardcore/util";
+import { Box, getLeftPlayer, makeSchema } from "@cardcore/util";
 import { PLAY_CREATURE } from "./play-creature";
 import { START_GAME } from "./start-game";
+import { STANDARD_ACTION } from "./standard-action";
 
 export const PLAY_CARD = "PLAY_CARD";
 export const playCard = ({ boxId }) => ({
@@ -42,7 +43,26 @@ export const playCardReducer = (state, action) => {
           type: PLAY_CREATURE,
           boxId: action.boxId
         }
+      },
+      {
+        playerId: action.agent,
+        action: {
+          type: STANDARD_ACTION
+        }
       }
+    ];
+    let queue = [
+      ...state.game.queue,
+      makeSchema({
+        type: PLAY_CREATURE,
+        agent: action.agent,
+        boxId: action.boxId,
+        targets: { enum: [[]] }
+      }),
+      makeSchema({
+        type: STANDARD_ACTION,
+        agent: action.agent
+      })
     ];
     if (!state.game.units[action.boxId]) {
       nextActions = [
@@ -55,12 +75,24 @@ export const playCardReducer = (state, action) => {
         },
         ...nextActions
       ];
+      queue = [
+        makeSchema({
+          type: REVEAL_CARD,
+          agent: getLeftPlayer(action.agent, state.game.playerOrder),
+          boxId: action.boxId,
+          privateKey: {
+            type: "string"
+          }
+        }),
+        ...queue
+      ];
     }
     return {
       ...state,
       game: {
         ...state.game,
-        nextActions: nextActions
+        nextActions: nextActions,
+        queue: queue
       }
     };
   }
@@ -84,6 +116,7 @@ export const playCardReducer = (state, action) => {
     const contents = Box.open(state, action.boxId);
     // if there's another box in here, pass to the player on our left
     let nextActions = state.game.nextActions;
+    let queue = state.game.queue;
     if (state.game.boxes[contents]) {
       nextActions = [
         {
@@ -95,6 +128,17 @@ export const playCardReducer = (state, action) => {
         },
         ...nextActions
       ];
+      queue = [
+        makeSchema({
+          type: REVEAL_CARD,
+          agent: getLeftPlayer(action.agent, state.game.playerOrder),
+          boxId: contents,
+          privateKey: {
+            type: "string"
+          }
+        }),
+        ...queue
+      ];
     } else if (!state.game.units[contents]) {
       throw new Error(`invalid card: ${contents}`);
     }
@@ -102,7 +146,8 @@ export const playCardReducer = (state, action) => {
       ...state,
       game: {
         ...state.game,
-        nextActions: nextActions
+        nextActions: nextActions,
+        queue: queue
       }
     };
   }
