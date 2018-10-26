@@ -165,10 +165,11 @@ app.post(hashRegex, async (req, res) => {
     return res.sendStatus(403);
   }
   try {
-    let prevState = {};
+    let prevState = undefined;
+    let nextState;
     if (action.prev) {
-      prevState = await req.store.get(action.prev);
-      let nextState;
+      const prevGameState = await req.store.get(action.prev);
+      prevState = { game: prevGameState };
       try {
         nextState = await req.store.get(`${action.prev}/next`);
       } catch (e) {
@@ -182,7 +183,7 @@ app.post(hashRegex, async (req, res) => {
         return;
       }
     }
-    const newState = gameReducer({ game: prevState }, action);
+    const newState = gameReducer(prevState, action);
     const newHash = hashState(newState.game);
     if (newHash !== req.params[0] || newHash !== req.body.next) {
       res.status(409);

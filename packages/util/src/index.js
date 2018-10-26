@@ -6,3 +6,4 @@ export { default as Box } from "./box";
 export { default as hashState } from "./hash-state";
 import * as Keys from "./keys";
 export { Keys };
+export { default as makeSchema } from "./make-schema";

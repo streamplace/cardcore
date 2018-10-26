@@ -1,6 +1,6 @@
 import { DRAW_CARD } from "./draw-card";
 import { START_GAME } from "./start-game";
-import { Box } from "@cardcore/util";
+import { Box, makeSchema } from "@cardcore/util";
 
 export const START_TURN = "START_TURN";
 export const startTurn = () => async dispatch => {
@@ -65,6 +65,23 @@ export function turnReducer(state, action) {
             action: { type: DRAW_CARD, target: { player: state.game.turn } }
           },
           ...state.game.nextActions
+        ],
+        queue: [
+          makeSchema({
+            type: DRAW_CARD,
+            agent: state.game.turn,
+            target: {
+              type: "object",
+              additionalProperties: false,
+              required: ["player"],
+              properties: {
+                player: {
+                  enum: [state.game.turn]
+                }
+              }
+            }
+          }),
+          ...state.game.queue
         ]
       }
     };

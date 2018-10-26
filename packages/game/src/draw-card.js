@@ -1,4 +1,5 @@
 import { SHUFFLE_DECK_DECRYPT } from "./shuffle-deck";
+import { makeSchema } from "@cardcore/util";
 export const DRAW_CARD = "DRAW_CARD";
 
 export function drawCardReducer(state, action) {
@@ -61,6 +62,18 @@ export function drawCardReducer(state, action) {
               }
             },
             ...state.game.nextActions
+          ],
+          queue: [
+            makeSchema({
+              type: SHUFFLE_DECK_DECRYPT,
+              agent: Object.keys(state.game.boxes[boxId].keys).sort()[0],
+              boxId: boxId,
+              playerId,
+              key: {
+                type: "string"
+              }
+            }),
+            ...state.game.queue
           ]
         }
       };

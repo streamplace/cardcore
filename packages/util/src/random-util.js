@@ -3,6 +3,8 @@
 import ssbKeys from "@streamplace/ssb-keys";
 
 export function shuffle(arr, func = Math.random) {
+  // often times values from Object.keys and such can be nondeterministic, so
+  arr = [...arr].sort();
   const randos = arr.map(() => func());
   return Object.keys(arr)
     .sort((a, b) => randos[a] - randos[b])
@@ -17,6 +19,7 @@ export class RandomUtil {
   }
 
   setSeed(seed) {
+    // todo: broken and insecure
     if (typeof seed === "string") {
       let seedInt = 0;
       for (let i = 0; i < seed.length; i += 1) {

@@ -1,5 +1,5 @@
 import ssbKeys from "@streamplace/ssb-keys";
-import { rando, Box } from "@cardcore/util";
+import { rando, Box, makeSchema } from "@cardcore/util";
 import { BOX_OPEN } from "./box";
 
 export const SEED_RNG = "SEED_RNG";
@@ -30,6 +30,43 @@ export const seedRngReducer = (state, action) => {
       ...state,
       game: {
         ...state.game,
+        queue: [
+          makeSchema({
+            type: {
+              enum: [SEED_RNG_ENCRYPT]
+            },
+            agent: {
+              enum: [orderedPlayers[0]]
+            },
+            boxId: {
+              type: "string"
+            },
+            box: {
+              type: "object",
+              additionalProperties: false,
+              required: ["contents", "keys"],
+              properties: {
+                contents: {
+                  type: "string"
+                },
+                keys: {
+                  [orderedPlayers[0]]: {
+                    type: "string"
+                  }
+                }
+              }
+            }
+          }),
+          makeSchema({
+            type: {
+              enum: [SEED_RNG_COMBINE]
+            },
+            agent: {
+              enum: [action.agent]
+            }
+          }),
+          ...state.game.queue
+        ],
         nextActions: [
           {
             playerId: orderedPlayers[0],
@@ -81,6 +118,25 @@ export const seedRngReducer = (state, action) => {
               }
             })),
             ...state.game.nextActions
+          ],
+          queue: [
+            ...orderedPlayers.map(playerId =>
+              makeSchema({
+                type: {
+                  enum: [BOX_OPEN]
+                },
+                agent: {
+                  enum: [playerId]
+                },
+                boxId: {
+                  enum: [state.game.randoSeeds[playerId]]
+                },
+                privateKey: {
+                  type: "string"
+                }
+              })
+            ),
+            ...state.game.queue
           ]
         }
       };
@@ -98,7 +154,37 @@ export const seedRngReducer = (state, action) => {
                 type: SEED_RNG_ENCRYPT
               }
             },
+
             ...state.game.nextActions
+          ],
+          queue: [
+            makeSchema({
+              type: {
+                enum: [SEED_RNG_ENCRYPT]
+              },
+              agent: {
+                enum: [orderedPlayers[seedCount]]
+              },
+              boxId: {
+                type: "string"
+              },
+              box: {
+                type: "object",
+                additionalProperties: false,
+                required: ["contents", "keys"],
+                properties: {
+                  contents: {
+                    type: "string"
+                  },
+                  keys: {
+                    [orderedPlayers[seedCount]]: {
+                      type: "string"
+                    }
+                  }
+                }
+              }
+            }),
+            ...state.game.queue
           ]
         }
       };

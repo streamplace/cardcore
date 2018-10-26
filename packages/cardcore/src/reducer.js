@@ -1,7 +1,27 @@
 import queueReducer from "./queue-reducer";
-import { rando } from "@cardcore/util";
+import { rando, makeSchema } from "@cardcore/util";
 
-const DEFAULT_STATE = { game: {} };
+const DEFAULT_STATE = {
+  game: {
+    queue: [
+      makeSchema({
+        type: {
+          enum: ["CREATE_GAME"]
+        },
+        startTime: {
+          type: "number"
+        },
+        agent: {
+          type: "string"
+        },
+        // this won't be null once we take over the world
+        prev: {
+          enum: [null]
+        }
+      })
+    ]
+  }
+};
 
 const getReducers = mod =>
   Object.keys(mod)
@@ -42,6 +62,10 @@ export function createReducer(gameModules, clientModules = {}) {
       };
     }
 
+    if (gameModules[action.type]) {
+      state = queueReducer(state, action);
+    }
+
     for (const reducer of [...gameReducers, ...clientReducers]) {
       state = reducer(state, action);
       if (!state) {
@@ -57,9 +81,6 @@ export function createReducer(gameModules, clientModules = {}) {
           randoSeed: rando.seed
         }
       };
-    }
-    if (gameModules[action.type]) {
-      state = queueReducer(state, action);
     }
     rando.clearSeed();
     return state;
