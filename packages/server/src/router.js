@@ -13,6 +13,29 @@ const app = Router();
 const hashRegex = /^\/(.*\.sha256)$/;
 const nextRegex = /^\/(.*\.sha256\/next)$/;
 
+// dev helper
+if (process.env.NODE_ENV === "development") {
+  app.post("/development/:hash", async (req, res) => {
+    await req.store.put(req.params.hash, JSON.stringify(req.body));
+    res.sendStatus(200);
+  });
+
+  app.get("/development/:hash", async (req, res) => {
+    let data;
+    try {
+      data = await req.store.get(req.params.hash);
+    } catch (e) {
+      if (e.name === "NotFoundError") {
+        return res.sendStatus(404);
+      } else {
+        console.error(e);
+        res.sendStatus(500);
+      }
+    }
+    res.json(data);
+  });
+}
+
 app.get(hashRegex, async (req, res) => {
   try {
     const data = await req.store.get(req.params[0]);

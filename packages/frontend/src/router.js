@@ -9,6 +9,7 @@ import {
 import Board from "./board";
 import FrontPage from "./front-page";
 import GameProvider from "./game-provider";
+import Development from "./development";
 
 export default class Router extends React.Component {
   constructor() {
@@ -30,6 +31,17 @@ export default class Router extends React.Component {
     return (
       <ReactRouter>
         <RouteSwitch>
+          <Route
+            path="/development/:action"
+            render={props => {
+              const { action } = props.match.params;
+              return (
+                <GameProvider key="development">
+                  <Development action={action} />
+                </GameProvider>
+              );
+            }}
+          />
           <Route
             path="/game/:gameId"
             render={props => (
