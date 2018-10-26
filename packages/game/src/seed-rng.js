@@ -113,6 +113,7 @@ export const seedRngReducer = (state, action) => {
       })
       .join("");
     finalSeed = ssbKeys.hash(finalSeed);
+    rando.setSeed(finalSeed);
     return {
       ...state,
       game: {

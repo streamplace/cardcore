@@ -137,6 +137,15 @@ export class Board extends React.Component {
           <Text>Waiting for another player...</Text>
           <Text>Send your friend this link:</Text>
           <Text>{gameUrl}</Text>
+          <Text> </Text>
+          {this.props.actionLog.map((action, i) => (
+            <Text key={i}>
+              {action.agent === this.props.currentPlayer
+                ? "You: "
+                : "Other Player: "}
+              {action.type} {action.next}
+            </Text>
+          ))}
         </LoadingBox>
       );
     }
@@ -184,7 +193,8 @@ const mapStateToProps = (state, props) => {
       ),
     playerOrder: state.game.playerOrder,
     height: state.frontend.height,
-    width: state.frontend.width
+    width: state.frontend.width,
+    actionLog: state.client.actionLog
   };
 };
 
