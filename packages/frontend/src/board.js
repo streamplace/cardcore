@@ -63,6 +63,28 @@ const LeaveGameText = styled(Text)`
   font-size: 24px;
 `;
 
+const ActionLayer = styled(View)`
+  position: absolute;
+  z-index: 100;
+  bottom: ${props => props.height / 4}px;
+  height: ${props => props.height / 2}px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: bottom;
+  width: 100%;
+`;
+
+const ActionLayerInner = styled(View)`
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+`;
+
+const ActionText = styled(Text)`
+  color: ${props => (props.me ? "blue" : "#006b00")};
+`;
+
 export class Board extends React.Component {
   constructor(props) {
     super();
@@ -98,10 +120,29 @@ export class Board extends React.Component {
     );
   }
 
+  renderActionLayer() {
+    return (
+      <ActionLayer height={this.props.height} width={this.props.height}>
+        <ActionLayerInner>
+          {this.props.actionLog.map((action, i) =>
+            <ActionText me={action.agent === this.props.currentPlayer} key={i}>
+              {action.agent === this.props.currentPlayer ? "you: " : "them: "}
+              {action.type}
+            </ActionText>
+          )}
+        </ActionLayerInner>
+      </ActionLayer>
+    );
+  }
+
   render() {
     const { height, width } = this.props;
     if (this.props.loading) {
-      return <View>{this.renderLeaveGame()}</View>;
+      return (
+        <View>
+          {this.renderLeaveGame()}
+        </View>
+      );
     }
     if (this.props.started) {
       clearInterval(this.interval);
@@ -123,7 +164,9 @@ export class Board extends React.Component {
             if you wanna help, send someone this blob of data:
           </BigMessage>
           <DesyncBox>
-            <LinkBox>{str}</LinkBox>
+            <LinkBox>
+              {str}
+            </LinkBox>
           </DesyncBox>
         </BoardWrapper>
       );
@@ -132,21 +175,15 @@ export class Board extends React.Component {
       const gameUrl = `${getServer()}/game/${this.props.gameId}`;
       console.log("game url: " + gameUrl);
       return (
-        <LoadingBox>
+        <BoardWrapper>
           {this.renderLeaveGame()}
+          {this.renderActionLayer()}
           <Text>Waiting for another player...</Text>
           <Text>Send your friend this link:</Text>
-          <Text>{gameUrl}</Text>
-          <Text> </Text>
-          {this.props.actionLog.map((action, i) => (
-            <Text key={i}>
-              {action.agent === this.props.currentPlayer
-                ? "You: "
-                : "Other Player: "}
-              {action.type} {action.next}
-            </Text>
-          ))}
-        </LoadingBox>
+          <Text>
+            {gameUrl}
+          </Text>
+        </BoardWrapper>
       );
     }
     let [topPlayerId, bottomPlayerId] = this.props.playerOrder;
@@ -158,6 +195,7 @@ export class Board extends React.Component {
     }
     return (
       <BoardWrapper disableSelect={true}>
+        {this.renderActionLayer()}
         {this.renderLeaveGame()}
         <CardLayer height={height} width={width} />
         <Sidebar

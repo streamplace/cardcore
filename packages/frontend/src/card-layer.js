@@ -14,6 +14,7 @@ const CardLayerBox = styled(View)`
   top: 0px;
   left: 0px;
   z-index: 100;
+  overflow: hidden;
 `;
 
 export class Sidebar extends React.Component {
