@@ -125,12 +125,15 @@ export class Board extends React.Component {
     return (
       <ActionLayer height={this.props.height} width={this.props.height}>
         <ActionLayerInner>
-          {this.props.actionLog.map((action, i) =>
-            <ActionText me={action.agent === this.props.currentPlayer} key={i}>
+          {this.props.actionLog.map((action, i) => (
+            <ActionText
+              me={action.agent === this.props.currentPlayer ? 1 : 0}
+              key={i}
+            >
               {action.agent === this.props.currentPlayer ? "you: " : "them: "}
               {action.type}
             </ActionText>
-          )}
+          ))}
         </ActionLayerInner>
       </ActionLayer>
     );
@@ -139,11 +142,7 @@ export class Board extends React.Component {
   render() {
     const { height, width } = this.props;
     if (this.props.loading) {
-      return (
-        <View>
-          {this.renderLeaveGame()}
-        </View>
-      );
+      return <View>{this.renderLeaveGame()}</View>;
     }
     if (this.props.started) {
       clearInterval(this.interval);
@@ -165,9 +164,7 @@ export class Board extends React.Component {
             if you wanna help, send someone this blob of data:
           </BigMessage>
           <DesyncBox>
-            <LinkBox>
-              {str}
-            </LinkBox>
+            <LinkBox>{str}</LinkBox>
           </DesyncBox>
         </BoardWrapper>
       );
@@ -181,9 +178,7 @@ export class Board extends React.Component {
           {this.renderActionLayer()}
           <Text>Waiting for another player...</Text>
           <Text>Send your friend this link:</Text>
-          <Text>
-            {gameUrl}
-          </Text>
+          <Text>{gameUrl}</Text>
         </BoardWrapper>
       );
     }
