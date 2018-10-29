@@ -9,6 +9,8 @@ export const playCard = ({ boxId }) => ({
   boxId
 });
 
+export const PLAY_CARD_DONE = "PLAY_CARD_DONE";
+
 export const REVEAL_CARD = "REVEAL_CARD";
 export const revealCard = ({ boxId }) => (dispatch, getState) => {
   const privateKey = Box.getPrivate(getState(), boxId);
@@ -40,7 +42,7 @@ export const playCardReducer = (state, action) => {
       {
         playerId: action.agent,
         action: {
-          type: PLAY_CREATURE,
+          type: PLAY_CARD_DONE,
           boxId: action.boxId
         }
       },
@@ -54,10 +56,9 @@ export const playCardReducer = (state, action) => {
     let queue = [
       ...state.game.queue,
       makeSchema({
-        type: PLAY_CREATURE,
+        type: PLAY_CARD_DONE,
         agent: action.agent,
-        boxId: action.boxId,
-        targets: { enum: [[]] }
+        boxId: action.boxId
       }),
       makeSchema({
         type: STANDARD_ACTION,
@@ -93,6 +94,44 @@ export const playCardReducer = (state, action) => {
         ...state.game,
         nextActions: nextActions,
         queue: queue
+      }
+    };
+  }
+
+  if (action.type === PLAY_CARD_DONE) {
+    // If we get here, we should know the contents...
+    const cardId = Box.traverse(state, action.boxId);
+    const card = state.game.units[cardId];
+    return {
+      ...state,
+      game: {
+        ...state.game,
+        nextActions: [
+          {
+            playerId: action.agent,
+            action: {
+              type: PLAY_CREATURE,
+              boxId: action.boxId
+            }
+          },
+          ...state.game.nextActions
+        ],
+        queue: [
+          makeSchema({
+            type: PLAY_CREATURE,
+            agent: action.agent,
+            boxId: action.boxId,
+            targets: {
+              type: "array",
+              minItems: card.onSummon.length,
+              maxItems: card.onSummon.length,
+              items: {
+                enum: [null]
+              }
+            }
+          }),
+          ...state.game.queue
+        ]
       }
     };
   }

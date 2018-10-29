@@ -57,8 +57,8 @@ export const playCreatureReducer = (state, action) => {
                     unitId: onSummon.target.random
                       ? undefined
                       : action.targets[i]
-                  },
-                  unitId: unitId
+                  }
+                  // unitId: unitId
                 }
               };
             }),
@@ -70,6 +70,49 @@ export const playCreatureReducer = (state, action) => {
             type: SEED_RNG,
             agent: action.agent
           }),
+          ...unit.onSummon
+            .filter(
+              (onSummon, i) =>
+                Object.keys(target(state, onSummon.target)).length !== 0
+            )
+            .map((onSummon, i) => {
+              return makeSchema(
+                Object.keys(onSummon).reduce(
+                  (schema, fieldName) => {
+                    if (["type", "target"].includes(fieldName)) {
+                      return schema;
+                    }
+                    return {
+                      ...schema,
+                      [fieldName]: {
+                        enum: [onSummon[fieldName]]
+                      }
+                    };
+                  },
+                  {
+                    type: onSummon.type,
+                    agent: action.agent,
+                    target: {
+                      type: "object",
+                      additionalProperties: false,
+                      properties: Object.keys(onSummon.target).reduce(
+                        (props, field) => ({
+                          ...props,
+                          [field]: {
+                            enum: [onSummon.target[field]]
+                          }
+                        }),
+                        {
+                          unitId: onSummon.target.random
+                            ? undefined
+                            : { enum: [action.targets[i]] }
+                        }
+                      )
+                    }
+                  }
+                )
+              );
+            }),
           makeSchema({
             type: CHECK_DEATH,
             agent: action.agent
