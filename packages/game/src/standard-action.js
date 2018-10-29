@@ -1,7 +1,7 @@
 import { END_TURN } from "./turns";
 import { PLAY_CARD } from "./play-card";
 import { ATTACK } from "./attack";
-import { makeSchema } from "@cardcore/util";
+import { makeSchema, Box } from "@cardcore/util";
 
 export const STANDARD_ACTION = "STANDARD_ACTION";
 
@@ -27,9 +27,25 @@ export const standardActionReducer = (state, action) => {
               }),
               makeSchema({
                 type: ATTACK,
-                agent: state.game.turn
+                agent: state.game.turn,
+                attackingUnitId: {
+                  enum: state.game.players[state.game.turn].field
+                    .map(bid => Box.traverse(state, bid))
+                    .filter(uid => state.game.units[uid].canAttack)
+                },
+                defendingUnitId: {
+                  enum: Object.keys(state.game.players)
+                    .filter(pId => pId !== state.game.turn)
+                    .map(pId => [
+                      ...state.game.players[pId].field.map(bid =>
+                        Box.traverse(state, bid)
+                      ),
+                      state.game.players[pId].unitId
+                    ])
+                    .reduce((all, arr) => [...all, ...arr], [])
+                }
               })
-            ]
+            ].filter(x => !!x)
           },
           ...state.game.queue
         ]

@@ -1,4 +1,4 @@
-export default function actionSchema(fields) {
+export default function makeSchema(fields) {
   if (!fields.type) {
     throw new Error("type required");
   }
@@ -11,7 +11,7 @@ export default function actionSchema(fields) {
       };
     }
   }
-  return {
+  const schema = {
     type: "object",
     additionalProperties: false,
     required: Object.keys(fields).sort(),
@@ -31,4 +31,15 @@ export default function actionSchema(fields) {
       ...fields
     }
   };
+
+  // Shallow, first-pass validation to see if we have invalid enums
+  for (const values of Object.values(schema.properties)) {
+    if (values.enum === undefined) {
+      continue;
+    }
+    if (values.enum.length === 0) {
+      return null;
+    }
+  }
+  return schema;
 }
