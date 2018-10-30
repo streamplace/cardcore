@@ -52,12 +52,14 @@ export const playCreatureReducer = (state, action) => {
                 playerId: action.agent,
                 action: {
                   ...onSummon,
-                  target: {
-                    ...onSummon.target,
-                    unitId: onSummon.target.random
-                      ? undefined
-                      : action.targets[i]
-                  }
+                  target: JSON.parse(
+                    JSON.stringify({
+                      ...onSummon.target,
+                      unitId: onSummon.target.random
+                        ? undefined
+                        : action.targets[i]
+                    })
+                  )
                   // unitId: unitId
                 }
               };
@@ -102,11 +104,14 @@ export const playCreatureReducer = (state, action) => {
                             enum: [onSummon.target[field]]
                           }
                         }),
-                        {
-                          unitId: onSummon.target.random
-                            ? undefined
-                            : { enum: [action.targets[i]] }
-                        }
+                        // it's late, leave me alone
+                        JSON.parse(
+                          JSON.stringify({
+                            unitId: onSummon.target.random
+                              ? undefined
+                              : { enum: [action.targets[i]] }
+                          })
+                        )
                       )
                     }
                   }

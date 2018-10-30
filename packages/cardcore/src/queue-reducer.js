@@ -31,6 +31,31 @@ export default function queueReducer(state, action) {
   }
   // const validate = ajv.compile(schema);
 
+  // z-schema crashes if any fields are undefined, find that first
+  const queue = [[schema, ""]];
+  while (queue.length > 0) {
+    const [node, path] = queue.pop();
+    if (typeof node === "undefined") {
+      throw new Error(
+        JSON.stringify(
+          {
+            errorType: "INVALID_SCHEMA",
+            message: `json-schemas may not contain undefined values — found undefined at ${path}`,
+            action,
+            schema
+          },
+          null,
+          2
+        )
+      );
+    }
+    if (typeof node === "object" && node !== null) {
+      Object.entries(node).forEach(([key, value]) => {
+        queue.push([value, `${path}.${key}`]);
+      });
+    }
+  }
+
   // Catch this one first - it's not necessarily what the validator picks up on first
   if (
     schema.properties &&

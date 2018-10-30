@@ -27,7 +27,8 @@ export class Sidebar extends React.Component {
           const player = this.props.players[layout.playerId];
           let active = false;
           let draggable = false;
-          if (cardId) {
+          let targetable = false;
+          if (cardId && !this.props.availableTargets) {
             const card = this.props.units[cardId];
             if (layout.location === "hand") {
               if (player.availableMana >= card.cost) {
@@ -44,12 +45,15 @@ export class Sidebar extends React.Component {
                 }
               }
             }
+          } else if (cardId && this.props.availableTargets) {
+            targetable = this.props.availableTargets.includes(cardId);
           }
           return (
             <Card
               key={layout.boxId}
               active={active}
               draggable={draggable}
+              targetable={targetable}
               boxId={layout.boxId}
               height={layout.height}
               x={layout.x}
@@ -87,7 +91,8 @@ const mapStateToProps = (state, props) => {
     cards: state.frontend.layout.filter(elem => elem.type === "card"),
     faces: state.frontend.layout.filter(elem => elem.type === "face"),
     boxTraverse: Box.traverse.bind(Box, state),
-    state: state
+    state: state,
+    availableTargets: state.client.availableTargets
   };
 };
 

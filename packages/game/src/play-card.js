@@ -1,4 +1,4 @@
-import { Box, getLeftPlayer, makeSchema } from "@cardcore/util";
+import { Box, getLeftPlayer, makeSchema, target } from "@cardcore/util";
 import { PLAY_CREATURE } from "./play-creature";
 import { START_GAME } from "./start-game";
 import { STANDARD_ACTION } from "./standard-action";
@@ -125,9 +125,21 @@ export const playCardReducer = (state, action) => {
               type: "array",
               minItems: card.onSummon.length,
               maxItems: card.onSummon.length,
-              items: {
-                enum: [null]
-              }
+              items: card.onSummon.map(onSummon => {
+                if (onSummon.target.count === undefined) {
+                  return { enum: [null] };
+                }
+                if (onSummon.target.random) {
+                  return { enum: [null] };
+                }
+                const targets = Object.keys(
+                  target(state, onSummon.target)
+                ).sort();
+                if (targets.length > 0) {
+                  return { enum: targets };
+                }
+                return { enum: [null] };
+              })
             }
           }),
           ...state.game.queue
