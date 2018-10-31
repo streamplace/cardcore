@@ -10,6 +10,7 @@ import Board from "./board";
 import FrontPage from "./front-page";
 import GameProvider from "./game-provider";
 import Development from "./development";
+import * as aiModules from "@cardcore/ai";
 
 export default class Router extends React.Component {
   constructor() {
@@ -36,7 +37,7 @@ export default class Router extends React.Component {
             render={props => {
               const { action } = props.match.params;
               return (
-                <GameProvider key="development">
+                <GameProvider modules={aiModules} key="development">
                   <Development action={action} />
                 </GameProvider>
               );

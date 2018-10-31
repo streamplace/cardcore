@@ -1,0 +1,19 @@
+{
+  "name": "@cardcore/ai",
+  "version": "0.0.1",
+  "description": "beep boop cardcore robot",
+  "main": "dist/index.js",
+  "repository": "git@github.com:streamplace/cardcore.git",
+  "author": "Streamplace",
+  "license": "Apache-2.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@cardcore/elements": "^0.0.1",
+    "@cardcore/game": "^0.0.1",
+    "@cardcore/util": "^0.0.1",
+    "json-schema-faker": "^0.5.0-rc16"
+  }
+}
