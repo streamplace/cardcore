@@ -24,6 +24,6 @@
     "z-schema": "^3.23.0"
   },
   "scripts": {
-    "test": "jest src"
+    "test": "jest dist"
   }
 }

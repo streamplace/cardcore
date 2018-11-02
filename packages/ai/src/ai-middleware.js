@@ -1,4 +1,4 @@
-import jsf from "json-schema-faker";
+import jsf from "json-schema-faker/dist/json-schema-faker.cjs.js";
 
 /**
  * This middleware implements an AI that does nothing but determine random allowed a ctions and

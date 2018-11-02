@@ -7,7 +7,6 @@
   },
   "devDependencies": {
     "jest": "^23.5.0",
-    "jest-expo": "~27.0.0",
     "react-native-scripts": "1.14.0",
     "react-test-renderer": "16.3.1"
   },
@@ -26,7 +25,7 @@
     "crna-make-symlinks-for-yarn-workspaces": "^1.0.1",
     "expo": "^27.0.1",
     "metro-bundler-config-yarn-workspaces": "^1.0.3",
-    "react": "16.3.1",
+    "react": "^16.6.0",
     "react-native": "~0.55.2",
     "react-native-svg": "^6.5.2"
   }
