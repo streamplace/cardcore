@@ -42,6 +42,9 @@
     "*.{js,css,md}": [
       "prettier --prose-wrap always --write",
       "git add"
+    ],
+    "*.js": [
+      "eslint --max-warnings 0 --config node_modules/eslint-config-react-app/index.js"
     ]
   },
   "husky": {

@@ -48,10 +48,6 @@ const LinkBox = styled(Text)`
   padding: 1em;
 `;
 
-const LoadingBox = styled(View)`
-  padding: 24px;
-`;
-
 const LeaveGame = styled(TouchableOpacity)`
   position: absolute;
   top: 10px;
