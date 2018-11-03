@@ -52,7 +52,7 @@ app.get(hashRegex, async (req, res) => {
 
 app.head(nextRegex, async (req, res) => {
   try {
-    const data = await req.store.get(req.params[0]);
+    await req.store.get(req.params[0]);
     res.status(204);
     res.end();
   } catch (err) {
@@ -141,8 +141,6 @@ app.get(nextRegex, async (req, res) => {
     });
 });
 
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-
 app.post(hashRegex, async (req, res) => {
   const action = req.body;
   if (req.body.next !== req.params[0]) {
@@ -193,11 +191,10 @@ app.post(hashRegex, async (req, res) => {
       });
     }
     const nextKey = `${action.prev}/next`;
-    const putPromises = [req.store.put(newHash, stringify(newState.game))];
+    await req.store.put(newHash, stringify(newState.game));
     if (action.prev) {
-      putPromises.push(req.store.put(nextKey, stringify(action)));
+      await req.store.put(nextKey, stringify(action));
     }
-    await Promise.all(putPromises);
     if (allPollers[nextKey]) {
       allPollers[nextKey].data(action);
     }
