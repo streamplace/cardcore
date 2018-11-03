@@ -48,10 +48,6 @@ const LinkBox = styled(Text)`
   padding: 1em;
 `;
 
-const LoadingBox = styled(View)`
-  padding: 24px;
-`;
-
 const LeaveGame = styled(TouchableOpacity)`
   position: absolute;
   top: 10px;
@@ -61,6 +57,29 @@ const LeaveGame = styled(TouchableOpacity)`
 
 const LeaveGameText = styled(Text)`
   font-size: 24px;
+`;
+
+const ActionLayer = styled(View)`
+  position: absolute;
+  z-index: 100;
+  bottom: ${props => props.height / 4}px;
+  height: ${props => props.height / 2}px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: bottom;
+  width: 100%;
+  pointer-events: none;
+`;
+
+const ActionLayerInner = styled(View)`
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+`;
+
+const ActionText = styled(Text)`
+  color: ${props => (props.me ? "blue" : "#006b00")};
 `;
 
 export class Board extends React.Component {
@@ -98,6 +117,24 @@ export class Board extends React.Component {
     );
   }
 
+  renderActionLayer() {
+    return (
+      <ActionLayer height={this.props.height} width={this.props.height}>
+        <ActionLayerInner>
+          {this.props.actionLog.map((action, i) => (
+            <ActionText
+              me={action.agent === this.props.currentPlayer ? 1 : 0}
+              key={i}
+            >
+              {action.agent === this.props.currentPlayer ? "you: " : "them: "}
+              {action.type}
+            </ActionText>
+          ))}
+        </ActionLayerInner>
+      </ActionLayer>
+    );
+  }
+
   render() {
     const { height, width } = this.props;
     if (this.props.loading) {
@@ -132,12 +169,13 @@ export class Board extends React.Component {
       const gameUrl = `${getServer()}/game/${this.props.gameId}`;
       console.log("game url: " + gameUrl);
       return (
-        <LoadingBox>
+        <BoardWrapper>
           {this.renderLeaveGame()}
+          {this.renderActionLayer()}
           <Text>Waiting for another player...</Text>
           <Text>Send your friend this link:</Text>
           <Text>{gameUrl}</Text>
-        </LoadingBox>
+        </BoardWrapper>
       );
     }
     let [topPlayerId, bottomPlayerId] = this.props.playerOrder;
@@ -149,6 +187,7 @@ export class Board extends React.Component {
     }
     return (
       <BoardWrapper disableSelect={true}>
+        {this.renderActionLayer()}
         {this.renderLeaveGame()}
         <CardLayer height={height} width={width} />
         <Sidebar
@@ -184,7 +223,8 @@ const mapStateToProps = (state, props) => {
       ),
     playerOrder: state.game.playerOrder,
     height: state.frontend.height,
-    width: state.frontend.width
+    width: state.frontend.width,
+    actionLog: state.client.actionLog
   };
 };
 

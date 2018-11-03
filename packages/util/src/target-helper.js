@@ -31,8 +31,13 @@ export function target(state, target, func = noop) {
   if (target.unitId) {
     units[target.unitId] = game.units[target.unitId];
     owners[target.unitId] = Object.keys(game.players).find(playerId => {
-      return game.players[playerId].field.includes(target.unitId);
+      return game.players[playerId].field
+        .map(boxId => Box.traverse(state, boxId))
+        .includes(target.unitId);
     });
+    if (!owners[target.unitId]) {
+      throw new Error(`couldn't find who owns ${target.unitId}`);
+    }
   } else {
     let players;
     if (!target.player) {

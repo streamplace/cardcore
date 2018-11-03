@@ -8,6 +8,7 @@
   "license": "Apache-2.0",
   "private": false,
   "dependencies": {
+    "@babel/polyfill": "^7.0.0",
     "@cardcore/game": "^0.0.1",
     "@cardcore/util": "^0.0.1",
     "@streamplace/ssb-keys": "7.0.21",

@@ -10,7 +10,8 @@ const INITIAL_STATE = {
   keys: {},
   started: false,
   loadingState: true,
-  closed: false
+  closed: false,
+  actionLog: []
 };
 
 export default function clientReducer(state, action) {
@@ -20,6 +21,17 @@ export default function clientReducer(state, action) {
       client: INITIAL_STATE
     };
   }
+
+  if (actions[action.type]) {
+    state = {
+      ...state,
+      client: {
+        ...state.client,
+        actionLog: [...state.client.actionLog, action]
+      }
+    };
+  }
+
   if (action.type === actions.JOIN_GAME_ACCEPT) {
     return {
       ...state,

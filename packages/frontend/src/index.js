@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Router from "./router";
-import { injectGlobal } from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 
-injectGlobal`
+const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
   }
@@ -13,4 +13,15 @@ injectGlobal`
   }
 `;
 
-ReactDOM.render(<Router />, document.getElementById("root"));
+const GlobalWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+ReactDOM.render(
+  <GlobalWrapper>
+    <GlobalStyle />
+    <Router />
+  </GlobalWrapper>,
+  document.getElementById("root")
+);

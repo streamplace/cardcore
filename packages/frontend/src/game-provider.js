@@ -9,10 +9,6 @@ import * as frontendModules from "./actions";
 export default class GameProvider extends React.Component {
   constructor() {
     super();
-    this.store = createStore(gameModules, {
-      ...clientModules,
-      ...frontendModules
-    });
     this.state = {
       ready: false
     };
@@ -24,6 +20,12 @@ export default class GameProvider extends React.Component {
   }
 
   async componentDidMount() {
+    let additionalModules = this.props.modules || {};
+    this.store = createStore(gameModules, {
+      ...clientModules,
+      ...frontendModules,
+      ...additionalModules
+    });
     await this.handleResize();
     this.setState({ ready: true });
     Events.on("resize", this.handleResize);

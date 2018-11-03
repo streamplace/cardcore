@@ -76,7 +76,17 @@ export default function createGameMiddleware(gameActions, clientActions) {
             );
           }
           if (!res.ok) {
-            throw new Error(await res.text());
+            const text = await res.text();
+            if (res.status === 409) {
+              throw new Error(
+                JSON.stringify({
+                  errorType: "DESYNC",
+                  clientState: store.getState().game,
+                  serverState: JSON.parse(text)
+                })
+              );
+            }
+            throw new Error(text);
           }
         }
 

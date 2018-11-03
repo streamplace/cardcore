@@ -1,5 +1,6 @@
 import { rotateArray, shuffle } from "@cardcore/util";
-import { Box } from "@cardcore/util";
+import { Box, makeSchema, RandomUtil } from "@cardcore/util";
+import ssbKeys from "@streamplace/ssb-keys";
 
 export const SHUFFLE_DECK = "SHUFFLE_DECK";
 // export const shuffleDeck = action => (dispatch, getState) => {
@@ -12,16 +13,15 @@ export const shuffleDeckEncrypt = ({ playerId }) => async (
   getState
 ) => {
   const state = getState();
-  let encryptedDeck = [];
+  const seed = ssbKeys.generate().public;
   const boxes = {};
   for (const card of state.game.players[playerId].deck) {
     const { boxId, box } = Box.new(card, state.client.keys.id);
-    encryptedDeck.push(boxId);
     boxes[boxId] = box;
   }
   return dispatch({
     type: SHUFFLE_DECK_ENCRYPT,
-    deck: shuffle(encryptedDeck),
+    seed,
     boxes,
     playerId
   });
@@ -61,12 +61,44 @@ export const shuffleDeckReducer = (state, action) => {
             };
           }),
           ...state.game.nextActions
+        ],
+        queue: [
+          ...encryptOrder.map(playerId =>
+            makeSchema({
+              type: SHUFFLE_DECK_ENCRYPT,
+              agent: playerId,
+              playerId: action.playerId,
+              seed: {
+                type: "string"
+              },
+              boxes: {
+                type: "object",
+                minProperties: state.game.players[action.playerId].deck.length,
+                maxProperties: state.game.players[action.playerId].deck.length,
+                additionalProperties: {
+                  type: "object",
+                  properties: {
+                    contents: {
+                      type: "string"
+                    },
+                    keys: {
+                      [playerId]: {
+                        type: "string"
+                      }
+                    }
+                  }
+                }
+              }
+            })
+          ),
+          ...state.game.queue
         ]
       }
     };
   }
 
   if (action.type === SHUFFLE_DECK_ENCRYPT) {
+    const localRando = new RandomUtil(action.seed);
     return {
       ...state,
       game: {
@@ -75,10 +107,10 @@ export const shuffleDeckReducer = (state, action) => {
           ...state.game.players,
           [action.playerId]: {
             ...state.game.players[action.playerId],
-            deck: action.deck
+            deck: localRando.shuffle(Object.keys(action.boxes))
           }
         },
-        boxes: action.deck.reduce(
+        boxes: Object.keys(action.boxes).reduce(
           (boxes, boxId) => ({
             ...boxes,
             [boxId]: {

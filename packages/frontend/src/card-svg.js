@@ -15,6 +15,7 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { desaturate } from "polished";
 import { frontendCardDrop } from "./actions";
+import { clientPickTarget } from "@cardcore/client";
 
 const WIDTH = 1024;
 const HEIGHT = (1024 * 3) / 2;
@@ -32,6 +33,8 @@ const OVERHANG_TRANSLATE_Y = (HEIGHT - OVERHANG_HEIGHT) / 2;
 
 const MANA_COLOR = "rgb(15, 143, 255)";
 const MANA_COLOR_INACTIVE = desaturate(1, MANA_COLOR);
+
+const TARGETABLE_COLOR = "rgb(28, 189, 5)";
 
 const PLAYABLE_BAR_HEIGHT = 50;
 
@@ -76,6 +79,7 @@ const NumberBox = props => (
 
 const ViewWrapper = styled(Animated.View)`
   ${isWeb() && "user-select: none"};
+  ${props => isWeb() && props.targetable && "cursor: pointer"};
   margin: 0 10px;
   z-index: ${props => (props.dragging ? 101 : 100)};
   position: absolute;
@@ -131,7 +135,13 @@ export class CardSVG extends React.Component {
     this.state = { dragging: false };
     // Initialize PanResponder with move handling
     this.panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: (e, gesture) => this.props.draggable,
+      onStartShouldSetPanResponder: (e, gesture) => {
+        if (this.props.targetable && this.props.cardId) {
+          this.props.dispatch(clientPickTarget(this.props.cardId));
+          return false;
+        }
+        return this.props.draggable;
+      },
       onPanResponderGrant: (e, gesture) => {
         this.panOffset.setValue({
           x: -e.nativeEvent.locationX,
@@ -214,7 +224,14 @@ export class CardSVG extends React.Component {
 
   render() {
     let { width, height, card } = this.props;
-    const manaColor = this.props.active ? MANA_COLOR : MANA_COLOR_INACTIVE;
+    let manaColor;
+    if (this.props.targetable) {
+      manaColor = TARGETABLE_COLOR;
+    } else if (this.props.active) {
+      manaColor = MANA_COLOR;
+    } else {
+      manaColor = MANA_COLOR_INACTIVE;
+    }
     if (!card) {
       card = TEMP_DEFAULT_CARD;
     }
@@ -242,6 +259,7 @@ export class CardSVG extends React.Component {
       // <ViewWrapper> is a bit of a shame, I'd love for this to be pure SVG
       <ViewWrapper
         {...this.panResponder.panHandlers}
+        targetable={this.props.targetable}
         dragging={this.state.dragging}
         style={{
           width: width,

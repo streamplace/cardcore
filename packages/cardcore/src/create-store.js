@@ -5,12 +5,23 @@ import createGameMiddleware from "./game-middleware";
 import { createReducer } from "./reducer";
 
 export default function(gameModules, clientModules) {
+  const middlewares = Object.entries({
+    ...gameModules,
+    ...clientModules
+  })
+    .filter(([name]) => {
+      return name.endsWith("Middleware");
+    })
+    .map(([_, value]) => value);
   const composeEnhancers =
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
   return createStore(
     createReducer(gameModules, clientModules),
     composeEnhancers(
-      applyMiddleware(createGameMiddleware(gameModules, clientModules))
+      applyMiddleware(
+        createGameMiddleware(gameModules, clientModules),
+        ...middlewares.map(creator => creator(gameModules, clientModules))
+      )
     )
   );
 }

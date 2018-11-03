@@ -31,6 +31,14 @@ export const bounceReducer = (state, action) => {
             };
           }),
           ...state.game.nextActions
+        ],
+        queue: [
+          ...targets.map(target => ({
+            action: BOUNCE_ENCRYPT,
+            agent: target.playerId,
+            unitId: target.unitId
+          })),
+          ...state.game.queue
         ]
       }
     };

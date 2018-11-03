@@ -1,6 +1,6 @@
 import { SEED_RNG } from "./seed-rng";
 import { CHECK_DEATH } from "./check-death";
-import { target, Box } from "@cardcore/util";
+import { target, Box, makeSchema } from "@cardcore/util";
 import { START_GAME } from "./start-game";
 
 export const PLAY_CREATURE = "PLAY_CREATURE";
@@ -52,18 +52,77 @@ export const playCreatureReducer = (state, action) => {
                 playerId: action.agent,
                 action: {
                   ...onSummon,
-                  target: {
-                    ...onSummon.target,
-                    unitId: onSummon.target.random
-                      ? undefined
-                      : action.targets[i]
-                  },
-                  unitId: unitId
+                  target: JSON.parse(
+                    JSON.stringify({
+                      ...onSummon.target,
+                      unitId: onSummon.target.random
+                        ? undefined
+                        : action.targets[i]
+                    })
+                  )
+                  // unitId: unitId
                 }
               };
             }),
           { playerId: action.agent, action: { type: CHECK_DEATH } },
           ...state.game.nextActions
+        ],
+        queue: [
+          makeSchema({
+            type: SEED_RNG,
+            agent: action.agent
+          }),
+          ...unit.onSummon
+            .filter(
+              (onSummon, i) =>
+                Object.keys(target(state, onSummon.target)).length !== 0
+            )
+            .map((onSummon, i) => {
+              return makeSchema(
+                Object.keys(onSummon).reduce(
+                  (schema, fieldName) => {
+                    if (["type", "target"].includes(fieldName)) {
+                      return schema;
+                    }
+                    return {
+                      ...schema,
+                      [fieldName]: {
+                        enum: [onSummon[fieldName]]
+                      }
+                    };
+                  },
+                  {
+                    type: onSummon.type,
+                    agent: action.agent,
+                    target: {
+                      type: "object",
+                      additionalProperties: false,
+                      properties: Object.keys(onSummon.target).reduce(
+                        (props, field) => ({
+                          ...props,
+                          [field]: {
+                            enum: [onSummon.target[field]]
+                          }
+                        }),
+                        // it's late, leave me alone
+                        JSON.parse(
+                          JSON.stringify({
+                            unitId: onSummon.target.random
+                              ? undefined
+                              : { enum: [action.targets[i]] }
+                          })
+                        )
+                      )
+                    }
+                  }
+                )
+              );
+            }),
+          makeSchema({
+            type: CHECK_DEATH,
+            agent: action.agent
+          }),
+          ...state.game.queue
         ]
       }
     };

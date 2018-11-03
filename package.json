@@ -8,37 +8,33 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development run-s prepare:babel start:watch",
     "start:watch": "run-p start:babel-watch start:packages",
-    "start:babel-watch": "cross-env NODE_ENV=development lerna exec --concurrency=999 --no-sort --stream -- babel --copy-files -d dist --source-maps true --skip-initial-build --source-root '$PWD'/dist --watch src",
+    "start:babel-watch": "cross-env NODE_ENV=development lerna exec --concurrency=999 --no-sort --stream -- babel --root-mode upward --copy-files -d dist --source-maps true --skip-initial-build --source-root '$PWD'/dist --watch src",
     "start:packages": "lerna run --no-sort --concurrency=999 --stream start",
     "test": "run-s test:lint test:packages",
-    "test:lint": "lerna exec --stream dependency-check ./package.json",
+    "test:lint": "lerna exec --stream -- dependency-check --ignore-module=regenerator-runtime ./package.json",
     "test:packages": "lerna run --stream test",
     "pre-commit:lint-staged": "lint-staged",
     "prepare": "cross-env NODE_ENV=production run-s prepare:babel prepare:build",
     "prepare:build": "lerna run --stream build",
-    "prepare:babel": "lerna exec --stream -- babel --copy-files -d dist --source-maps true src",
+    "prepare:babel": "lerna exec --stream -- babel --root-mode upward --copy-files -d dist --source-maps true src",
     "push-secrets": "drone secret add streamplace/cardcore --name npm_token --value \"$(cat /keybase/team/streamplace_team/secrets/npm_token)\""
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-react-app": "^3.1.2",
+    "babel-preset-react-app": "6.1.0",
     "cross-env": "^5.2.0",
     "dependency-check": "^3.2.0",
     "lerna": "^3.0.0-rc.0",
     "npm-run-all": "^4.1.3"
   },
-  "babel": {
-    "presets": [
-      "env",
-      "react-app"
-    ]
-  },
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
     "husky": "^1.1.2",
     "lint-staged": "^7.3.0"
   },
@@ -46,6 +42,9 @@
     "*.{js,css,md}": [
       "prettier --prose-wrap always --write",
       "git add"
+    ],
+    "*.js": [
+      "eslint --max-warnings 0 --config node_modules/eslint-config-react-app/index.js"
     ]
   },
   "husky": {
