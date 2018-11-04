@@ -84,6 +84,9 @@ class Poller extends EE {
   }
 
   _poll() {
+    if (this.done) {
+      return;
+    }
     this.store
       .get(this.key)
       .then(data => {
@@ -117,8 +120,6 @@ class Poller extends EE {
   cleanup() {
     this.done = true;
     delete allPollers[this.key];
-    clearTimeout(this.pollHandle);
-    clearTimeout(this.timeoutHandle);
   }
 }
 
