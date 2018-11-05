@@ -1,5 +1,4 @@
 import { hashState, REMOTE_ACTION } from "@cardcore/util";
-import { gameNoop } from "@cardcore/game";
 import { clientFetch } from "./client-fetch";
 import { clientNext } from "./client-next";
 
@@ -47,6 +46,7 @@ export const clientLoadState = gameId => async (dispatch, getState) => {
       enumerable: false
     });
     await dispatch(newAct);
+    await new Promise(r => setTimeout(r, 0));
   }
   await dispatch({
     type: "CLIENT_LOAD_STATE_DONE"

@@ -1,7 +1,6 @@
 import "./fonts/stylesheet.css";
 import EE from "wolfy87-eventemitter";
 import { throttle } from "underscore";
-import fetch from "isomorphic-fetch";
 
 export { BrowserRouter as Router } from "react-router-dom";
 export { Route, Switch as RouteSwitch, withRouter } from "react-router-dom";
@@ -41,7 +40,7 @@ export const Storage = {
     return Promise.resolve(localStorage.getItem(key));
   },
 
-  setItem: async (key, value) => {
+  setItem: (key, value) => {
     return Promise.resolve(localStorage.setItem(key, value));
   },
 
