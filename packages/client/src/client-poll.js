@@ -14,7 +14,7 @@ export const clientGetGameHash = () => (dispatch, getState) => {
 export const CLIENT_LOAD_STATE_START = "CLIENT_LOAD_STATE_START";
 export const CLIENT_LOAD_STATE_DONE = "CLIENT_LOAD_STATE_DONE";
 export const clientLoadState = gameId => async (dispatch, getState) => {
-  const res = await dispatch(clientFetch(`/${gameId}.sha256`));
+  const res = await dispatch(clientFetch(`/${gameId}`));
   if (res.status !== 200) {
     const err = await res.text();
     console.error(err);
@@ -25,7 +25,7 @@ export const clientLoadState = gameId => async (dispatch, getState) => {
     type: CLIENT_LOAD_STATE_START,
     gameState: startState,
     [REMOTE_ACTION]: true,
-    next: `${gameId}.sha256`
+    next: gameId
   });
   while (true) {
     const hash = await dispatch(clientGetGameHash());

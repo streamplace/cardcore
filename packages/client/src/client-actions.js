@@ -64,20 +64,25 @@ export const CLIENT_START_TARGET = "CLIENT_START_TARGET";
 export const CLIENT_PICK_TARGET = "CLIENT_PICK_TARGET";
 export const CLIENT_GENERATE_IDENTITY = "CLIENT_GENERATE_IDENTITY";
 const CARDCORE_IDENTITY = "CARDCORE_IDENTITY";
-export const clientGenerateIdentity = () => async dispatch => {
-  const storedItem = await Storage.getItem(CARDCORE_IDENTITY);
+export const clientGenerateIdentity = ({
+  store = true
+} = {}) => async dispatch => {
+  let storedItem;
+  if (store) {
+    storedItem = await Storage.getItem(CARDCORE_IDENTITY);
+  }
   let keys;
   if (storedItem) {
     try {
       keys = JSON.parse(storedItem);
     } catch (e) {
       console.error("error parsing cardcore identity, clearing", e);
-      await Storage.removeItem(CARDCORE_IDENTITY);
+      store && (await Storage.removeItem(CARDCORE_IDENTITY));
     }
   }
   if (!keys) {
     keys = ssbKeys.generate();
-    await Storage.setItem(CARDCORE_IDENTITY, JSON.stringify(keys));
+    store && (await Storage.setItem(CARDCORE_IDENTITY, JSON.stringify(keys)));
   }
   dispatch({
     type: CLIENT_GENERATE_IDENTITY,

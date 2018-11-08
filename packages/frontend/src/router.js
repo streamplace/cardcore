@@ -47,7 +47,10 @@ export default class Router extends React.Component {
             path="/game/:gameId"
             render={props => (
               <GameProvider key="foo">
-                <Board {...props} gameId={props.match.params.gameId} />
+                <Board
+                  {...props}
+                  gameId={`${props.match.params.gameId}.sha256`}
+                />
               </GameProvider>
             )}
           />
