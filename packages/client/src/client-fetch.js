@@ -22,6 +22,40 @@ class CachedResponse {
 }
 
 /**
+ * Get the server... either it's been previously set or infer from environment
+ */
+export const clientGetServer = () => (dispatch, getState) => {
+  const state = getState();
+  if (state.client.server) {
+    return state.client.server;
+  }
+  if (typeof getServer !== "undefined") {
+    return getServer();
+  }
+  throw new Error(`Server wasn't set and we couldn't infer from environment`);
+};
+
+export const CLIENT_SET_SERVER = "CLIENT_SET_SERVER";
+export const clientSetServer = ({ server }) => ({
+  type: "CLIENT_SET_SERVER",
+  server
+});
+
+export const clientServerReducer = (state, action) => {
+  if (action.type === CLIENT_SET_SERVER) {
+    console.log("here");
+    return {
+      ...state,
+      client: {
+        ...state.client,
+        server: action.server
+      }
+    };
+  }
+  return state;
+};
+
+/**
  * fetch() wrapped suitable for use in a game. If the game gets closed, we'll disregard all pending
  * requests. Ideally we'd cancel the in-progress fetches as well but that's NYI in a lot of
  * environments.
@@ -41,9 +75,10 @@ export const clientFetch = (url, opts = { method: "GET" }) => async (
       Storage.removeItem(url);
     }
   }
+  const server = await dispatch(clientGetServer());
   return new Promise((resolve, reject) => {
     let res;
-    fetch(`${getServer()}${url}`, opts)
+    fetch(`${server}${url}`, opts)
       .then(_res => {
         res = _res;
         return res.text();

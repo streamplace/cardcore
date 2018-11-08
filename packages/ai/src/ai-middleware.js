@@ -1,4 +1,7 @@
 import jsf from "json-schema-faker/dist/json-schema-faker.cjs.js";
+import debug from "debug";
+
+const log = debug("cardcore:ai-middleware");
 
 /**
  * This middleware implements an AI that does nothing but determine random allowed a ctions and
@@ -6,6 +9,7 @@ import jsf from "json-schema-faker/dist/json-schema-faker.cjs.js";
  */
 export function createAIMiddleware(gameActions, clientActions) {
   return store => next => action => {
+    log(action.type);
     if (!gameActions[action.type]) {
       return next(action);
     }
