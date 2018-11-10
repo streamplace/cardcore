@@ -1,5 +1,3 @@
-import { makeSchema } from "@cardcore/util";
-
 // emoji, attack, health, name, text, onSummon
 const emojis = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "☺️", "😊"];
 export function standard(cost) {

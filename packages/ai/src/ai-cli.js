@@ -7,6 +7,7 @@ import path from "path";
 import os from "os";
 import { createStore } from "cardcore";
 import runServer from "@cardcore/server";
+import fs from "fs";
 
 const createPlayer = async server => {
   const store = createStore(game, { ...client, ...ai });
@@ -16,6 +17,8 @@ const createPlayer = async server => {
 };
 
 let server;
+let p1;
+let p2;
 
 const run = async inputUrl => {
   // const { protocol, host } = parse(inputUrl);
@@ -28,12 +31,12 @@ const run = async inputUrl => {
   console.log("hi");
   // process.exit(0);
 
-  const p1 = await createPlayer(serverString);
+  p1 = await createPlayer(serverString);
   await p1.dispatch(game.createGame());
   const gameId = await p1.dispatch(client.clientGetGameHash());
   p1.dispatch(client.clientPoll());
 
-  const p2 = await createPlayer(serverString);
+  p2 = await createPlayer(serverString);
   await p2.dispatch(client.clientLoadState(gameId));
   p2.dispatch(client.clientPoll());
 
@@ -41,12 +44,26 @@ const run = async inputUrl => {
 };
 
 if (!module.parent) {
-  process.on("unhandledRejection", error => {
+  const handleError = error => {
     console.log(error);
+    if (p1) {
+      console.log(JSON.stringify(p1.getState(), null, 2));
+    }
+    try {
+      fs.writeFileSync(
+        "cardcore-error.json",
+        JSON.stringify(
+          {
+            error: { message: error.message, stack: error.stack },
+            state: p1.getState()
+          },
+          null,
+          2
+        )
+      );
+    } catch (e) {}
     process.exit(1);
-  });
-  run(process.argv[2]).catch(err => {
-    console.error(err);
-    process.exit(1);
-  });
+  };
+  process.on("unhandledRejection", handleError);
+  run(process.argv[2]).catch(handleError);
 }

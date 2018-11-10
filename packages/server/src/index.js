@@ -5,7 +5,7 @@ import morgan from "morgan";
 import Store from "./store";
 
 export default async function runServer({ port, dataDir }) {
-  const store = new Store(dataDir);
+  const store = new Store({ dataDir });
   const app = express();
   app.use(bodyParser.json());
   app.use(morgan("dev"));

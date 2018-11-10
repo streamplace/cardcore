@@ -1,5 +1,6 @@
 import { SHUFFLE_DECK_DECRYPT } from "./shuffle-deck";
 import { makeSchema } from "@cardcore/util";
+import { CHECK_DEATH } from "./check-death";
 export const DRAW_CARD = "DRAW_CARD";
 
 export function drawCardReducer(state, action) {
@@ -61,6 +62,12 @@ export function drawCardReducer(state, action) {
                 boxId: boxId
               }
             },
+            {
+              playerId: playerId,
+              action: {
+                type: CHECK_DEATH
+              }
+            },
             ...state.game.nextActions
           ],
           queue: [
@@ -72,6 +79,10 @@ export function drawCardReducer(state, action) {
               key: {
                 type: "string"
               }
+            }),
+            makeSchema({
+              type: CHECK_DEATH,
+              agent: playerId
             }),
             ...state.game.queue
           ]

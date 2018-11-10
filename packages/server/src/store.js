@@ -6,6 +6,7 @@ export default class Store {
   constructor({ dataDir } = {}) {
     this.dir = dataDir || path.resolve(__dirname, "..", "..", "..", "data");
     fs.ensureDir(this.dir);
+    console.log(this.dir);
     this.db = level(path.resolve(this.dir, "cardcore-leveldb"));
   }
 

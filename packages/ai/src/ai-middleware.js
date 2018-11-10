@@ -29,7 +29,9 @@ export function createAIMiddleware(gameActions, clientActions) {
     state = store.getState();
     nextSchema = state.game.queue[0];
 
-    if (nextSchema.anyOf) {
+    if (!nextSchema) {
+      throw new Error("done");
+    } else if (nextSchema.anyOf) {
       setTimeout(() => {
         console.log("faking action");
         const act = jsf.generate(nextSchema);
