@@ -8,6 +8,7 @@ import os from "os";
 import { createStore } from "cardcore";
 import runServer from "@cardcore/server";
 import fs from "fs";
+import ms from "ms";
 
 const createPlayer = async server => {
   const store = createStore(game, { ...client, ...ai });
@@ -20,16 +21,14 @@ let server;
 let p1;
 let p2;
 
-const run = async inputUrl => {
+const run = async () => {
   // const { protocol, host } = parse(inputUrl);
   // const serverString = `${protocol}//${host}`;
   server = await runServer({
-    dataDir: path.resolve(os.tmpdir(), "cardcore-test-server")
+    dataDir: path.resolve(os.tmpdir(), "cardcore-test-server"),
+    log: false
   });
-  console.log("asdf");
   const serverString = `http://localhost:${server.address().port}`;
-  console.log("hi");
-  // process.exit(0);
 
   p1 = await createPlayer(serverString);
   await p1.dispatch(game.createGame());
@@ -40,7 +39,7 @@ const run = async inputUrl => {
   await p2.dispatch(client.clientLoadState(gameId));
   p2.dispatch(client.clientPoll());
 
-  await p1.dispatch(client.clientLoadState(gameId));
+  // await p1.dispatch(client.clientLoadState(gameId));
 };
 
 if (!module.parent) {
@@ -76,4 +75,7 @@ if (!module.parent) {
   };
   process.on("unhandledRejection", handleError);
   run(process.argv[2]).catch(handleError);
+  setTimeout(() => {
+    handleError(new Error("timeout"));
+  }, ms("10 minutes"));
 }

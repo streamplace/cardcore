@@ -4,11 +4,13 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 import Store from "./store";
 
-export default async function runServer({ port, dataDir }) {
+export default async function runServer({ port, dataDir, log = true }) {
   const store = new Store({ dataDir });
   const app = express();
   app.use(bodyParser.json());
-  app.use(morgan("dev"));
+  if (log) {
+    app.use(morgan("dev"));
+  }
   app.use((req, res, next) => {
     req.store = store;
     next();
