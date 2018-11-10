@@ -7,7 +7,7 @@ pipeline:
     commands:
       - yarn install
       - npm run test
-      - time node packages/ai/dist/ai-cli.js
+      - node packages/ai/dist/ai-cli.js
 
   publish:
     image: node:10
