@@ -45,6 +45,16 @@ const run = async inputUrl => {
 
 if (!module.parent) {
   const handleError = error => {
+    if (error.message === "done") {
+      const state = p1.getState();
+      if (
+        state.client.actionLog[state.client.actionLog.length - 1].type ===
+        "DEFEAT"
+      ) {
+        console.log("simulation completed normally");
+        process.exit(0);
+      }
+    }
     console.log(error);
     if (p1) {
       console.log(JSON.stringify(p1.getState(), null, 2));
