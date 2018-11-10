@@ -4,22 +4,33 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 import Store from "./store";
 
-const app = express();
-app.use(bodyParser.json());
-app.use(morgan("dev"));
-let store;
-app.use((req, res, next) => {
-  req.store = store;
-  next();
-});
-app.use(router);
+export default async function runServer({ port, dataDir }) {
+  const store = new Store(dataDir);
+  const app = express();
+  app.use(bodyParser.json());
+  app.use(morgan("dev"));
+  app.use((req, res, next) => {
+    req.store = store;
+    next();
+  });
+  app.use(router);
+
+  let listener;
+  await new Promise((resolve, reject) => {
+    listener = app.listen(port, err => {
+      if (err) {
+        reject(err);
+      }
+      resolve();
+    });
+  });
+  console.log(`cardcore server listening on ${listener.address().port}`);
+  return listener;
+}
 
 if (!module.parent) {
-  store = new Store();
-  const listener = app.listen(process.env.port || 3003, err => {
-    if (err) {
-      throw err;
-    }
-    console.log(`cardcore server listening on ${listener.address().port}`);
+  runServer({ port: process.env.PORT || 3003 }).catch(err => {
+    console.log(err);
+    process.exit(1);
   });
 }
