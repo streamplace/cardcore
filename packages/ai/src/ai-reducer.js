@@ -11,7 +11,6 @@ export function aiReducer(state, action) {
         return null;
       }
       const allTargets = Object.keys(target(state, onSummon.target));
-      console.log(allTargets);
       return shuffle(allTargets)[0] || null;
     });
     return {

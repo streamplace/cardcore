@@ -43,7 +43,6 @@ export const clientSetServer = ({ server }) => ({
 
 export const clientServerReducer = (state, action) => {
   if (action.type === CLIENT_SET_SERVER) {
-    console.log("here");
     return {
       ...state,
       client: {

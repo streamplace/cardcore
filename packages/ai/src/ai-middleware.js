@@ -33,7 +33,7 @@ export function createAIMiddleware(gameActions, clientActions) {
       throw new Error("done");
     } else if (nextSchema.anyOf) {
       setTimeout(() => {
-        console.log("faking action");
+        log("faking action");
         const act = jsf.generate(nextSchema);
         store.dispatch(act);
       }, 300);
