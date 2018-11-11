@@ -9,7 +9,7 @@ const slackNotify = async function(text) {
   if (typeof text !== "string") {
     text = JSON.stringify(text);
   }
-  await fetch(slack.rootNotifications, {
+  await fetch(process.env.SLACK_NOTIFICATIONS, {
     method: "POST",
     body: JSON.stringify({ text }),
     headers: { "content-type": "application/json" }
@@ -20,12 +20,13 @@ blobService.createContainerIfNotExists(container, error => {
   if (error) return console.log(error);
   blobService.createBlockBlobFromLocalFile(
     container,
-    filename,
     `${process.env.DRONE_COMMIT}-error.json`,
+    filename,
     (error, result) => {
-      if (error) return console.log(error);
-      console.log(slackNotify("test"));
+      if (error) console.log(error);
+      slackNotify("test");
       console.dir(result, { depth: null, colors: true });
+      process.exit(1);
     }
   );
 });
