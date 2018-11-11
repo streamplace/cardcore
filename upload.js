@@ -24,9 +24,9 @@ blobService.createContainerIfNotExists(container, error => {
     container,
     remoteName,
     filename,
-    (error, result) => {
+    async (error, result) => {
       if (error) console.log(error);
-      slackNotify(
+      await slackNotify(
         `simulation error: https://streamplace.blob.core.windows.net/${container}/${remoteName}`
       );
       console.dir(result, { depth: null, colors: true });
