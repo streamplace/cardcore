@@ -4,11 +4,13 @@ pipeline:
       - NODE_ENV=development
     image: node:10
     pull: true
+    secrets:
+      - slack_notification
+      - az_connection_string
     commands:
       - yarn install
       - npm run test
       - npm run simulate-16
-      - node upload.js
 
   publish:
     image: node:10
@@ -16,7 +18,6 @@ pipeline:
       branch: latest
     secrets:
       - npm_token
-      - az_connection_string
     commands:
       - npm config set '//registry.npmjs.org/:_authToken' $NPM_TOKEN
       - npx lerna publish --repo-version $(node -p 'require("./lerna.json").version')-${DRONE_COMMIT:0:8} --skip-git --yes --npm-tag $DRONE_BRANCH --exact
