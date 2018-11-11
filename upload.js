@@ -10,18 +10,19 @@ const slackNotify = async function(text) {
   if (typeof text !== "string") {
     text = JSON.stringify(text);
   }
-  await fetch(process.env.SLACK_NOTIFICATION, {
+  const res = await fetch(process.env.SLACK_NOTIFICATION, {
     method: "POST",
     body: JSON.stringify({ text }),
     headers: { "content-type": "application/json" }
   });
+  console.log(res.status);
 };
 
 blobService.createContainerIfNotExists(container, error => {
   if (error) return console.log(error);
   blobService.createBlockBlobFromLocalFile(
     container,
-    `${process.env.DRONE_COMMIT}-error.json`,
+    remoteName,
     filename,
     (error, result) => {
       if (error) console.log(error);
