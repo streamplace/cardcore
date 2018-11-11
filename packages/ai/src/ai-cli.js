@@ -83,21 +83,16 @@ if (!module.parent) {
         process.exit(0);
       }
     }
-    console.log(error);
-    if (p1) {
-      console.log(JSON.stringify(p1.getState(), null, 2));
-    }
+    const errorLog = {
+      error: { message: error.message, stack: error.stack },
+      state: p1.getState()
+    };
+    console.log(JSON.stringify(errorLog));
+
     try {
       fs.writeFileSync(
         "cardcore-error.json",
-        JSON.stringify(
-          {
-            error: { message: error.message, stack: error.stack },
-            state: p1.getState()
-          },
-          null,
-          2
-        )
+        JSON.stringify(errorLog, null, 2)
       );
     } catch (e) {}
     process.exit(1);
