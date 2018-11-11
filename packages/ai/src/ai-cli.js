@@ -6,9 +6,27 @@ import * as ai from "./index.js";
 import path from "path";
 import os from "os";
 import { createStore } from "cardcore";
+import { Storage } from "@cardcore/elements";
 import runServer from "@cardcore/server";
-import fs from "fs";
+import fs from "fs-extra";
 import ms from "ms";
+
+const mockStorage = {};
+
+Storage.getItem = key => {
+  const item = mockStorage[key] || null;
+  return Promise.resolve(item);
+};
+
+Storage.setItem = (key, value) => {
+  mockStorage[key] = value;
+  return Promise.resolve();
+};
+
+Storage.removeItem = key => {
+  delete mockStorage[key];
+  return Promise.resolve();
+};
 
 const createPlayer = async server => {
   const store = createStore(game, { ...client, ...ai });
@@ -21,11 +39,17 @@ let server;
 let p1;
 let p2;
 
+const SERVER_DIR = path.resolve(
+  os.tmpdir(),
+  `cardcore-test-${Math.round(Math.random() * 10000000000)}`
+);
+
 const run = async () => {
+  await fs.ensureDir(SERVER_DIR);
   // const { protocol, host } = parse(inputUrl);
   // const serverString = `${protocol}//${host}`;
   server = await runServer({
-    dataDir: path.resolve(os.tmpdir(), "cardcore-test-server"),
+    dataDir: path.resolve(SERVER_DIR, "server"),
     log: false
   });
   const serverString = `http://localhost:${server.address().port}`;
@@ -43,7 +67,12 @@ const run = async () => {
 };
 
 if (!module.parent) {
-  const handleError = error => {
+  const handleError = async error => {
+    try {
+      await fs.remove(SERVER_DIR);
+    } catch (e) {
+      console.log("failed to remove server");
+    }
     if (error.message === "done") {
       const state = p1.getState();
       if (
