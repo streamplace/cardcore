@@ -17,37 +17,34 @@ Object.keys(gameActions).forEach(key => {
   }
 });
 
-export const clientNext = () => async (dispatch, getState) => {
+// return the next action we can take, or null if not exist
+export const clientGetNext = () => (dispatch, getState) => {
   const state = getState();
-  if (state.client.loadingState) {
-    return;
-  }
   const me = state.client.keys.id;
-  // Action resolved! Good job, everyone! If we can take an action immediately, do so.
-  if (state.game.nextActions.length > 0) {
-    const {
-      playerId,
-      notPlayerId,
-      action: nextAction
-    } = state.game.nextActions[0];
-    if (!gameActions[nextAction.type]) {
-      throw new Error(
-        `${nextAction.type} is queued but we don't have a definition`
-      );
-    }
-    if (
-      (playerId && playerId === me) ||
-      (notPlayerId && notPlayerId !== me) // hack hack hack
-    ) {
-      // Does that action have an action creator? Great, delegate to them.
-      if (actionMap[nextAction.type]) {
-        await dispatch(actionMap[nextAction.type](nextAction));
-      }
+  if (state.game.nextActions.length === 0) {
+    return null;
+  }
+  let { playerId, notPlayerId, action: nextAction } = state.game.nextActions[0];
+  if (!gameActions[nextAction.type]) {
+    throw new Error(
+      `${nextAction.type} is queued but we don't have a definition`
+    );
+  }
+  if (playerId && playerId !== me) {
+    return null;
+  }
+  if (notPlayerId && notPlayerId === me) {
+    return null;
+  }
+  if (actionMap[nextAction.type]) {
+    nextAction = actionMap[nextAction.type](nextAction);
+  }
+  return nextAction;
+};
 
-      // If it doesn't, just dispatch the dang action.
-      else {
-        await dispatch(nextAction);
-      }
-    }
+export const clientNext = () => async (dispatch, getState) => {
+  const nextAction = await dispatch(clientGetNext());
+  if (nextAction) {
+    dispatch(nextAction);
   }
 };
