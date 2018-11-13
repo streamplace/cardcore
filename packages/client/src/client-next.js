@@ -1,4 +1,5 @@
 import * as gameActions from "@cardcore/game";
+import { CLIENT_LOAD_STATE_START } from "./client-poll";
 
 // Build a mapping of action type strings to cooresponding action creators
 const actionMap = {};
@@ -17,9 +18,7 @@ Object.keys(gameActions).forEach(key => {
   }
 });
 
-// return the next action we can take, or null if not exist
-export const clientGetNext = () => (dispatch, getState) => {
-  const state = getState();
+const clientNextHelper = state => {
   const me = state.client.keys.id;
   if (state.game.nextActions.length === 0) {
     return null;
@@ -42,9 +41,31 @@ export const clientGetNext = () => (dispatch, getState) => {
   return nextAction;
 };
 
+/**
+ * Reducer that generates next actions for us if appropriate
+ */
+export const clientNextReducer = (state, action) => {
+  if (!gameActions[action.type] && action.type !== CLIENT_LOAD_STATE_START) {
+    return state;
+  }
+
+  const nextAction = clientNextHelper(state, action);
+  if (state.client.nextAction !== nextAction) {
+    return {
+      ...state,
+      client: {
+        ...state.client,
+        nextAction
+      }
+    };
+  }
+
+  return state;
+};
+
 export const clientNext = () => async (dispatch, getState) => {
-  const nextAction = await dispatch(clientGetNext());
+  const nextAction = getState().client.nextAction;
   if (nextAction) {
-    dispatch(nextAction);
+    return await dispatch(nextAction);
   }
 };
