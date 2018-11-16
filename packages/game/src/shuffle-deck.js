@@ -35,7 +35,7 @@ export const shuffleDeckDecrypt = ({ playerId, boxId }) => (
 ) => {
   const state = getState();
   const key = Box.addKey(state, boxId, playerId);
-  dispatch({
+  return dispatch({
     type: SHUFFLE_DECK_DECRYPT,
     boxId,
     playerId,

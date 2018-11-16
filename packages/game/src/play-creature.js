@@ -6,7 +6,7 @@ import { START_GAME } from "./start-game";
 export const PLAY_CREATURE = "PLAY_CREATURE";
 export const playCreature = ({ boxId }) => async (dispatch, getState) => {
   const { targets } = getState().client;
-  dispatch({
+  return dispatch({
     type: PLAY_CREATURE,
     boxId,
     targets

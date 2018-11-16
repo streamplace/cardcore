@@ -1,7 +1,7 @@
 import { REMOTE_ACTION, hashState, Keys } from "@cardcore/util";
 
 export default function createGameMiddleware(gameActions, clientActions) {
-  const { clientFetch, clientPoll, clientNext } = clientActions;
+  const { clientFetch, clientHandleNext } = clientActions;
 
   return function gameMiddleware(store) {
     return next => {
@@ -15,10 +15,8 @@ export default function createGameMiddleware(gameActions, clientActions) {
 
         // Next... if it's not a game action, pass through as a promise.
         if (!gameActions[action.type]) {
-          return Promise.resolve(next(action));
+          return next(action);
         }
-
-        // Okay, it's a game action. Great! Let's handle some special cases first.
 
         // Special case: we're loading the state from the server. Pass through.
 
@@ -71,9 +69,11 @@ export default function createGameMiddleware(gameActions, clientActions) {
               })
             );
           } catch (e) {
-            throw new Error(
+            console.error(
               "Failed to create an action. We should probably handle this error."
             );
+            console.log(e);
+            throw e;
           }
           if (!res.ok) {
             const text = await res.text();
@@ -99,8 +99,7 @@ export default function createGameMiddleware(gameActions, clientActions) {
           }
         }
 
-        await store.dispatch(clientNext());
-        store.dispatch(clientPoll());
+        return store.dispatch(clientHandleNext());
       };
     };
   };

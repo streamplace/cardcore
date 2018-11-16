@@ -4,16 +4,7 @@ import { START_GAME } from "./start-game";
 import { STANDARD_ACTION } from "./standard-action";
 
 export const START_TURN = "START_TURN";
-export const startTurn = () => async dispatch => {
-  await dispatch({ type: START_TURN });
-};
-
 export const END_TURN = "END_TURN";
-export const endTurn = () => async dispatch => {
-  await dispatch({
-    type: END_TURN
-  });
-};
 
 export function turnReducer(state, action) {
   if (action.type === START_GAME) {

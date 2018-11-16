@@ -87,10 +87,6 @@ export class Board extends React.Component {
     super();
   }
 
-  async joinGame() {
-    await this.props.dispatch(joinGameStart());
-  }
-
   async componentDidMount() {
     await this.props.dispatch(clientGenerateIdentity());
     if (this.props.loading) {

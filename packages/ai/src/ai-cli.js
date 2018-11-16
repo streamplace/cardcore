@@ -55,13 +55,24 @@ const run = async () => {
   const serverString = `http://localhost:${server.address().port}`;
 
   p1 = await createPlayer(serverString);
-  await p1.dispatch(game.createGame());
+  const p1Prom = (async () => {
+    await p1.dispatch(game.createGame());
+    console.log("game created, p1 starting autoplay");
+    await p1.dispatch(ai.aiAutoplay());
+  })();
+
   const gameId = await p1.dispatch(client.clientGetGameHash());
-  p1.dispatch(client.clientPoll());
+  console.log(gameId);
 
   p2 = await createPlayer(serverString);
   await p2.dispatch(client.clientLoadState(gameId));
-  p2.dispatch(client.clientPoll());
+  // await p2.dispatch(client.clientNext());
+  console.log("p2 starting autoplay");
+  const p2Prom = p2.dispatch(ai.aiAutoplay());
+
+  await Promise.all([p1Prom, p2Prom]);
+  console.log("Simulation completed successfully");
+  server.close();
 
   // await p1.dispatch(client.clientLoadState(gameId));
 };
@@ -87,7 +98,9 @@ if (!module.parent) {
       error: { message: error.message, stack: error.stack },
       state: p1.getState()
     };
-    console.log(JSON.stringify(errorLog));
+    console.log(error.message);
+    console.log(error.stack);
+    // console.log(JSON.stringify(errorLog));
 
     try {
       fs.writeFileSync(
@@ -98,8 +111,12 @@ if (!module.parent) {
     process.exit(1);
   };
   process.on("unhandledRejection", handleError);
-  run(process.argv[2]).catch(handleError);
-  setTimeout(() => {
+  const handle = setTimeout(() => {
     handleError(new Error("timeout"));
   }, ms("10 minutes"));
+  run(process.argv[2])
+    .then(() => {
+      clearTimeout(handle);
+    })
+    .catch(handleError);
 }

@@ -1,5 +1,5 @@
 import * as gameActions from "@cardcore/game";
-import { CLIENT_LOAD_STATE_START } from "./client-poll";
+import { CLIENT_LOAD_STATE_START, clientPoll } from "./client-poll";
 
 // Build a mapping of action type strings to cooresponding action creators
 const actionMap = {};
@@ -45,22 +45,59 @@ const clientNextHelper = state => {
  * Reducer that generates next actions for us if appropriate
  */
 export const clientNextReducer = (state, action) => {
-  if (!gameActions[action.type] && action.type !== CLIENT_LOAD_STATE_START) {
+  if (
+    !gameActions[action.type] &&
+    (action.type !== CLIENT_LOAD_STATE_START ||
+      action.type !== CLIENT_LOAD_STATE_DONE)
+  ) {
     return state;
   }
 
   const nextAction = clientNextHelper(state, action);
-  if (state.client.nextAction !== nextAction) {
-    return {
-      ...state,
-      client: {
-        ...state.client,
-        nextAction
-      }
-    };
+  let nextAgent = null;
+
+  if (nextAction) {
+    // we have an action ready to go, it's us!
+    nextAgent = state.client.keys.id;
+  } else if (state.game.nextActions.length > 0) {
+    // there's a queued action we're waiting on
+    const nextAction = state.game.nextActions[0];
+    if (nextAction.playerId) {
+      nextAgent = nextAction.playerId;
+    } else if (
+      nextAction.notPlayerId &&
+      state.client.keys.id !== nextAction.notPlayerId
+    ) {
+      nextAgent = state.client.keys.id;
+    }
+  } else if (state.game.queue.length > 0 && state.game.queue[0].anyOf) {
+    // someone is deciding on their next move
+    nextAgent = state.game.turn;
+  } else {
+    if (
+      state.client.actionLog[state.client.actionLog.length - 1].type !==
+      gameActions.DEFEAT
+    ) {
+      throw new Error("unable to determine next agent");
+    }
   }
 
-  return state;
+  if (
+    !nextAction &&
+    nextAgent === state.client.keys.id &&
+    !state.game.queue[0].anyOf
+  ) {
+    throw new Error("err");
+  }
+
+  return {
+    ...state,
+    client: {
+      ...state.client,
+      nextAction,
+      nextAgent
+    }
+  };
 };
 
 export const clientNext = () => async (dispatch, getState) => {
@@ -68,4 +105,39 @@ export const clientNext = () => async (dispatch, getState) => {
   if (nextAction) {
     return await dispatch(nextAction);
   }
+};
+
+export const clientHandleNext = () => (dispatch, getState) => {
+  const state = getState();
+
+  if (state.game.queue.length === 0) {
+    // Game over!
+    return;
+  }
+
+  if (state.client.nextAction) {
+    // We can do something immediately, so do it.
+    return dispatch(clientNext());
+  } else if (
+    state.client.nextAgent === state.client.keys.id &&
+    !state.game.queue[0].anyOf
+  ) {
+    throw new Error(
+      `${
+        getState().client.shortName
+      } has a queued action but is not autonomous, error ${JSON.stringify(
+        state.game.queue
+      )}`
+    );
+  }
+
+  if (
+    state.client.nextAgent !== undefined &&
+    state.client.nextAgent !== state.client.keys.id
+  ) {
+    // It's someone else's turn, wait for them.
+    return dispatch(clientPoll());
+  }
+
+  // Otherwise it's our turn — end this stack and return control to the user
 };

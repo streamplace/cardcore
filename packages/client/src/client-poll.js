@@ -1,6 +1,5 @@
 import { hashState, REMOTE_ACTION } from "@cardcore/util";
 import { clientFetch } from "./client-fetch";
-import { clientNext } from "./client-next";
 
 // this isn't a redux action really, don't tell anyone
 export const clientGetGameHash = () => (dispatch, getState) => {
@@ -8,73 +7,28 @@ export const clientGetGameHash = () => (dispatch, getState) => {
   return hashState(state.game);
 };
 
-/**
- * Load the state of a game by replaying all the actions
- */
-export const CLIENT_LOAD_STATE_START = "CLIENT_LOAD_STATE_START";
-export const CLIENT_LOAD_STATE_DONE = "CLIENT_LOAD_STATE_DONE";
-export const clientLoadState = gameId => async (dispatch, getState) => {
-  const res = await dispatch(clientFetch(`/${gameId}`));
-  if (res.status !== 200) {
-    const err = await res.text();
-    console.error(err);
-    return;
-  }
-  const startState = await res.json();
-  await dispatch({
-    type: CLIENT_LOAD_STATE_START,
-    gameState: startState,
-    [REMOTE_ACTION]: true,
-    next: gameId
-  });
-  while (true) {
-    const hash = await dispatch(clientGetGameHash());
-    const headRes = await dispatch(
-      clientFetch(`/${hash}/next`, {
-        method: "HEAD"
-      })
-    );
-    if (headRes.status !== 204) {
-      break;
-    }
-    const actionRes = await dispatch(clientFetch(`/${hash}/next`));
-    const action = await actionRes.json();
-    // we don't want REMOTE_ACTION to muck up our verification, so...
-    const newAct = { ...action };
-    Object.defineProperty(newAct, REMOTE_ACTION, {
-      value: true,
-      enumerable: false
-    });
-    await dispatch(newAct);
-    await new Promise(r => setTimeout(r, 0));
-  }
-  await dispatch({
-    type: "CLIENT_LOAD_STATE_DONE"
-  });
-  await dispatch(clientNext());
-};
-
 const BACKOFF_INTERVALS = [50, 150, 500, 1000, 2000];
 
 export const CLIENT_POLL = "CLIENT_POLL";
 export const clientPoll = () => async (dispatch, getState) => {
   if (getState().client.polling) {
-    return;
+    throw new Error("tried to poll when already polling");
   }
   if (getState().client.loadingState) {
-    return;
+    throw new Error("tried to poll while loading state");
   }
   let backoffIdx = 0;
   await dispatch({
     type: CLIENT_POLL,
     polling: true
   });
-  const backoff = () => {
-    setTimeout(poll, BACKOFF_INTERVALS[backoffIdx]);
+  const backoff = async () => {
+    const backoffDuration = BACKOFF_INTERVALS[backoffIdx];
     if (BACKOFF_INTERVALS[backoffIdx + 1]) {
       backoffIdx += 1;
     }
-    return;
+    await new Promise(r => setTimeout(r, backoffDuration));
+    return poll();
   };
   const poll = async () => {
     if (getState().client.closed) {
@@ -94,7 +48,7 @@ export const clientPoll = () => async (dispatch, getState) => {
       type: CLIENT_POLL,
       polling: false
     });
-    dispatch({ ...action, [REMOTE_ACTION]: true });
+    return dispatch({ ...action, [REMOTE_ACTION]: true });
   };
-  poll();
+  return poll();
 };

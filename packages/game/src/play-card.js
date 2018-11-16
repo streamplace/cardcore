@@ -14,7 +14,7 @@ export const PLAY_CARD_DONE = "PLAY_CARD_DONE";
 export const REVEAL_CARD = "REVEAL_CARD";
 export const revealCard = ({ boxId }) => (dispatch, getState) => {
   const privateKey = Box.getPrivate(getState(), boxId);
-  dispatch({
+  return dispatch({
     type: "REVEAL_CARD",
     boxId,
     privateKey
