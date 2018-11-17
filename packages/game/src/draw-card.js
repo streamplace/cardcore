@@ -1,5 +1,6 @@
 import { SHUFFLE_DECK_DECRYPT } from "./shuffle-deck";
 import { makeSchema } from "@cardcore/util";
+import { CHECK_DEATH } from "./check-death";
 export const DRAW_CARD = "DRAW_CARD";
 
 export function drawCardReducer(state, action) {
@@ -36,7 +37,23 @@ export function drawCardReducer(state, action) {
                 ...player,
                 fatigue: player.fatigue + 1
               }
-            }
+            },
+            nextActions: [
+              {
+                playerId: playerId,
+                action: {
+                  type: CHECK_DEATH
+                }
+              },
+              ...state.game.nextActions
+            ],
+            queue: [
+              makeSchema({
+                type: CHECK_DEATH,
+                agent: playerId
+              }),
+              ...state.game.queue
+            ]
           }
         };
       }

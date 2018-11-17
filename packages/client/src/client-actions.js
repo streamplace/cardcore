@@ -3,6 +3,7 @@ import { Box, target as targetHelper } from "@cardcore/util";
 import ssbKeys from "@streamplace/ssb-keys";
 import { Storage } from "@cardcore/elements";
 
+export * from "./client-load-state";
 export * from "./client-poll";
 export * from "./client-fetch";
 export * from "./client-next";

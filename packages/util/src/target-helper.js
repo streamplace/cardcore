@@ -72,13 +72,14 @@ export function target(state, target, func = noop) {
           }
           const unitId = Box.traverse(state, boxId);
           if (!unitId) {
-            console.warn(
-              `Tried to target something I can't decrypt, ${JSON.stringify({
-                location,
-                boxId,
-                playerId
-              })}`
-            );
+            // TODO FIXME this should be an error condition
+            // console.warn(
+            //   `Tried to target something I can't decrypt, ${JSON.stringify({
+            //     location,
+            //     boxId,
+            //     playerId
+            //   })}`
+            // );
             continue;
           }
           units[unitId] = game.units[unitId];

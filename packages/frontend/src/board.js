@@ -5,10 +5,9 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import {
   clientGenerateIdentity,
-  clientPoll,
+  clientHandleNext,
   clientLoadState
 } from "@cardcore/client";
-import { joinGameStart } from "@cardcore/game";
 import { diff } from "deep-diff";
 import {
   View,
@@ -87,17 +86,13 @@ export class Board extends React.Component {
     super();
   }
 
-  async joinGame() {
-    await this.props.dispatch(joinGameStart());
-  }
-
   async componentDidMount() {
     await this.props.dispatch(clientGenerateIdentity());
     if (this.props.loading) {
       await this.props.dispatch(clientLoadState(this.props.gameId));
     }
     await Storage.setItem("CURRENT_GAME", this.props.gameId);
-    await this.props.dispatch(clientPoll());
+    await this.props.dispatch(clientHandleNext());
   }
 
   componentWillUnmount() {

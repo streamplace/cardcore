@@ -25,6 +25,10 @@ const INITIAL_PLAYER = {
   fatigue: 1
 };
 
+export const joinGame = () => ({
+  type: JOIN_GAME
+});
+
 export function startGameReducer(state, action) {
   // initialization
   // On this one, clear out both the nextActions queue and the players list... this is the first

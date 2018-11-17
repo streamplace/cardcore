@@ -1,5 +1,8 @@
 import { getServer, Storage } from "@cardcore/elements";
 import fetch from "isomorphic-fetch";
+import debug from "debug";
+
+const log = debug("cardcore:client-fetch");
 
 class CachedResponse {
   constructor(str, status) {
@@ -43,7 +46,6 @@ export const clientSetServer = ({ server }) => ({
 
 export const clientServerReducer = (state, action) => {
   if (action.type === CLIENT_SET_SERVER) {
-    console.log("here");
     return {
       ...state,
       client: {
@@ -64,6 +66,7 @@ export const clientFetch = (url, opts = { method: "GET" }) => async (
   dispatch,
   getState
 ) => {
+  log(`${opts.method} ${url}`);
   if (opts.method === "GET" || opts.method === "HEAD") {
     try {
       const cached = await Storage.getItem(url);
@@ -87,6 +90,7 @@ export const clientFetch = (url, opts = { method: "GET" }) => async (
         if (getState().client.closed) {
           return;
         }
+        log(`${res.status} ${url}`);
         resolve(new CachedResponse(text, res.status));
         if (!res.ok) {
           return;

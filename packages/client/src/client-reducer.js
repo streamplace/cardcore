@@ -42,7 +42,14 @@ export default function clientReducer(state, action) {
     };
   }
   if (action.type === clientActions.CLIENT_GENERATE_IDENTITY) {
-    return { ...state, client: { ...state.client, keys: action.keys } };
+    return {
+      ...state,
+      client: {
+        ...state.client,
+        keys: action.keys,
+        shortName: action.keys.id.slice(0, 13)
+      }
+    };
   }
 
   if (action.type === clientActions.CLIENT_PLAY_CREATURE) {

@@ -4,9 +4,13 @@ pipeline:
       - NODE_ENV=development
     image: node:10
     pull: true
+    secrets:
+      - slack_notification
+      - az_connection_string
     commands:
       - yarn install
       - npm run test
+      - npm run simulate-16
 
   publish:
     image: node:10

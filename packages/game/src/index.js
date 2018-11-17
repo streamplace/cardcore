@@ -4,6 +4,7 @@ export * from "./box";
 export * from "./buff";
 export * from "./check-death";
 export * from "./damage";
+export * from "./defeat";
 export * from "./desync";
 export * from "./draw-card";
 export * from "./play-card";

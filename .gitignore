@@ -24,3 +24,4 @@ package-lock.json
 lerna-debug.log
 dist
 /data
+cardcore-error.json

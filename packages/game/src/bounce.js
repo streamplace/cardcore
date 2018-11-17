@@ -1,4 +1,4 @@
-import { targetArray } from "@cardcore/util";
+import { targetArray, Box } from "@cardcore/util";
 
 export const BOUNCE = "BOUNCE";
 export const bounce = ({ target }) => {
@@ -45,6 +45,9 @@ export const bounceReducer = (state, action) => {
   }
   if (action.type === BOUNCE_ENCRYPT) {
     const player = state.game.players[action.agent];
+    const boxId = player.field.find(
+      boxId => Box.traverse(state, boxId) === action.unitId
+    );
     return {
       ...state,
       game: {
@@ -53,8 +56,8 @@ export const bounceReducer = (state, action) => {
           ...state.game.players,
           [action.agent]: {
             ...player,
-            hand: [...player.hand, action.unitId],
-            field: player.field.filter(unitId => unitId !== action.unitId)
+            hand: [...player.hand, boxId],
+            field: player.field.filter(bid => bid !== boxId)
           }
         }
       }
