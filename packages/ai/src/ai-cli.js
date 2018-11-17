@@ -98,7 +98,8 @@ if (!module.parent) {
     }
     const errorLog = {
       error: { message: error.message, stack: error.stack },
-      state: p1.getState()
+      p1: p1.getState(),
+      p2: p2.getState()
     };
     console.log(error.message);
     console.log(error.stack);
