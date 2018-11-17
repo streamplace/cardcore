@@ -37,7 +37,23 @@ export function drawCardReducer(state, action) {
                 ...player,
                 fatigue: player.fatigue + 1
               }
-            }
+            },
+            nextActions: [
+              {
+                playerId: playerId,
+                action: {
+                  type: CHECK_DEATH
+                }
+              },
+              ...state.game.nextActions
+            ],
+            queue: [
+              makeSchema({
+                type: CHECK_DEATH,
+                agent: playerId
+              }),
+              ...state.game.queue
+            ]
           }
         };
       }
@@ -62,12 +78,6 @@ export function drawCardReducer(state, action) {
                 boxId: boxId
               }
             },
-            {
-              playerId: playerId,
-              action: {
-                type: CHECK_DEATH
-              }
-            },
             ...state.game.nextActions
           ],
           queue: [
@@ -79,10 +89,6 @@ export function drawCardReducer(state, action) {
               key: {
                 type: "string"
               }
-            }),
-            makeSchema({
-              type: CHECK_DEATH,
-              agent: playerId
             }),
             ...state.game.queue
           ]
