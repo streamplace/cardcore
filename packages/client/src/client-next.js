@@ -1,5 +1,9 @@
 import * as gameActions from "@cardcore/game";
-import { CLIENT_LOAD_STATE_START, clientPoll } from "./client-poll";
+import {
+  CLIENT_LOAD_STATE_DONE,
+  CLIENT_LOAD_STATE_START
+} from "./client-load-state";
+import { clientPoll } from "./client-poll";
 
 // Build a mapping of action type strings to cooresponding action creators
 const actionMap = {};
@@ -47,8 +51,8 @@ const clientNextHelper = state => {
 export const clientNextReducer = (state, action) => {
   if (
     !gameActions[action.type] &&
-    (action.type !== CLIENT_LOAD_STATE_START ||
-      action.type !== CLIENT_LOAD_STATE_DONE)
+    action.type !== CLIENT_LOAD_STATE_START &&
+    action.type !== CLIENT_LOAD_STATE_DONE
   ) {
     return state;
   }
@@ -109,6 +113,11 @@ export const clientNext = () => async (dispatch, getState) => {
 
 export const clientHandleNext = () => (dispatch, getState) => {
   const state = getState();
+
+  if (state.client.loadingState) {
+    // short-circuit, we're still loading
+    return;
+  }
 
   if (state.game.queue.length === 0) {
     // Game over!

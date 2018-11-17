@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import {
   clientGenerateIdentity,
-  clientPoll,
+  clientHandleNext,
   clientLoadState
 } from "@cardcore/client";
 import { diff } from "deep-diff";
@@ -92,7 +92,7 @@ export class Board extends React.Component {
       await this.props.dispatch(clientLoadState(this.props.gameId));
     }
     await Storage.setItem("CURRENT_GAME", this.props.gameId);
-    await this.props.dispatch(clientPoll());
+    await this.props.dispatch(clientHandleNext());
   }
 
   componentWillUnmount() {
