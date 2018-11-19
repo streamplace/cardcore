@@ -10,7 +10,7 @@ pipeline:
     commands:
       - yarn install
       - npm run test
-      - npm run simulate-16
+      - npm run simulate-1024-no-fail
 
   publish:
     image: node:10

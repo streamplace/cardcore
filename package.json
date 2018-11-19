@@ -19,7 +19,10 @@
     "prepare:babel": "lerna exec --stream -- babel --root-mode upward --copy-files -d dist --source-maps true src",
     "push-secrets": "drone secret add streamplace/cardcore --name npm_token --value \"$(cat /keybase/team/streamplace_team/secrets/npm_token)\"",
     "simulate": "node packages/ai/dist/ai-cli.js",
-    "simulate-16": "run-p simulate simulate simulate simulate simulate simulate simulate simulate simulate simulate simulate simulate simulate simulate simulate simulate || node upload.js"
+    "simulate-16": "run-p simulate simulate simulate simulate simulate simulate simulate simulate simulate simulate simulate simulate simulate simulate simulate simulate || node upload.js",
+    "simulate-128": "run-s simulate-16 simulate-16 simulate-16 simulate-16 simulate-16 simulate-16 simulate-16 simulate-16",
+    "simulate-1024": "run-s simulate-128 simulate-128 simulate-128 simulate-128 simulate-128 simulate-128 simulate-128 simulate-128",
+    "simulate-1024-no-fail": "npm run simulate-1024 || exit 0"
   },
   "devDependencies": {
     "azure": "^2.3.1-preview",

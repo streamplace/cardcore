@@ -41,7 +41,7 @@ let p2;
 
 const SERVER_DIR = path.resolve(
   os.tmpdir(),
-  `cardcore-test-${Math.round(Math.random() * 10000000000)}`
+  `cardcore-test-${Date.now()}-${Math.round(Math.random() * 1000000000000)}`
 );
 
 const run = async () => {
@@ -74,6 +74,8 @@ const run = async () => {
   console.log("Simulation completed successfully");
   server.close();
 
+  process.exit(0);
+
   // await p1.dispatch(client.clientLoadState(gameId));
 };
 
@@ -96,7 +98,8 @@ if (!module.parent) {
     }
     const errorLog = {
       error: { message: error.message, stack: error.stack },
-      state: p1.getState()
+      p1: p1.getState(),
+      p2: p2.getState()
     };
     console.log(error.message);
     console.log(error.stack);
