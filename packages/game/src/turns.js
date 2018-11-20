@@ -6,6 +6,10 @@ import { STANDARD_ACTION } from "./standard-action";
 export const START_TURN = "START_TURN";
 export const END_TURN = "END_TURN";
 
+export const endTurn = () => ({
+  type: END_TURN
+});
+
 export function turnReducer(state, action) {
   if (action.type === START_GAME) {
     return {
