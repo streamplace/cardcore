@@ -11,12 +11,12 @@
     "access": "public"
   },
   "dependencies": {
+    "@cardcore/core": "^0.0.1",
     "@cardcore/elements": "^0.0.1",
     "@cardcore/game": "^0.0.1",
     "@cardcore/util": "^0.0.1",
     "@streamplace/ssb-keys": "7.0.21",
     "babel-runtime": "^6.26.0",
-    "cardcore": "^0.0.1",
     "debug": "^4.1.0",
     "isomorphic-fetch": "^2.2.1"
   }

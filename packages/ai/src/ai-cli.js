@@ -5,7 +5,7 @@ import * as client from "@cardcore/client";
 import * as ai from "./index.js";
 import path from "path";
 import os from "os";
-import { createStore } from "cardcore";
+import { createStore } from "@cardcore/core";
 import { Storage } from "@cardcore/elements";
 import runServer from "@cardcore/server";
 import fs from "fs-extra";

@@ -3,20 +3,6 @@
 import ZSchema from "z-schema";
 const validator = new ZSchema();
 
-const handlePlayerId = action => {
-  if (action.playerId) {
-    return {
-      enum: [action.playerId]
-    };
-  } else if (action.notPlayerId) {
-    return {
-      not: {
-        enum: [action.notPlayerId]
-      }
-    };
-  }
-};
-
 export default function queueReducer(state, action) {
   // hack
   action = {
@@ -88,37 +74,4 @@ export default function queueReducer(state, action) {
       queue: state.game.queue.slice(1)
     }
   };
-
-  if (state.game.nextActions) {
-    // return {
-    //   ...state,
-    //   game: {
-    //     ...state.game,
-    //     queue: state.game.nextActions.map(action => ({
-    //       type: "object",
-    //       additionalProperties: false,
-    //       properties: {
-    //         type: {
-    //           enum: [action.action.type]
-    //         },
-    //         agent: {
-    //           type: "string",
-    //           ...handlePlayerId(action)
-    //         },
-    //         prev: {
-    //           type: "string"
-    //         },
-    //         next: {
-    //           type: "string"
-    //         },
-    //         signature: {
-    //           type: "string"
-    //         }
-    //       }
-    //     }))
-    //   }
-    // };
-  }
-
-  return state;
 }

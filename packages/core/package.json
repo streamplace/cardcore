@@ -1,5 +1,5 @@
 {
-  "name": "cardcore",
+  "name": "@cardcore/core",
   "version": "0.0.1",
   "description": "Core functions for cards",
   "main": "dist/index.js",

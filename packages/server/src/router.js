@@ -1,6 +1,6 @@
 import Router from "express/lib/router";
 import ssbKeys from "@streamplace/ssb-keys";
-import { createReducer } from "cardcore/dist/reducer";
+import { createReducer } from "@cardcore/core/dist/reducer";
 import { hashState } from "@cardcore/util";
 import stringify from "json-stable-stringify";
 import EE from "wolfy87-eventemitter";
