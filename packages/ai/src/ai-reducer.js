@@ -5,9 +5,18 @@ import { AI_FAKE_ACTION } from "./ai-autoplay";
 export function aiReducer(state, action) {
   if (!state.ai) {
     state.ai = {
-      fakeActions: []
+      fakeActions: [],
+      allActions: []
     };
   }
+
+  state = {
+    ...state,
+    ai: {
+      ...state.ai,
+      allActions: [...state.ai.allActions, action]
+    }
+  };
 
   if (action.type === AI_FAKE_ACTION) {
     return {
