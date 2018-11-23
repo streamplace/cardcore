@@ -61,6 +61,10 @@ export const simulateServer = async () => {
     });
   });
 
+  if (!gameId || typeof gameId !== "string" || gameId.trim() === "") {
+    throw new Error("Didn't get gameId from P1");
+  }
+
   const p2 = fork(process.argv[1], [
     "simulate",
     "join",
