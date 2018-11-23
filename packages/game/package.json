@@ -13,6 +13,7 @@
   "dependencies": {
     "@cardcore/util": "^0.0.1",
     "@streamplace/ssb-keys": "7.0.21",
-    "babel-runtime": "^6.26.0"
+    "babel-runtime": "^6.26.0",
+    "ms": "^2.1.1"
   }
 }
