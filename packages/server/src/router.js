@@ -114,6 +114,7 @@ class Poller extends EE {
     if (this.done) {
       return;
     }
+    this.cleanup();
     this.emit("nodata");
   }
 
