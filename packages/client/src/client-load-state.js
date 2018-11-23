@@ -11,9 +11,7 @@ export const CLIENT_LOAD_STATE_DONE = "CLIENT_LOAD_STATE_DONE";
 export const clientLoadState = gameId => async (dispatch, getState) => {
   const res = await dispatch(clientFetch(`/${gameId}`));
   if (res.status !== 200) {
-    const err = await res.text();
-    console.error(err);
-    return;
+    throw new Error(`${res.status} /${gameId}`);
   }
   const startState = await res.json();
   await dispatch({
