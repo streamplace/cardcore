@@ -8,6 +8,7 @@ pipeline:
       - slack_notification
       - az_connection_string
     commands:
+      - npm install -g yarn
       - yarn install
       - npm run test
       - npm run simulate-1024
