@@ -4,8 +4,7 @@ import * as game from "@cardcore/game";
 import * as client from "@cardcore/client";
 import * as ai from "@cardcore/ai";
 import runServer from "@cardcore/server";
-import path from "path";
-import os from "os";
+import tmp from "tmp-promise";
 import { fork } from "child_process";
 import ms from "ms";
 import uploadError from "./upload-error";
@@ -34,10 +33,7 @@ export const simulateServer = async () => {
     handleError(new Error("timeout"));
   }, ms("10 minutes"));
 
-  const dataDir = path.resolve(
-    os.tmpdir(),
-    `cardcore-test-${Date.now()}-${Math.round(Math.random() * 1000000000000)}`
-  );
+  const dataDir = (await tmp.dir()).path;
   const server = await runServer({ dataDir, log: false });
   const serverString = `http://localhost:${server.address().port}`;
   const p1 = fork(process.argv[1], [
