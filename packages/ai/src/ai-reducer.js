@@ -1,7 +1,24 @@
 import { PLAY_CARD } from "@cardcore/game";
 import { target, Box, shuffle } from "@cardcore/util";
+import { AI_FAKE_ACTION } from "./ai-autoplay";
 
 export function aiReducer(state, action) {
+  if (!state.ai) {
+    state.ai = {
+      fakeActions: []
+    };
+  }
+
+  if (action.type === AI_FAKE_ACTION) {
+    return {
+      ...state,
+      ai: {
+        ...state.ai,
+        fakeActions: [...state.ai.fakeActions, action.action]
+      }
+    };
+  }
+
   // when we play the cards, we gotta pick random targets b/c no client
   if (action.type === PLAY_CARD && action.agent === state.client.keys.id) {
     const cardId = Box.traverse(state, action.boxId);

@@ -2,6 +2,15 @@ import jsf from "json-schema-faker/dist/json-schema-faker.cjs.js";
 import debug from "debug";
 import { clientHandleNext } from "@cardcore/client";
 
+export const AI_FAKE_ACTION = "AI_FAKE_ACTION";
+export const aiFakeAction = action => async dispatch => {
+  await dispatch({
+    type: AI_FAKE_ACTION,
+    action: action
+  });
+  return await dispatch(action);
+};
+
 export const aiAutoplay = () => async (dispatch, getState) => {
   const log = debug(`cardcore:ai-${getState().client.shortName}`);
   await dispatch(clientHandleNext());
@@ -10,7 +19,7 @@ export const aiAutoplay = () => async (dispatch, getState) => {
     const nextSchema = state.game.queue[0];
     const fakeAction = jsf.generate(nextSchema);
     log(`ai dispatching ${JSON.stringify(fakeAction)}`);
-    await dispatch(fakeAction);
+    await dispatch(aiFakeAction(fakeAction));
     state = getState();
   }
 };
