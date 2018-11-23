@@ -16,6 +16,7 @@ yargs
       });
       yargs.option("data-dir", {
         describe: `data storage directory`,
+        type: "string",
         default: null
       });
     },
@@ -37,6 +38,7 @@ yargs
         yargs => {
           yargs.option("server", {
             describe: `server to which I should connect`,
+            type: "string",
             demandOption: true
           });
         },
@@ -51,10 +53,12 @@ yargs
         yargs => {
           yargs.option("server", {
             describe: `server to which I should connect`,
+            type: "string",
             demandOption: true
           });
           yargs.option("game-id", {
             describe: "id of the simulated game",
+            type: "string",
             demandOption: true
           });
         },
