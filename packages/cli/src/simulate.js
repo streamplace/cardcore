@@ -47,7 +47,7 @@ export const simulateServerMany = async (count, concurrency) => {
     console.log(str);
   };
   report();
-  setInterval(report, ms("1 minute"));
+  const interval = setInterval(report, ms("1 minute"));
   while (started < count) {
     started += 1;
     const proc = fork(process.argv[1], ["simulate"], { silent: true });
@@ -68,6 +68,7 @@ export const simulateServerMany = async (count, concurrency) => {
     }
     proc.prom.then(() => (completed += 1));
   }
+  clearInterval(interval);
   console.log(`${count} runs completed successfully`);
 };
 
