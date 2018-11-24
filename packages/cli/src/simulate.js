@@ -166,6 +166,7 @@ export const simulateCreate = async server => {
     await player.dispatch(game.createGame());
     await player.dispatch(ai.aiAutoplay());
   })();
+  await new Promise(r => setTimeout(r, 1000)); // Fixes race where hash runs before game created
   const gameId = await player.dispatch(client.clientGetGameHash());
   process.send(gameId);
   return exitOrDump(player, playerProm);
