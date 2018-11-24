@@ -4,6 +4,7 @@ import { DRAW_CARD } from "./draw-card";
 import { SHUFFLE_DECK } from "./shuffle-deck";
 import { getStandardDeck, getStandardEmoji } from "./standard";
 import { rando, range, uid, makeSchema } from "@cardcore/util";
+import ms from "ms";
 
 export const JOIN_GAME = "JOIN_GAME";
 export const ORDER_PLAYERS = "ORDER_PLAYERS";
@@ -34,6 +35,10 @@ export function startGameReducer(state, action) {
   // On this one, clear out both the nextActions queue and the players list... this is the first
   // person joining. Everyone else joins with JOIN_GAME
   if (action.type === CREATE_GAME) {
+    // Absurdity check... tracking down an unrelated bug
+    if (Math.abs(action.startTime - Date.now()) > ms("1 year")) {
+      throw new Error("Invalid start time");
+    }
     return {
       ...state,
       game: {

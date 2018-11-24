@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Events, getDimensions } from "@cardcore/elements";
 import { Provider } from "react-redux";
-import { createStore } from "cardcore";
+import { createStore } from "@cardcore/core";
 import * as gameModules from "@cardcore/game";
 import * as clientModules from "@cardcore/client";
 import * as frontendModules from "./actions";

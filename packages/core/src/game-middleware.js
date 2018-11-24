@@ -36,7 +36,7 @@ export default function createGameMiddleware(gameActions, clientActions) {
           };
         } else {
           if (action.prev !== prevHash) {
-            throw new Error(`hash mismatch, ${action.next} !== ${nextHash}`);
+            throw new Error(`hash mismatch, ${action.prev} !== ${prevHash}`);
           }
         }
         next(action);
