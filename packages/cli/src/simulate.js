@@ -108,9 +108,15 @@ export const simulateServer = async () => {
     const bothStates = states.values();
     if (process.env.DRONE_COMMIT) {
       try {
+        let stack;
+        for (const user of bothStates) {
+          if (user.stack) {
+            stack = user.stack;
+          }
+        }
         await uploadError({
           error: err.message,
-          stack: bothStates[0].stack || bothStates[1].stack,
+          stack: stack,
           states: bothStates
         });
       } catch (e) {
