@@ -66,7 +66,7 @@ export const simulateServerMany = async (count, concurrency) => {
     if (active.length >= concurrency) {
       await Promise.race(active.map(p => p.prom));
     }
-    completed += 1;
+    proc.prom.then(() => (completed += 1));
   }
   console.log(`${count} runs completed successfully`);
 };
