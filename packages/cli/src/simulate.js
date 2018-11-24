@@ -174,6 +174,9 @@ export const simulateCreate = async server => {
 export const simulateJoin = async (server, gameId) => {
   mockStorage();
   const player = await createPlayer(server);
-  await player.dispatch(client.clientLoadState(gameId));
-  return exitOrDump(player, player.dispatch(ai.aiAutoplay()));
+  const playerProm = (async () => {
+    await player.dispatch(client.clientLoadState(gameId));
+    await player.dispatch(ai.aiAutoplay());
+  })();
+  return exitOrDump(player, playerProm);
 };
