@@ -32,6 +32,18 @@ yargs
     "simulate",
     "run a simulation of a cardcore game",
     yargs => {
+      yargs.option("count", {
+        describe: "how many simulations to run",
+        type: "number",
+        default: 1
+      });
+
+      yargs.option("concurrency", {
+        describe: "when count >= 1, how many simulations should I run at once?",
+        type: "number",
+        default: 16
+      });
+
       yargs.command(
         "create",
         "start up a cardcore client creating a game",
@@ -68,7 +80,10 @@ yargs
       );
     },
     async argv => {
-      await simulateServer();
+      await simulateServer({
+        count: argv.count,
+        concurrency: argv.concurrency
+      });
     }
   )
 

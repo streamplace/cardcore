@@ -28,7 +28,48 @@ export const mockStorage = () => {
   };
 };
 
-export const simulateServer = async () => {
+export const simulateServerMany = async (count, concurrency) => {
+  let started = 0;
+  let completed = 0;
+  let active = [];
+  const report = () => {
+    console.log(
+      `Started ${started}/${count} (${Math.floor(
+        (started / count) * 100
+      )}%) Completed ${completed}/${count} (${Math.floor(
+        (completed / count) * 100
+      )}%)`
+    );
+  };
+  report();
+  setInterval(report, ms("1 minute"));
+  while (started < count) {
+    started += 1;
+    const proc = fork(process.argv[1], ["simulate"], { silent: true });
+    active.push(proc);
+    /* eslint-disable no-loop-func */
+    proc.prom = new Promise(resolve => {
+      proc.on("close", code => {
+        if (code !== 0) {
+          process.exit(1);
+        }
+        active = active.filter(p => p !== proc);
+        resolve();
+      });
+    });
+
+    if (active.length >= concurrency) {
+      await Promise.race(active.map(p => p.prom));
+    }
+    completed += 1;
+  }
+  console.log(`${count} runs completed successfully`);
+};
+
+export const simulateServer = async ({ count, concurrency }) => {
+  if (count > 1) {
+    return simulateServerMany(count, concurrency);
+  }
   setTimeout(() => {
     handleError(new Error("timeout"));
   }, ms("10 minutes"));
