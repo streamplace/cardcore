@@ -66,8 +66,7 @@ export const simulateServer = async () => {
     "join",
     "--server",
     serverString,
-    "--game-id",
-    gameId
+    `--game-id=${gameId}`
   ]);
 
   const p2Prom = new Promise((resolve, reject) => {
