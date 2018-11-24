@@ -117,7 +117,7 @@ export const simulateServer = async () => {
         await uploadError({
           error: err.message,
           stack: stack,
-          states: bothStates
+          states: [...bothStates]
         });
       } catch (e) {
         console.log("error uploading", e);
