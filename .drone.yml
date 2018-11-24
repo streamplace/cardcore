@@ -11,7 +11,7 @@ pipeline:
       - npm install -g yarn
       - yarn install
       - npm run test
-      - npm run simulate-1024
+      - npm run simulate-ci
 
   publish:
     image: node:10
