@@ -101,11 +101,11 @@ export const simulateServer = async () => {
     p2.on("error", () => {});
     for (const player of [p1, p2]) {
       if (!states.has(player)) {
-        console.log("sending dump state");
         player.send("dumpState");
       }
     }
-    const bothStates = await stateDumpProm;
+    await Promise.race([stateDumpProm, new Promise(r => setTimeout(r, 5000))]);
+    const bothStates = states.values();
     if (process.env.DRONE_COMMIT) {
       try {
         await uploadError({
