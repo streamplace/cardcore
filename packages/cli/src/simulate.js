@@ -32,14 +32,19 @@ export const simulateServerMany = async (count, concurrency) => {
   let started = 0;
   let completed = 0;
   let active = [];
+  const startTime = Date.now();
   const report = () => {
-    console.log(
-      `Started ${started}/${count} (${Math.floor(
-        (started / count) * 100
-      )}%) Completed ${completed}/${count} (${Math.floor(
-        (completed / count) * 100
-      )}%)`
-    );
+    let str = `Started ${started}/${count} (${Math.floor(
+      (started / count) * 100
+    )}%) Completed ${completed}/${count} (${Math.floor(
+      (completed / count) * 100
+    )}%)`;
+    if (completed > 0) {
+      const duration = Date.now() - startTime;
+      const timeForOne = Math.floor(duration / completed) * (count - completed);
+      str += ` ETA: ${ms(timeForOne)}`;
+    }
+    console.log(str);
   };
   report();
   setInterval(report, ms("1 minute"));
