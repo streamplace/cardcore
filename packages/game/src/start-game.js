@@ -35,10 +35,6 @@ export function startGameReducer(state, action) {
   // On this one, clear out both the nextActions queue and the players list... this is the first
   // person joining. Everyone else joins with JOIN_GAME
   if (action.type === CREATE_GAME) {
-    // Absurdity check... tracking down an unrelated bug
-    if (Math.abs(action.startTime - Date.now()) > ms("1 year")) {
-      throw new Error("Invalid start time");
-    }
     return {
       ...state,
       game: {

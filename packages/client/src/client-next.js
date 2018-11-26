@@ -39,10 +39,29 @@ const clientNextHelper = state => {
   if (notPlayerId && notPlayerId === me) {
     return null;
   }
-  if (actionMap[nextAction.type]) {
-    nextAction = actionMap[nextAction.type](nextAction);
-  }
   return nextAction;
+};
+
+// Set up variables to determine if we should auto-fire the next action
+const nextHelper = (state, action) => {
+  let nextAction = null;
+  let nextAgent = null;
+
+  const nextSchema = state.game.queue[0];
+  if (!nextSchema) {
+    return { nextAction, nextAgent };
+  }
+
+  // If there's an "anyOf", that's waiting for current player's input. (For now.)
+  if (nextSchema.anyOf) {
+    return { nextAction: null, nextAgent: state.game.turn };
+  }
+
+  if (!nextSchema.properties) {
+    throw new Error("invalid next schema");
+  }
+
+  return { nextAction, nextAgent };
 };
 
 /**
@@ -56,6 +75,11 @@ export const clientNextReducer = (state, action) => {
   ) {
     return state;
   }
+
+  let nextAction;
+  let nextAgent;
+
+  // Ok
 
   const nextAction = clientNextHelper(state, action);
   let nextAgent = null;
