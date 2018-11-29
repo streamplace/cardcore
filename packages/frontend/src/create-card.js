@@ -2,13 +2,17 @@ import React from "react";
 import { TextInput, View, Text } from "@cardcore/elements";
 import styled from "styled-components";
 import { parseCard } from "@cardcore/cards";
+import JSONPretty from "react-json-pretty";
+import "react-json-pretty/src/JSONPretty.monikai.css";
 
 const Container = styled(View)`
   width: 100%;
   height: 100%;
-  align-items: stretch;
+  align-items: center;
   justify-content: center;
   padding: 1em;
+  background-color: #272822;
+  flex-direction: row;
 `;
 
 const Input = styled(TextInput)`
@@ -17,10 +21,21 @@ const Input = styled(TextInput)`
   font-size: 18px;
   flex-grow: 1;
   padding: 1em;
+  color: #eee;
+  background-color: black;
+  align-self: stretch;
+
+  &::selection {
+    background-color: #9a3c05;
+  }
+  flex-basis: 0;
 `;
 
 const OutputWrapper = styled(View)`
+  padding: 1em;
   flex-grow: 1;
+  font-size: 18px;
+  flex-basis: 0;
 `;
 
 const Output = styled(Text)`
@@ -60,17 +75,17 @@ export default class CreateCard extends React.Component {
     const { data, errors } = parseCard(this.state.text);
     return (
       <Container>
-        <OutputWrapper>
-          <Output>{JSON.stringify(data, null, 2)}</Output>
-          {errors.map((text, i) => (
-            <ParseError key={i}>{text}</ParseError>
-          ))}
-        </OutputWrapper>
         <Input
           onChangeText={text => this.handleChange(text)}
           multiline={true}
           value={this.state.text}
         />
+        <OutputWrapper>
+          <JSONPretty json={data} />
+          {errors.map((text, i) => (
+            <ParseError key={i}>{text}</ParseError>
+          ))}
+        </OutputWrapper>
       </Container>
     );
   }

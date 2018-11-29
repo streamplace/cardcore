@@ -7,13 +7,97 @@ const plugin = {
   words: {
     battlecry: "Trigger",
     set: "Action",
-    "all other minions": "Target"
+    "all other minions": "TargetCreatures",
+    "all other creatures": "TargetCreatures",
+    attack: "PropertyAttack",
+    health: "PropertyHealth"
+  },
+  tags: {
+    TargetCreatures: {
+      isA: "Target"
+    },
+    PropertyAttack: {
+      isA: "Property"
+    },
+    PropertyHealth: {
+      isA: "Property"
+    }
   },
   patterns: {
-    "#Trigger: won't let me (log|sign|get) in": "TriggerString"
+    "[#Trigger]: [.*]": "TriggerString"
+  },
+  plurals: {
+    property: "properties"
   }
 };
+
+const BASIC_TRIGGER = "^#Trigger";
+
 nlp.plugin(plugin);
+
+export const setPhrase = doc => {
+  if (!doc.has(BASIC_TRIGGER)) {
+    return null;
+  }
+  // const match = doc.match(BASIC_TRIGGER);
+  const restMatch = doc.not(BASIC_TRIGGER);
+
+  if (
+    !restMatch.has("^set #Target+ #Property+ and? #Property+? to #Cardinal")
+  ) {
+    return null;
+  }
+
+  const actionMatch = restMatch.match(
+    "^set #Target+ #Property+ and? #Property+? to #Cardinal"
+  );
+  const cardinal = parseInt(
+    actionMatch
+      .match("#Cardinal+")
+      .values()
+      .toNumber()
+      .out("normal")
+  );
+
+  const trigger = {
+    action: "CARD_PLAYED",
+    effects: []
+  };
+
+  const target = actionMatch.match("#Target+");
+  if (target.has("#TargetCreatures")) {
+    trigger.target = {
+      type: "creature",
+      location: "board"
+    };
+  } else {
+    return null;
+  }
+
+  if (actionMatch.has("#PropertyHealth")) {
+    trigger.effects.push({
+      type: "SET_PROPERTY",
+      property: "health",
+      value: cardinal
+    });
+  }
+  if (actionMatch.has("#PropertyAttack")) {
+    trigger.effects.push({
+      type: "SET_PROPERTY",
+      property: "attack",
+      value: cardinal
+    });
+  }
+  if (trigger.effects.length === 0) {
+    return null;
+  }
+
+  window.actionMatch = actionMatch;
+
+  return {
+    triggers: [trigger]
+  };
+};
 
 export const parseCard = str => {
   const lines = str
@@ -21,7 +105,7 @@ export const parseCard = str => {
     .split("\n")
     .filter(x => x);
 
-  const ret = {};
+  let ret = {};
   const errors = [];
 
   const name = lines.shift();
@@ -42,10 +126,16 @@ export const parseCard = str => {
       continue;
     }
 
-    nlp.verbose("tagger");
+    // nlp.verbose("tagger");
     const doc = nlp(line);
-    console.log(doc.clauses().data());
-
+    const result = setPhrase(doc);
+    if (result) {
+      ret = {
+        ...ret,
+        ...result
+      };
+      continue;
+    }
     errors.push(`unhandled: ${line}`);
   }
   return {
