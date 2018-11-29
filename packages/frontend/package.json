@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "@cardcore/ai": "^0.0.1",
+    "@cardcore/cards": "^0.0.1",
     "@cardcore/client": "^0.0.1",
     "@cardcore/core": "^0.0.1",
     "@cardcore/elements": "^0.0.1",

@@ -23,14 +23,14 @@ class FrontPage extends React.Component {
   async handleClick() {
     this.props.dispatch(createGame());
     const hash = await this.props.dispatch(clientGetGameHash());
-    this.props.history.push(`/game/${hash.replace(".sha256", "")}`);
+    this.props.history.replace(`/game/${hash.replace(".sha256", "")}`);
   }
 
   async componentDidMount() {
     await this.props.dispatch(clientGenerateIdentity());
     let currentGame = await Storage.getItem("CURRENT_GAME");
     if (currentGame) {
-      this.props.history.push(`/game/${currentGame}`);
+      this.props.history.replace(`/game/${currentGame.replace(".sha256", "")}`);
     }
   }
 
