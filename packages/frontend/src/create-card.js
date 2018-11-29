@@ -43,7 +43,7 @@ export default class CreateCard extends React.Component {
         Health: 7
         Attack: 3
         Taunt
-        Batlecry: Set all other minions' Attack and Health to 3.
+        Battlecry: Set all other minions' Attack and Health to 3.
       `
         .split("\n")
         .map(x => x.trim())
