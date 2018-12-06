@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "@cardcore/ai": "^0.0.1",
+    "@cardcore/cards": "^0.0.1",
     "@cardcore/client": "^0.0.1",
     "@cardcore/core": "^0.0.1",
     "@cardcore/elements": "^0.0.1",
@@ -18,6 +19,7 @@
     "polished": "^2.0.3",
     "react": "^16.6.0",
     "react-dom": "^16.4.0",
+    "react-json-pretty": "^1.7.9",
     "react-redux": "^5.0.7",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
@@ -38,9 +40,9 @@
     "build": "npm run prepare"
   },
   "devDependencies": {
-    "react-scripts": "2.1.1",
     "cross-env": "^5.2.0",
-    "opn-cli": "^3.1.0"
+    "opn-cli": "^3.1.0",
+    "react-scripts": "2.1.1"
   },
   "publishConfig": {
     "access": "public"

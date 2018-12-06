@@ -10,6 +10,7 @@ const GlobalStyle = createGlobalStyle`
   html, body, #root {
     height: 100%;
     overflow: hidden;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, sans-serif;
   }
 `;
 

@@ -1,16 +1,20 @@
-import { Font, Util } from "expo";
+import { Font } from "expo";
 import { fonts } from "./shared";
 import { Dimensions, Platform, BackHandler, AsyncStorage } from "react-native";
 import EE from "wolfy87-eventemitter";
-import fetch from "isomorphic-fetch";
+import Expo from "expo";
+import URL from "url-parse";
 
 export { NativeRouter as Router } from "react-router-native";
-export { Route, Switch as RouteSwitch, withRouter } from "react-router-native";
+export {
+  Route,
+  Switch as RouteSwitch,
+  withRouter,
+  Link
+} from "react-router-native";
 export * from "react-native";
 export { Svg } from "expo";
 export * from "./shared";
-import Expo from "expo";
-import URL from "url-parse";
 
 if (Platform.OS === "android") {
   fonts.title = "Roboto";
