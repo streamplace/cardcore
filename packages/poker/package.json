@@ -1,0 +1,19 @@
+{
+  "name": "@cardcore/poker",
+  "version": "0.0.1",
+  "description": "poker in cardcore!!!!",
+  "main": "dist/index.js",
+  "repository": "git@github.com:streamplace/cardcore.git",
+  "author": "Streamplace",
+  "license": "Apache-2.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@cardcore/util": "^0.0.1",
+    "debug": "^4.1.0",
+    "ms": "^2.1.1",
+    "pokersolver": "^2.1.2"
+  }
+}
