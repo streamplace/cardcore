@@ -1,7 +1,7 @@
-import jsf from "json-schema-faker/dist/json-schema-faker.cjs.js";
-import debug from "debug";
+// import jsf from "json-schema-faker/dist/json-schema-faker.cjs.js";
+// import debug from "debug";
 
-const log = debug("cardcore:ai-middleware");
+// const log = debug("cardcore:ai-middleware");
 
 /**
  * This middleware implements an AI that does nothing but determine random allowed a ctions and

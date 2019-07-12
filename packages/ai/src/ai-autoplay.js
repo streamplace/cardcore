@@ -1,4 +1,4 @@
-import jsf from "json-schema-faker/dist/json-schema-faker.cjs.js";
+import jsf from "json-schema-faker";
 import debug from "debug";
 import { clientHandleNext } from "@cardcore/client";
 
