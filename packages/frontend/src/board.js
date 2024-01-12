@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import {
   clientGenerateIdentity,
   clientHandleNext,
-  clientLoadState
+  clientLoadState,
 } from "@cardcore/client";
 import { diff } from "deep-diff";
 import {
@@ -16,19 +16,19 @@ import {
   getServer,
   isWeb,
   Storage,
-  withRouter
+  withRouter,
 } from "@cardcore/elements";
 import CardLayer from "./card-layer";
 import {
   TOP_SIDEBOARD,
   TOP_FIELD,
   BOTTOM_FIELD,
-  BOTTOM_SIDEBOARD
+  BOTTOM_SIDEBOARD,
 } from "./actions/layout";
 
 const BoardWrapper = styled(View)`
   height: 100%;
-  ${props => props.disableSelect && isWeb() && "user-select: none"};
+  ${(props) => props.disableSelect && isWeb() && "user-select: none"};
 `;
 
 const DesyncBox = styled(View)`
@@ -61,8 +61,8 @@ const LeaveGameText = styled(Text)`
 const ActionLayer = styled(View)`
   position: absolute;
   z-index: 100;
-  bottom: ${props => props.height / 4}px;
-  height: ${props => props.height / 2}px;
+  bottom: ${(props) => props.height / 4}px;
+  height: ${(props) => props.height / 2}px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -78,7 +78,7 @@ const ActionLayerInner = styled(View)`
 `;
 
 const ActionText = styled(Text)`
-  color: ${props => (props.me ? "blue" : "#006b00")};
+  color: ${(props) => (props.me ? "blue" : "#006b00")};
 `;
 
 export class Board extends React.Component {
@@ -169,14 +169,14 @@ export class Board extends React.Component {
           {this.renderActionLayer()}
           <Text>Waiting for another player...</Text>
           <Text>Send your friend this link:</Text>
-          <Text>{gameUrl}</Text>
+          <Text>{gameUrl.split(".sha256")[0]}</Text>
         </BoardWrapper>
       );
     }
     let [topPlayerId, bottomPlayerId] = this.props.playerOrder;
     if (this.props.playerOrder.includes(this.props.currentPlayer)) {
       topPlayerId = this.props.playerOrder.find(
-        id => id !== this.props.currentPlayer
+        (id) => id !== this.props.currentPlayer
       );
       bottomPlayerId = this.props.currentPlayer;
     }
@@ -202,7 +202,7 @@ export class Board extends React.Component {
 const mapStateToProps = (state, props) => {
   if (!state.game || !state.game.players) {
     return {
-      loading: true
+      loading: true,
     };
   }
   return {
@@ -214,12 +214,12 @@ const mapStateToProps = (state, props) => {
     ready:
       state.game.playerOrder.length > 0 &&
       state.game.playerOrder.every(
-        playerId => state.game.players[playerId].unitId
+        (playerId) => state.game.players[playerId].unitId
       ),
     playerOrder: state.game.playerOrder,
     height: state.frontend.height,
     width: state.frontend.width,
-    actionLog: state.client.actionLog
+    actionLog: state.client.actionLog,
   };
 };
 

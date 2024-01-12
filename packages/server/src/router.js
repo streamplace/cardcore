@@ -5,6 +5,8 @@ import { hashState } from "@cardcore/util";
 import stringify from "json-stable-stringify";
 import EE from "wolfy87-eventemitter";
 import * as gameModules from "@cardcore/game";
+import path from "path";
+import express from "express";
 
 const gameReducer = createReducer(gameModules);
 
@@ -225,5 +227,17 @@ app.post(hashRegex, async (req, res) => {
     res.send({ error: err.message, stack: err.stack });
   }
 });
+
+if (
+  process.env.NODE_ENV === "production" ||
+  process.env.SERVE_STATIC === "true"
+) {
+  console.log("got here");
+  const frontend = path.resolve(__dirname, "..", "..", "frontend", "build");
+  app.use(express.static(frontend));
+  app.use((req, res, next) => {
+    res.sendFile(path.resolve(frontend, "index.html"));
+  });
+}
 
 export default app;
