@@ -1,12 +1,13 @@
 import path from "path";
 import fs from "fs-extra";
-import level from "level";
+import { Level } from "level";
 
 export default class Store {
   constructor({ dataDir } = {}) {
     this.dir = dataDir || path.resolve(__dirname, "..", "..", "..", "data");
+    console.log(this.dir);
     fs.ensureDir(this.dir);
-    this.db = level(path.resolve(this.dir, "cardcore-leveldb"));
+    this.db = new Level(path.resolve(this.dir, "cardcore-leveldb"));
   }
 
   async put(id, str) {

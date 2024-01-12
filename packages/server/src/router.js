@@ -25,7 +25,7 @@ if (process.env.NODE_ENV === "development") {
     try {
       data = await req.store.get(req.params.hash);
     } catch (e) {
-      if (e.name === "NotFoundError") {
+      if (e.code === "LEVEL_NOT_FOUND") {
         return res.sendStatus(404);
       } else {
         console.error(e);
@@ -37,17 +37,21 @@ if (process.env.NODE_ENV === "development") {
 }
 
 app.get(hashRegex, async (req, res) => {
+  console.log(`getting ${req.params[0]}`);
+  let data;
   try {
-    const data = await req.store.get(req.params[0]);
-    res.header("content-type", "application/json");
-    res.send(stringify(data));
+    data = await req.store.get(req.params[0]);
   } catch (err) {
-    if (err.name === "NotFoundError") {
+    if (err.code === "LEVEL_NOT_FOUND") {
       return res.sendStatus(204);
     }
     console.error(err);
     res.sendStatus(404);
+    return;
   }
+  console.log(data);
+  res.header("content-type", "application/json");
+  res.send(stringify(data));
 });
 
 app.head(nextRegex, async (req, res) => {
@@ -56,13 +60,13 @@ app.head(nextRegex, async (req, res) => {
     res.status(204);
     res.end();
   } catch (err) {
-    if (err.name === "NotFoundError") {
+    if (err.code === "LEVEL_NOT_FOUND") {
       return res.sendStatus(404);
     }
     res.status(500);
     res.json({
       error: err.message,
-      stack: err.stack
+      stack: err.stack,
     });
   }
 });
@@ -89,11 +93,11 @@ class Poller extends EE {
     }
     this.store
       .get(this.key)
-      .then(data => {
+      .then((data) => {
         this.data(data);
       })
-      .catch(err => {
-        if (err.name === "NotFoundError") {
+      .catch((err) => {
+        if (err.code === "LEVEL_NOT_FOUND") {
           this.pollHandle = setTimeout(() => this._poll(), POLL_FREQUENCY);
         } else {
           this.emit("error", err);
@@ -125,20 +129,35 @@ class Poller extends EE {
 }
 
 app.get(nextRegex, async (req, res) => {
+  console.log("next regex");
   const poller = new Poller(req.params[0], req.store);
+  let ended = false;
   poller
-    .on("data", data => {
+    .on("data", (data) => {
+      if (ended) {
+        return;
+      }
+      ended = true;
       res.header("content-type", "application/json");
       res.send(stringify(data));
     })
     .on("nodata", () => {
+      if (ended) {
+        return;
+      }
+      ended = true;
       res.sendStatus(204);
     })
-    .on("error", err => {
+    .on("error", (err) => {
+      console.log(err);
+      if (ended) {
+        return;
+      }
+      ended = true;
       res.status(500);
       res.json({
         error: err.message,
-        stack: err.stack
+        stack: err.stack,
       });
     });
 });
@@ -150,14 +169,14 @@ app.post(hashRegex, async (req, res) => {
     return res.json({
       error: "body.next and url don't match",
       body: req.body,
-      params: req.params
+      params: req.params,
     });
   }
   const verified = ssbKeys.verifyObj(
     {
       id: req.body.agent,
       curve: "ed25519",
-      public: req.body.agent.slice(1)
+      public: req.body.agent.slice(1),
     },
     action
   );
@@ -173,7 +192,7 @@ app.post(hashRegex, async (req, res) => {
       try {
         nextState = await req.store.get(`${action.prev}/next`);
       } catch (e) {
-        if (e.name !== "NotFoundError") {
+        if (e.code !== "LEVEL_NOT_FOUND") {
           throw e;
         }
       }
@@ -189,7 +208,7 @@ app.post(hashRegex, async (req, res) => {
       res.status(409);
       return res.json({
         state: newState,
-        hash: newHash
+        hash: newHash,
       });
     }
     const nextKey = `${action.prev}/next`;

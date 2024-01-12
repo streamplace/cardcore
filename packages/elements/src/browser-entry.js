@@ -1,3 +1,4 @@
+console.log("browser");
 import "./fonts/stylesheet.css";
 import EE from "wolfy87-eventemitter";
 import { throttle } from "underscore";
@@ -7,7 +8,7 @@ export {
   Route,
   Switch as RouteSwitch,
   withRouter,
-  Link
+  Link,
 } from "react-router-dom";
 export * from "react-native-web";
 export { default as Svg } from "./browser/browser-svg";
@@ -17,7 +18,7 @@ export function getDimensions() {
   const rects = document.querySelector("#root").getClientRects()[0];
   return {
     width: rects.width,
-    height: rects.height
+    height: rects.height,
   };
 }
 
@@ -41,7 +42,7 @@ class BrowserEvents extends EE {
 export const Events = new BrowserEvents();
 
 export const Storage = {
-  getItem: key => {
+  getItem: (key) => {
     return Promise.resolve(localStorage.getItem(key));
   },
 
@@ -49,7 +50,7 @@ export const Storage = {
     return Promise.resolve(localStorage.setItem(key, value));
   },
 
-  removeItem: key => {
+  removeItem: (key) => {
     return Promise.resolve(localStorage.removeItem(key));
-  }
+  },
 };

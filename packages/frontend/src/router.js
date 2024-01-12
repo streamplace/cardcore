@@ -5,7 +5,7 @@ import {
   RouteSwitch,
   bootstrap,
   View,
-  Link
+  Link,
 } from "@cardcore/elements";
 import Board from "./board";
 import FrontPage from "./front-page";
@@ -48,7 +48,7 @@ export default class Router extends React.Component {
   constructor() {
     super();
     this.state = {
-      ready: false
+      ready: false,
     };
   }
 
@@ -64,21 +64,21 @@ export default class Router extends React.Component {
     return (
       <ReactRouter>
         <BigContainer>
-          <Sidebar>
+          {/* <Sidebar>
             <MenuLink to="/">Game</MenuLink>
             <MenuLink to="/create-card">Create Card</MenuLink>
-          </Sidebar>
+          </Sidebar> */}
           <MainView>
             <RouteSwitch>
               <Route
                 path="/create-card"
-                render={props => {
+                render={(props) => {
                   return <CreateCard />;
                 }}
               />
               <Route
                 path="/development/:action"
-                render={props => {
+                render={(props) => {
                   const { action } = props.match.params;
                   return (
                     <GameProvider modules={aiModules} key="development">
@@ -89,7 +89,7 @@ export default class Router extends React.Component {
               />
               <Route
                 path="/game/:gameId"
-                render={props => (
+                render={(props) => (
                   <GameProvider key="foo">
                     <Board
                       {...props}
@@ -100,7 +100,7 @@ export default class Router extends React.Component {
               />
               <Route
                 path="/"
-                render={props => (
+                render={(props) => (
                   <GameProvider key="bar">
                     <FrontPage {...props} />
                   </GameProvider>

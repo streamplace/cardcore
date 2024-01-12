@@ -10,7 +10,7 @@ export {
   Route,
   Switch as RouteSwitch,
   withRouter,
-  Link
+  Link,
 } from "react-router-native";
 export * from "react-native";
 export { Svg } from "expo";
@@ -22,13 +22,15 @@ if (Platform.OS === "android") {
 
 export async function bootstrap() {
   await Font.loadAsync({
-    [fonts.title]: require("./fonts/OpenSansCondensed-Bold.ttf")
+    [fonts.title]: require("./fonts/OpenSansCondensed-Bold.ttf"),
   });
 }
 
 export function getDimensions() {
   return Dimensions.get("window");
 }
+
+console.log("native entry");
 
 export const isWeb = () => false;
 export const isNative = () => true;
@@ -44,7 +46,7 @@ export const getServer = () => {
 };
 
 if (Platform.OS === "android") {
-  BackHandler.addEventListener("hardwareBackPress", function() {
+  BackHandler.addEventListener("hardwareBackPress", function () {
     setTimeout(() => Expo.Util.reload(), 0);
     return true;
   });
@@ -62,7 +64,7 @@ class NativeEvents extends EE {
 export const Events = new NativeEvents();
 
 export const Storage = {
-  getItem: async key => {
+  getItem: async (key) => {
     try {
       return await AsyncStorage.getItem(key);
     } catch (e) {
@@ -74,7 +76,7 @@ export const Storage = {
     return await AsyncStorage.setItem(key, value);
   },
 
-  removeItem: async key => {
+  removeItem: async (key) => {
     return await AsyncStorage.removeItem(key);
-  }
+  },
 };

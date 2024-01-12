@@ -1,4 +1,16 @@
 {
-  "packages": ["packages/*"],
+  "packages": [
+    "packages/ai",
+    "packages/cards",
+    "packages/cli",
+    "packages/client",
+    "packages/core",
+    "packages/elements",
+    "packages/frontend",
+    "packages/game",
+    "packages/poker",
+    "packages/server",
+    "packages/util"
+  ],
   "version": "0.0.1"
 }

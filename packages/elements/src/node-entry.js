@@ -9,16 +9,20 @@ const log = debug("cardcore:node-entry");
 export const CARDCORE_DIR = path.resolve(os.homedir(), ".cardcore");
 export const CARDCORE_DB = path.resolve(CARDCORE_DIR, "leveldb");
 
+console.log("this???");
+
 class LevelStorage {
   constructor() {
     this._initProm = false;
   }
 
   _init() {
+    console.log("init");
     if (this._initProm) {
       return this._initProm;
     }
     this._initProm = (async () => {
+      console.log("got here?");
       log(`initalizing leveldb at ${CARDCORE_DB}`);
       await fs.ensureDir(CARDCORE_DIR);
       this.db = level(CARDCORE_DB);
@@ -27,6 +31,7 @@ class LevelStorage {
   }
 
   async getItem(key) {
+    console.log("hi");
     if (typeof key !== "string") {
       throw new Error("keys must be strings");
     }

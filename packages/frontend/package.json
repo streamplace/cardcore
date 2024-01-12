@@ -33,16 +33,14 @@
   "scripts": {
     "start": "run-p start:react start:opn",
     "start:react": "cross-env PORT=3002 BROWSER=none react-scripts start | cat",
-    "start:opn": "opn http://localhost:3000",
+    "start:opn": "open-cli http://localhost:3000",
     "production": "run-p production:proxy start:signalhub production:serve",
     "production:serve": "serve -s -l 3002 build",
     "prepare": "react-scripts build",
     "build": "npm run prepare"
   },
   "devDependencies": {
-    "cross-env": "^5.2.0",
-    "opn-cli": "^3.1.0",
-    "react-scripts": "2.1.1"
+    "react-scripts": "^5.0.1"
   },
   "publishConfig": {
     "access": "public"

@@ -10,18 +10,18 @@ const app = express();
 
 app.use(
   proxy("/", {
-    target: "http://localhost:3002",
+    target: "http://127.0.0.1:3002",
     logLevel: "info",
     ws: true,
-    router: req => {
+    router: (req) => {
       if (
         req.path &&
         (req.path.endsWith(".sha256") || req.path.endsWith("next"))
       ) {
-        return "http://localhost:3003";
+        return "http://127.0.0.1:3003";
       }
-      return "http://localhost:3002";
-    }
+      return "http://127.0.0.1:3002";
+    },
   })
 );
 
