@@ -84,13 +84,23 @@ const ActionText = styled(Text)`
 
 export class Board extends React.Component {
   constructor(props) {
+    // this.over = false
     super();
   }
+
+  // async progressState() {
+  //   if (this.over) {
+  //     return;
+  //   }
+  //   if ()
+  //   requestAnimationFrame(this.progressState.bind(this))
+  // }
 
   async componentDidMount() {
     this.interval = setInterval(() => {
       this.props.dispatch(layoutNextAction());
     }, 100);
+    // requestAnimationFrame();
     await this.props.dispatch(clientGenerateIdentity());
     if (this.props.loading) {
       await this.props.dispatch(clientLoadState(this.props.gameId));
@@ -100,6 +110,7 @@ export class Board extends React.Component {
   }
 
   componentWillUnmount() {
+    this.over = true;
     clearInterval(this.interval);
   }
 
@@ -230,6 +241,7 @@ const mapStateToProps = (state, props) => {
     height: state.frontend.height,
     width: state.frontend.width,
     actionLog: state.client.actionLog,
+    gameQueue: state.frontend.gameQueue,
   };
 };
 

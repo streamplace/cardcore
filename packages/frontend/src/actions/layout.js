@@ -1,3 +1,5 @@
+import { Box } from "@cardcore/util";
+
 export const TOP_SIDEBOARD = {
   x: 0,
   y: 0,
@@ -32,7 +34,6 @@ export const CARD_Z_INDEX = 100;
 
 export const LAYOUT_NEXT = "LAYOUT_NEXT";
 export const layoutNextAction = () => async (dispatch) => {
-  console.log("layout next");
   await dispatch({
     type: LAYOUT_NEXT,
   });
@@ -56,38 +57,128 @@ export function layoutActionReducer(state, action) {
         ...state.frontend,
         game: state.game,
         gameQueue: [],
+        gameExpiry: 0,
+        cardAnimations: {},
       },
     };
-  } else if (
-    state.game !== state.frontend.game &&
-    !state.frontend.gameQueue.includes(state.game)
-  ) {
+  }
+  if (action.type === "ATTACK") {
+    console.log(action);
     state = {
       ...state,
       frontend: {
         ...state.frontend,
-        gameQueue: [...state.frontend.gameQueue, state.game],
+        gameQueue: [
+          ...state.frontend.gameQueue,
+          {
+            game: state.frontend.gamePrev,
+            expiry: 1000,
+            cardAnimations: {
+              [action.attackingUnitId]: {
+                offset: {
+                  x: 300,
+                  y: -150,
+                },
+              },
+            },
+          },
+          {
+            game: state.frontend.gamePrev,
+            expiry: 1000,
+            cardAnimations: {
+              [action.attackingUnitId]: {
+                moveTo: action.defendingUnitId,
+              },
+            },
+          },
+          {
+            game: state.frontend.gamePrev,
+            expiry: 1000,
+            cardAnimations: {
+              [action.attackingUnitId]: {
+                offset: {
+                  x: 300,
+                  y: -150,
+                },
+              },
+            },
+          },
+          {
+            game: state.frontend.game,
+            expiry: 1000,
+            cardAnimations: {},
+          },
+        ],
       },
     };
   }
-  if (action.type === "LAYOUT_NEXT") {
-    if (state.frontend.gameQueue.length === 0) {
-      return state;
-    }
-    console.log(
-      `gameQueue progressing, ${state.frontend.gameQueue.length} states remaining`
-    );
-    const newQueue = [...state.frontend.gameQueue];
-    const newGame = newQueue.shift();
-    return {
+
+  if (action.type === "PLAY_CARD_DONE") {
+    state = {
       ...state,
       frontend: {
         ...state.frontend,
-        game: newGame,
-        gameQueue: newQueue,
+        gameQueue: [
+          ...state.frontend.gameQueue,
+          {
+            game: state.gamePrev,
+            expiry: 1000,
+            cardAnimations: {},
+          },
+        ],
       },
     };
   }
+
+  const now = Date.now();
+  if (state.frontend.gameExpiry <= now) {
+    // something else in the animation queue, progress it
+    if (state.frontend.gameQueue.length > 1) {
+      const newQueue = [...state.frontend.gameQueue];
+      const { game, expiry, cardAnimations } = newQueue.shift();
+      console.log(`gameQueue progressing, ${newQueue.length} states remaining`);
+      state = {
+        ...state,
+        frontend: {
+          ...state.frontend,
+          gameQueue: newQueue,
+          game: game,
+          gameExpiry: now + expiry,
+          cardAnimations: cardAnimations,
+        },
+      };
+    }
+    // queue empty, catch the frontend state up with the game state
+    else {
+      state = {
+        ...state,
+        frontend: {
+          ...state.frontend,
+          game: state.game,
+          cardAnimations: {},
+        },
+      };
+    }
+  }
+
+  // if (action.type === "LAYOUT_NEXT") {
+  //   if (state.frontend.gameQueue.length === 0) {
+  //     return state;
+  //   }
+  //   console.log(
+  //     `gameQueue progressing, ${state.frontend.gameQueue.length} states remaining`
+  //   );
+  //   const newQueue = [...state.frontend.gameQueue];
+  //   const newGame = newQueue.shift();
+  //   return {
+  //     ...state,
+  //     frontend: {
+  //       ...state.frontend,
+  //       game: newGame,
+  //       gameQueue: newQueue,
+  //     },
+  //   };
+  // }
   return state;
 }
 
@@ -170,13 +261,14 @@ export function layoutReducer(state, action) {
     const leftOffset = (width - allCardsWidth) / 2;
     const y = height * region.y + CARD_PADDING;
     boxIds.forEach((boxId, i) => {
+      const x = i * cardWidth + leftOffset;
       layout.push({
         type: "card",
         key: boxId,
         boxId: boxId,
         height: cardHeight,
         width: cardWidth,
-        x: i * cardWidth + leftOffset,
+        x: x,
         y: y,
         playerId,
         location,
@@ -211,5 +303,40 @@ export function layoutReducer(state, action) {
       availableMana: player.availableMana,
     });
   });
-  return { ...state, frontend: { ...state.frontend, layout } };
+
+  for (const [cardId, anim] of Object.entries(state.frontend.cardAnimations)) {
+    try {
+      const card = layout.find((x) => Box.traverse(state, x.key) === cardId);
+      if (!card) {
+        throw new Error(`animation couldn't find card ${cardId}`);
+      }
+      if (anim.moveTo) {
+        const destCard = layout.find(
+          (x) => Box.traverse(state, x.key) === anim.moveTo
+        );
+        if (!card) {
+          throw new Error(
+            `animation couldn't find destination card ${destCard}`
+          );
+        }
+        card.zIndex = destCard.zIndex + 1;
+        if (card.y < destCard.y) {
+          card.x = destCard.x;
+          card.y = destCard.y - destCard.height;
+        }
+      }
+      if (anim.offset) {
+        card.x += anim.offset.x;
+        card.y += anim.offset.y;
+      }
+    } catch (e) {
+      console.log(e.message);
+      console.log(layout);
+    }
+  }
+
+  return {
+    ...state,
+    frontend: { ...state.frontend, layout, gamePrev: state.game },
+  };
 }
