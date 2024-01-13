@@ -4,7 +4,19 @@ import { REMOTE_ACTION } from "./constants";
 
 // Returns a stringified, signed action
 export const signAction = (state, action) => {
-  return stringify(ssbKeys.signObj(state.client.keys, action));
+  action;
+  if (typeof action.signature !== "undefined") {
+    throw new Error(`signAction cannot handle objects with "signature"`);
+  }
+  const str = stringify(ssbKeys.signObj(state.client.keys, action));
+  const valid = verifyAction(state, JSON.parse(str));
+  if (!valid) {
+    console.log("fatal error");
+    throw new Error(
+      `fatal error: i can't sign things in a manner that allows me to verify them action=${JSON.stringify(action)} signedAction=${str}`
+    );
+  }
+  return str;
 };
 
 export const verifyAction = (state, action) => {
@@ -17,6 +29,6 @@ export const verifyAction = (state, action) => {
     {
       ...action,
       [REMOTE_ACTION]: undefined,
-    },
+    }
   );
 };

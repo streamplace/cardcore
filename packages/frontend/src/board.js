@@ -131,6 +131,12 @@ export class Board extends React.Component {
   }
 
   render() {
+    if (document.location.href.endsWith(".sha256")) {
+      document.location.href = document.location.href.slice(
+        0,
+        document.location.href.length - ".sha256".length
+      );
+    }
     const { height, width } = this.props;
     if (this.props.loading) {
       return <View>{this.renderLeaveGame()}</View>;
@@ -176,7 +182,7 @@ export class Board extends React.Component {
     let [topPlayerId, bottomPlayerId] = this.props.playerOrder;
     if (this.props.playerOrder.includes(this.props.currentPlayer)) {
       topPlayerId = this.props.playerOrder.find(
-        (id) => id !== this.props.currentPlayer,
+        (id) => id !== this.props.currentPlayer
       );
       bottomPlayerId = this.props.currentPlayer;
     }
@@ -214,7 +220,7 @@ const mapStateToProps = (state, props) => {
     ready:
       state.game.playerOrder.length > 0 &&
       state.game.playerOrder.every(
-        (playerId) => state.game.players[playerId].unitId,
+        (playerId) => state.game.players[playerId].unitId
       ),
     playerOrder: state.game.playerOrder,
     height: state.frontend.height,

@@ -38,8 +38,7 @@ if (process.env.NODE_ENV === "development") {
   });
 }
 
-app.get(hashRegex, async (req, res) => {
-  console.log(`getting ${req.params[0]}`);
+app.get(hashRegex, async (req, res, next) => {
   let data;
   try {
     data = await req.store.get(req.params[0]);
@@ -180,9 +179,10 @@ app.post(hashRegex, async (req, res) => {
       curve: "ed25519",
       public: req.body.agent.slice(1),
     },
-    action,
+    action
   );
   if (!verified) {
+    console.log("failed ssb validation", JSON.stringify(action));
     return res.sendStatus(403);
   }
   try {

@@ -1,4 +1,7 @@
 import { REMOTE_ACTION, hashState, Keys } from "@cardcore/util";
+import debug from "debug";
+
+const log = debug("cardcore:game-middleware");
 
 export default function createGameMiddleware(gameActions, clientActions) {
   const { clientFetch, clientHandleNext } = clientActions;
@@ -56,7 +59,9 @@ export default function createGameMiddleware(gameActions, clientActions) {
 
         // Resolved. Are we the user making this action? Neato! Let's tell the server about it.
         if (!action[REMOTE_ACTION]) {
+          log(`signing ${JSON.stringify(action)}`);
           const signedAction = Keys.signAction(prevState, action);
+          log(`signedAction ${signedAction}`);
           let res;
           try {
             res = await store.dispatch(
@@ -66,11 +71,11 @@ export default function createGameMiddleware(gameActions, clientActions) {
                 headers: {
                   "content-type": "application/json",
                 },
-              }),
+              })
             );
           } catch (e) {
             console.error(
-              "Failed to create an action. We should probably handle this error.",
+              "Failed to create an action. We should probably handle this error."
             );
             console.log(e);
             throw e;
@@ -83,7 +88,7 @@ export default function createGameMiddleware(gameActions, clientActions) {
                   errorType: "DESYNC",
                   clientState: store.getState().game,
                   serverState: JSON.parse(text),
-                }),
+                })
               );
             }
             throw new Error(text);
@@ -94,7 +99,7 @@ export default function createGameMiddleware(gameActions, clientActions) {
         else {
           if (!Keys.verifyAction(prevState, action)) {
             throw new Error(
-              `Remote action failed to verify: ${JSON.stringify(action)}`,
+              `Remote action failed to verify: ${JSON.stringify(action)}`
             );
           }
         }

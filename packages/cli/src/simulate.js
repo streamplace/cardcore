@@ -35,9 +35,9 @@ export const simulateServerMany = async (count, concurrency) => {
   const startTime = Date.now();
   const report = () => {
     let str = `Started ${started}/${count} (${Math.floor(
-      (started / count) * 100,
+      (started / count) * 100
     )}%) Completed ${completed}/${count} (${Math.floor(
-      (completed / count) * 100,
+      (completed / count) * 100
     )}%)`;
     if (completed > 0) {
       const duration = Date.now() - startTime;
@@ -72,7 +72,12 @@ export const simulateServerMany = async (count, concurrency) => {
   console.log(`${count} runs completed successfully`);
 };
 
-export const simulateServer = async ({ count, concurrency }) => {
+export const simulateServer = async ({
+  count,
+  concurrency,
+  server: serverString,
+}) => {
+  console.log(serverString);
   if (count > 1) {
     return simulateServerMany(count, concurrency);
   }
@@ -81,8 +86,11 @@ export const simulateServer = async ({ count, concurrency }) => {
   }, ms("10 minutes"));
 
   const dataDir = (await tmp.dir()).path;
-  const server = await runServer({ dataDir, log: false });
-  const serverString = `http://localhost:${server.address().port}`;
+  let server;
+  if (!serverString) {
+    server = await runServer({ dataDir, log: false });
+    serverString = `http://localhost:${server.address().port}`;
+  }
   const p1 = fork(process.argv[1], [
     "simulate",
     "create",
@@ -135,7 +143,7 @@ export const simulateServer = async ({ count, concurrency }) => {
           resolve(state);
         });
       });
-    }),
+    })
   );
 
   const handleError = async (err) => {
@@ -178,7 +186,9 @@ export const simulateServer = async ({ count, concurrency }) => {
   try {
     await Promise.all([p1Prom, p2Prom]);
     console.log("Simulate ran successfully");
-    server.close();
+    if (server) {
+      server.close();
+    }
     process.exit(0);
   } catch (err) {
     console.log(err);
@@ -187,13 +197,19 @@ export const simulateServer = async ({ count, concurrency }) => {
   process.exit(1);
 };
 
+const sendParent = (...args) => {
+  if (process.send) {
+    process.send(...args);
+  }
+};
+
 export const createPlayer = async (server) => {
   const store = createStore(game, { ...client, ...ai });
   await store.dispatch(client.clientGenerateIdentity({ store: false }));
   await store.dispatch(client.clientSetServer({ server }));
   process.on("message", (msg) => {
     if (msg === "dumpState") {
-      process.send({ state: store.getState() });
+      sendParent({ state: store.getState() });
     }
   });
   return store;
@@ -202,15 +218,14 @@ export const createPlayer = async (server) => {
 const exitOrDump = async (player, prom) => {
   try {
     await prom;
-    process.exit(0);
   } catch (e) {
-    process.send({
+    console.log(e.stack);
+    sendParent({
       error: e.message,
       stack: e.stack,
       state: player.getState(),
     });
     await new Promise((r) => setTimeout(r, 1000));
-    process.exit(1);
   }
 };
 
@@ -223,8 +238,10 @@ export const simulateCreate = async (server) => {
   })();
   await new Promise((r) => setTimeout(r, 1000)); // Fixes race where hash runs before game created
   const gameId = await player.dispatch(client.clientGetGameHash());
-  process.send(gameId);
-  return exitOrDump(player, playerProm);
+  sendParent(gameId);
+  console.log(`${server}/game/${gameId}`);
+  await exitOrDump(player, playerProm);
+  console.log(`${server}/game/${gameId}`);
 };
 
 export const simulateJoin = async (server, gameId) => {

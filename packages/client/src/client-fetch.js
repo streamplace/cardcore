@@ -96,6 +96,7 @@ export const clientFetch =
           }
           if (opts.method === "GET") {
             if (res.status !== 200) {
+              throw new Error("res.status");
               return;
             }
           } else {

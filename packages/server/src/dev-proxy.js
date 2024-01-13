@@ -16,13 +16,14 @@ app.use(
     router: (req) => {
       if (
         req.path &&
+        !req.path.startsWith("/game/") &&
         (req.path.endsWith(".sha256") || req.path.endsWith("next"))
       ) {
         return "http://127.0.0.1:3003";
       }
       return "http://127.0.0.1:3002";
     },
-  }),
+  })
 );
 
 app.listen(process.env.PORT || 3000);

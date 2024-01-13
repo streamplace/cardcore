@@ -25,13 +25,18 @@ yargs
         port: argv.port,
         dataDir: argv.dataDir,
       });
-    },
+    }
   )
 
   .command(
     "simulate",
     "run a simulation of a cardcore game",
     (yargs) => {
+      yargs.option("server", {
+        describe: `server to use (otherwise i run my own)`,
+        type: "string",
+      });
+
       yargs.option("count", {
         describe: "how many simulations to run",
         type: "number",
@@ -56,7 +61,7 @@ yargs
         },
         async (argv) => {
           await simulateCreate(argv.server);
-        },
+        }
       );
 
       yargs.command(
@@ -76,15 +81,16 @@ yargs
         },
         async (argv) => {
           await simulateJoin(argv.server, argv.gameId);
-        },
+        }
       );
     },
     async (argv) => {
       await simulateServer({
         count: argv.count,
         concurrency: argv.concurrency,
+        server: argv.server,
       });
-    },
+    }
   )
 
   .demandCommand()

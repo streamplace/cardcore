@@ -17,7 +17,10 @@ export const aiAutoplay = () => async (dispatch, getState) => {
   let state = getState();
   while (state.game.queue.length > 0) {
     const nextSchema = state.game.queue[0];
+    console.log(nextSchema);
     const fakeAction = jsf.generate(nextSchema);
+    delete fakeAction.signature;
+    delete fakeAction.agent;
     log(`ai dispatching ${JSON.stringify(fakeAction)}`);
     await dispatch(aiFakeAction(fakeAction));
     state = getState();
