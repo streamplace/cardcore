@@ -30,7 +30,7 @@ const clientNextHelper = (state) => {
   let { playerId, notPlayerId, action: nextAction } = state.game.nextActions[0];
   if (!gameActions[nextAction.type]) {
     throw new Error(
-      `${nextAction.type} is queued but we don't have a definition`,
+      `${nextAction.type} is queued but we don't have a definition`
     );
   }
   if (playerId && playerId !== me) {
@@ -135,8 +135,8 @@ export const clientHandleNext = () => (dispatch, getState) => {
       `${
         getState().client.shortName
       } has a queued action but is not autonomous, error ${JSON.stringify(
-        state.game.queue,
-      )}`,
+        state.game.queue
+      )}`
     );
   }
 

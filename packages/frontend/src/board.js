@@ -24,6 +24,7 @@ import {
   TOP_FIELD,
   BOTTOM_FIELD,
   BOTTOM_SIDEBOARD,
+  layoutNextAction,
 } from "./actions/layout";
 
 const BoardWrapper = styled(View)`
@@ -87,15 +88,15 @@ export class Board extends React.Component {
   }
 
   async componentDidMount() {
+    this.interval = setInterval(() => {
+      this.props.dispatch(layoutNextAction());
+    }, 100);
     await this.props.dispatch(clientGenerateIdentity());
     if (this.props.loading) {
       await this.props.dispatch(clientLoadState(this.props.gameId));
     }
     await Storage.setItem("CURRENT_GAME", this.props.gameId);
     await this.props.dispatch(clientHandleNext());
-    this.interval = setInterval(() => {
-      console.log("layout");
-    }, 1000);
   }
 
   componentWillUnmount() {

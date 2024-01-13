@@ -32,10 +32,64 @@ export const CARD_Z_INDEX = 100;
 
 export const LAYOUT_NEXT = "LAYOUT_NEXT";
 export const layoutNextAction = () => async (dispatch) => {
+  console.log("layout next");
   await dispatch({
     type: LAYOUT_NEXT,
   });
 };
+
+export function layoutActionReducer(state, action) {
+  if (
+    !state.frontend ||
+    typeof state.frontend.width !== "number" ||
+    !state.game ||
+    !state.game.playerOrder ||
+    !state.client ||
+    !state.client.keys
+  ) {
+    return state;
+  }
+  if (!state.frontend.game && state.game) {
+    state = {
+      ...state,
+      frontend: {
+        ...state.frontend,
+        game: state.game,
+        gameQueue: [],
+      },
+    };
+  } else if (
+    state.game !== state.frontend.game &&
+    !state.frontend.gameQueue.includes(state.game)
+  ) {
+    state = {
+      ...state,
+      frontend: {
+        ...state.frontend,
+        gameQueue: [...state.frontend.gameQueue, state.game],
+      },
+    };
+  }
+  if (action.type === "LAYOUT_NEXT") {
+    if (state.frontend.gameQueue.length === 0) {
+      return state;
+    }
+    console.log(
+      `gameQueue progressing, ${state.frontend.gameQueue.length} states remaining`
+    );
+    const newQueue = [...state.frontend.gameQueue];
+    const newGame = newQueue.shift();
+    return {
+      ...state,
+      frontend: {
+        ...state.frontend,
+        game: newGame,
+        gameQueue: newQueue,
+      },
+    };
+  }
+  return state;
+}
 
 export function layoutReducer(state, action) {
   const layout = [];
@@ -49,35 +103,32 @@ export function layoutReducer(state, action) {
   ) {
     return state;
   }
-  if (action.type === "LAYOUT_NEXT") {
-    if (state.frontend.layoutQueue.length === 0) {
-      return state;
-    }
-    const newQueue = [...state.frontend.layoutQueue];
-    const newLayout = newQueue.unshift();
-    return {
-      ...state,
-      frontend: {
-        ...state.frontend,
-        layout: newLayout,
-        layoutQueue: newQueue,
-      },
-    };
+  if (!state.frontend.layout) {
+    state = { ...state, frontend: { ...state.frontend, layout: [] } };
   }
-  const { width, height } = state.frontend;
-  let [topPlayerId, bottomPlayerId] = state.game.playerOrder;
-  if (state.game.playerOrder.includes(state.client.keys.id)) {
-    topPlayerId = state.game.playerOrder.find(
+  if (!state.frontend.game) {
+    return state;
+  }
+  if (!state.frontend.game.playerOrder) {
+    return state;
+  }
+  let [topPlayerId, bottomPlayerId] = state.frontend.game.playerOrder;
+  if (state.frontend.game.playerOrder.includes(state.client.keys.id)) {
+    topPlayerId = state.frontend.game.playerOrder.find(
       (id) => id !== state.client.keys.id
     );
     bottomPlayerId = state.client.keys.id;
   }
 
   for (const playerId of [topPlayerId, bottomPlayerId]) {
-    if (!state.game.players[playerId] || !state.game.players[playerId].hand) {
+    if (
+      !state.frontend.game.players[playerId] ||
+      !state.frontend.game.players[playerId].hand
+    ) {
       return state;
     }
   }
+  const { width, height } = state.frontend;
 
   // cards
   [
@@ -111,7 +162,7 @@ export function layoutReducer(state, action) {
       height: height * region.height,
       zIndex: REGION_Z_INDEX,
     });
-    const player = state.game.players[playerId];
+    const player = state.frontend.game.players[playerId];
     const boxIds = player[location];
     const cardHeight = height * region.height - CARD_PADDING * 2;
     const cardWidth = (cardHeight * 3) / 4;
@@ -147,7 +198,7 @@ export function layoutReducer(state, action) {
   ].forEach(({ region, playerId }) => {
     const cardHeight = height * region.height - CARD_PADDING * 2;
     const cardWidth = (cardHeight * 3) / 4;
-    const player = state.game.players[playerId];
+    const player = state.frontend.game.players[playerId];
     layout.push({
       type: "face",
       boxId: player.unitId,
@@ -160,5 +211,5 @@ export function layoutReducer(state, action) {
       availableMana: player.availableMana,
     });
   });
-  return state;
+  return { ...state, frontend: { ...state.frontend, layout } };
 }
