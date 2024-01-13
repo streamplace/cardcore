@@ -30,7 +30,14 @@ export const CARD_PADDING = 5;
 export const REGION_Z_INDEX = 10;
 export const CARD_Z_INDEX = 100;
 
-export function layoutReducer(state) {
+export const LAYOUT_NEXT = "LAYOUT_NEXT";
+export const layoutNextAction = () => async (dispatch) => {
+  await dispatch({
+    type: LAYOUT_NEXT,
+  });
+};
+
+export function layoutReducer(state, action) {
   const layout = [];
   if (
     !state.frontend ||
@@ -42,11 +49,26 @@ export function layoutReducer(state) {
   ) {
     return state;
   }
+  if (action.type === "LAYOUT_NEXT") {
+    if (state.frontend.layoutQueue.length === 0) {
+      return state;
+    }
+    const newQueue = [...state.frontend.layoutQueue];
+    const newLayout = newQueue.unshift();
+    return {
+      ...state,
+      frontend: {
+        ...state.frontend,
+        layout: newLayout,
+        layoutQueue: newQueue,
+      },
+    };
+  }
   const { width, height } = state.frontend;
   let [topPlayerId, bottomPlayerId] = state.game.playerOrder;
   if (state.game.playerOrder.includes(state.client.keys.id)) {
     topPlayerId = state.game.playerOrder.find(
-      (id) => id !== state.client.keys.id,
+      (id) => id !== state.client.keys.id
     );
     bottomPlayerId = state.client.keys.id;
   }
@@ -138,6 +160,5 @@ export function layoutReducer(state) {
       availableMana: player.availableMana,
     });
   });
-
-  return { ...state, frontend: { ...state.frontend, layout } };
+  return state;
 }

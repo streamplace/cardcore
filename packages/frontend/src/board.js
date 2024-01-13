@@ -93,6 +93,9 @@ export class Board extends React.Component {
     }
     await Storage.setItem("CURRENT_GAME", this.props.gameId);
     await this.props.dispatch(clientHandleNext());
+    this.interval = setInterval(() => {
+      console.log("layout");
+    }, 1000);
   }
 
   componentWillUnmount() {
