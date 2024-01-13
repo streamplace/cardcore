@@ -6,27 +6,27 @@ const DEFAULT_STATE = {
     queue: [
       makeSchema({
         type: {
-          enum: ["CREATE_GAME"]
+          enum: ["CREATE_GAME"],
         },
         startTime: {
-          type: "number"
+          type: "number",
         },
         agent: {
-          type: "string"
+          type: "string",
         },
         // this won't be null once we take over the world
         prev: {
-          enum: [null]
-        }
-      })
-    ]
-  }
+          enum: [null],
+        },
+      }),
+    ],
+  },
 };
 
-const getReducers = mod =>
+const getReducers = (mod) =>
   Object.keys(mod)
-    .filter(key => key.endsWith("Reducer"))
-    .map(key => mod[key]);
+    .filter((key) => key.endsWith("Reducer"))
+    .map((key) => mod[key]);
 
 export function createReducer(gameModules, clientModules = {}) {
   const gameReducers = getReducers(gameModules);
@@ -40,7 +40,7 @@ export function createReducer(gameModules, clientModules = {}) {
     if (action.type === clientModules.CLIENT_LOAD_STATE_START) {
       state = {
         ...state,
-        game: action.gameState
+        game: action.gameState,
       };
     }
     // special logic to clean out the queue if we're executing a queued action
@@ -57,8 +57,8 @@ export function createReducer(gameModules, clientModules = {}) {
         ...state,
         game: {
           ...state.game,
-          nextActions: state.game.nextActions.slice(1)
-        }
+          nextActions: state.game.nextActions.slice(1),
+        },
       };
     }
 
@@ -78,8 +78,8 @@ export function createReducer(gameModules, clientModules = {}) {
         ...state,
         game: {
           ...state.game,
-          randoSeed: rando.seed
-        }
+          randoSeed: rando.seed,
+        },
       };
     }
     rando.clearSeed();

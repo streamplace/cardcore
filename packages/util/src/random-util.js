@@ -8,7 +8,7 @@ export function shuffle(arr, func = Math.random) {
   const randos = arr.map(() => func());
   return Object.keys(arr)
     .sort((a, b) => randos[a] - randos[b])
-    .map(k => arr[k]);
+    .map((k) => arr[k]);
 }
 
 export class RandomUtil {

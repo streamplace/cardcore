@@ -1,4 +1,4 @@
-module.exports = api => {
+module.exports = (api) => {
   api.cache(true);
   return {
     plugins: ["@babel/plugin-proposal-object-rest-spread"],
@@ -6,10 +6,10 @@ module.exports = api => {
       [
         "@babel/preset-env",
         {
-          targets: ["last 2 chrome versions"]
-        }
+          targets: ["last 2 chrome versions"],
+        },
       ],
-      "@babel/preset-react"
-    ]
+      "@babel/preset-react",
+    ],
   };
 };

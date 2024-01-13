@@ -6,20 +6,22 @@ import { STANDARD_ACTION } from "./standard-action";
 export const PLAY_CARD = "PLAY_CARD";
 export const playCard = ({ boxId }) => ({
   type: "PLAY_CARD",
-  boxId
+  boxId,
 });
 
 export const PLAY_CARD_DONE = "PLAY_CARD_DONE";
 
 export const REVEAL_CARD = "REVEAL_CARD";
-export const revealCard = ({ boxId }) => (dispatch, getState) => {
-  const privateKey = Box.getPrivate(getState(), boxId);
-  return dispatch({
-    type: "REVEAL_CARD",
-    boxId,
-    privateKey
-  });
-};
+export const revealCard =
+  ({ boxId }) =>
+  (dispatch, getState) => {
+    const privateKey = Box.getPrivate(getState(), boxId);
+    return dispatch({
+      type: "REVEAL_CARD",
+      boxId,
+      privateKey,
+    });
+  };
 
 // TODO: are you adding not-creatures? go here!
 export const playCardReducer = (state, action) => {
@@ -30,9 +32,9 @@ export const playCardReducer = (state, action) => {
         ...state.game,
         allowedActions: {
           ...state.game.allowedActions,
-          [PLAY_CARD]: true
-        }
-      }
+          [PLAY_CARD]: true,
+        },
+      },
     };
   }
 
@@ -43,27 +45,27 @@ export const playCardReducer = (state, action) => {
         playerId: action.agent,
         action: {
           type: PLAY_CARD_DONE,
-          boxId: action.boxId
-        }
+          boxId: action.boxId,
+        },
       },
       {
         playerId: action.agent,
         action: {
-          type: STANDARD_ACTION
-        }
-      }
+          type: STANDARD_ACTION,
+        },
+      },
     ];
     let queue = [
       ...state.game.queue,
       makeSchema({
         type: PLAY_CARD_DONE,
         agent: action.agent,
-        boxId: action.boxId
+        boxId: action.boxId,
       }),
       makeSchema({
         type: STANDARD_ACTION,
-        agent: action.agent
-      })
+        agent: action.agent,
+      }),
     ];
     if (!state.game.units[action.boxId]) {
       nextActions = [
@@ -71,10 +73,10 @@ export const playCardReducer = (state, action) => {
           playerId: getLeftPlayer(action.agent, state.game.playerOrder),
           action: {
             type: REVEAL_CARD,
-            boxId: action.boxId
-          }
+            boxId: action.boxId,
+          },
         },
-        ...nextActions
+        ...nextActions,
       ];
       queue = [
         makeSchema({
@@ -82,10 +84,10 @@ export const playCardReducer = (state, action) => {
           agent: getLeftPlayer(action.agent, state.game.playerOrder),
           boxId: action.boxId,
           privateKey: {
-            type: "string"
-          }
+            type: "string",
+          },
         }),
-        ...queue
+        ...queue,
       ];
     }
     return {
@@ -93,8 +95,8 @@ export const playCardReducer = (state, action) => {
       game: {
         ...state.game,
         nextActions: nextActions,
-        queue: queue
-      }
+        queue: queue,
+      },
     };
   }
 
@@ -111,10 +113,10 @@ export const playCardReducer = (state, action) => {
             playerId: action.agent,
             action: {
               type: PLAY_CREATURE,
-              boxId: action.boxId
-            }
+              boxId: action.boxId,
+            },
           },
-          ...state.game.nextActions
+          ...state.game.nextActions,
         ],
         queue: [
           makeSchema({
@@ -125,7 +127,7 @@ export const playCardReducer = (state, action) => {
               type: "array",
               minItems: card.onSummon.length,
               maxItems: card.onSummon.length,
-              items: card.onSummon.map(onSummon => {
+              items: card.onSummon.map((onSummon) => {
                 if (onSummon.target.count === undefined) {
                   return { enum: [null] };
                 }
@@ -133,18 +135,18 @@ export const playCardReducer = (state, action) => {
                   return { enum: [null] };
                 }
                 const targets = Object.keys(
-                  target(state, onSummon.target)
+                  target(state, onSummon.target),
                 ).sort();
                 if (targets.length > 0) {
                   return { enum: targets };
                 }
                 return { enum: [null] };
-              })
-            }
+              }),
+            },
           }),
-          ...state.game.queue
-        ]
-      }
+          ...state.game.queue,
+        ],
+      },
     };
   }
 
@@ -152,7 +154,7 @@ export const playCardReducer = (state, action) => {
     const box = state.game.boxes[action.boxId];
     const newBox = {
       ...box,
-      privateKey: action.privateKey
+      privateKey: action.privateKey,
     };
     state = {
       ...state,
@@ -160,9 +162,9 @@ export const playCardReducer = (state, action) => {
         ...state.game,
         boxes: {
           ...state.game.boxes,
-          [action.boxId]: newBox
-        }
-      }
+          [action.boxId]: newBox,
+        },
+      },
     };
     const contents = Box.open(state, action.boxId);
     // if there's another box in here, pass to the player on our left
@@ -174,10 +176,10 @@ export const playCardReducer = (state, action) => {
           playerId: getLeftPlayer(action.agent, state.game.playerOrder),
           action: {
             type: REVEAL_CARD,
-            boxId: contents
-          }
+            boxId: contents,
+          },
         },
-        ...nextActions
+        ...nextActions,
       ];
       queue = [
         makeSchema({
@@ -185,10 +187,10 @@ export const playCardReducer = (state, action) => {
           agent: getLeftPlayer(action.agent, state.game.playerOrder),
           boxId: contents,
           privateKey: {
-            type: "string"
-          }
+            type: "string",
+          },
         }),
-        ...queue
+        ...queue,
       ];
     } else if (!state.game.units[contents]) {
       throw new Error(`invalid card: ${contents}`);
@@ -198,8 +200,8 @@ export const playCardReducer = (state, action) => {
       game: {
         ...state.game,
         nextActions: nextActions,
-        queue: queue
-      }
+        queue: queue,
+      },
     };
   }
   return state;

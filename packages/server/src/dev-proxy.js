@@ -22,7 +22,7 @@ app.use(
       }
       return "http://127.0.0.1:3002";
     },
-  })
+  }),
 );
 
 app.listen(process.env.PORT || 3000);

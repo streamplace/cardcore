@@ -41,7 +41,7 @@ export const clientGetServer = () => (dispatch, getState) => {
 export const CLIENT_SET_SERVER = "CLIENT_SET_SERVER";
 export const clientSetServer = ({ server }) => ({
   type: "CLIENT_SET_SERVER",
-  server
+  server,
 });
 
 export const clientServerReducer = (state, action) => {
@@ -50,8 +50,8 @@ export const clientServerReducer = (state, action) => {
       ...state,
       client: {
         ...state.client,
-        server: action.server
-      }
+        server: action.server,
+      },
     };
   }
   return state;
@@ -62,55 +62,54 @@ export const clientServerReducer = (state, action) => {
  * requests. Ideally we'd cancel the in-progress fetches as well but that's NYI in a lot of
  * environments.
  */
-export const clientFetch = (url, opts = { method: "GET" }) => async (
-  dispatch,
-  getState
-) => {
-  log(`${opts.method} ${url}`);
-  if (opts.method === "GET" || opts.method === "HEAD") {
-    try {
-      const cached = await Storage.getItem(url);
-      if (cached) {
-        JSON.parse(cached);
-        return new CachedResponse(cached, opts.method === "GET" ? 200 : 204);
+export const clientFetch =
+  (url, opts = { method: "GET" }) =>
+  async (dispatch, getState) => {
+    log(`${opts.method} ${url}`);
+    if (opts.method === "GET" || opts.method === "HEAD") {
+      try {
+        const cached = await Storage.getItem(url);
+        if (cached) {
+          JSON.parse(cached);
+          return new CachedResponse(cached, opts.method === "GET" ? 200 : 204);
+        }
+      } catch (e) {
+        Storage.removeItem(url);
       }
-    } catch (e) {
-      Storage.removeItem(url);
     }
-  }
-  const server = await dispatch(clientGetServer());
-  return new Promise((resolve, reject) => {
-    let res;
-    fetch(`${server}${url}`, opts)
-      .then(_res => {
-        res = _res;
-        return res.text();
-      })
-      .then(text => {
-        if (getState().client.closed) {
-          return;
-        }
-        log(`${res.status} ${url}`);
-        resolve(new CachedResponse(text, res.status));
-        if (!res.ok) {
-          return;
-        }
-        if (opts.method === "GET") {
-          if (res.status !== 200) {
+    const server = await dispatch(clientGetServer());
+    return new Promise((resolve, reject) => {
+      let res;
+      fetch(`${server}${url}`, opts)
+        .then((_res) => {
+          res = _res;
+          return res.text();
+        })
+        .then((text) => {
+          if (getState().client.closed) {
             return;
           }
-        } else {
-          return;
-        }
-        setTimeout(async () => {
-          Storage.setItem(url, text);
-        }, 0);
-      })
-      .catch(err => {
-        if (getState().client.closed) {
-          return;
-        }
-        reject(err);
-      });
-  });
-};
+          log(`${res.status} ${url}`);
+          resolve(new CachedResponse(text, res.status));
+          if (!res.ok) {
+            return;
+          }
+          if (opts.method === "GET") {
+            if (res.status !== 200) {
+              return;
+            }
+          } else {
+            return;
+          }
+          setTimeout(async () => {
+            Storage.setItem(url, text);
+          }, 0);
+        })
+        .catch((err) => {
+          if (getState().client.closed) {
+            return;
+          }
+          reject(err);
+        });
+    });
+  };

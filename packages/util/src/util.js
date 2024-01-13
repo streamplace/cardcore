@@ -5,7 +5,7 @@ import ssbKeys from "@streamplace/ssb-keys";
  * Like Python's range. Get an array of numbers from 0 to n.
  */
 export function range(size, startAt = 0) {
-  return [...Array(size).keys()].map(i => i + startAt);
+  return [...Array(size).keys()].map((i) => i + startAt);
 }
 
 /**

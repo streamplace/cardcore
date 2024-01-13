@@ -10,32 +10,32 @@ const plugin = {
     "all other minions": "TargetCreatures",
     "all other creatures": "TargetCreatures",
     attack: "PropertyAttack",
-    health: "PropertyHealth"
+    health: "PropertyHealth",
   },
   tags: {
     TargetCreatures: {
-      isA: "Target"
+      isA: "Target",
     },
     PropertyAttack: {
-      isA: "Property"
+      isA: "Property",
     },
     PropertyHealth: {
-      isA: "Property"
-    }
+      isA: "Property",
+    },
   },
   patterns: {
-    "[#Trigger]: [.*]": "TriggerString"
+    "[#Trigger]: [.*]": "TriggerString",
   },
   plurals: {
-    property: "properties"
-  }
+    property: "properties",
+  },
 };
 
 const BASIC_TRIGGER = "^#Trigger";
 
 nlp.plugin(plugin);
 
-export const setPhrase = doc => {
+export const setPhrase = (doc) => {
   if (!doc.has(BASIC_TRIGGER)) {
     return null;
   }
@@ -49,26 +49,22 @@ export const setPhrase = doc => {
   }
 
   const actionMatch = restMatch.match(
-    "^set #Target+ #Property+ and? #Property+? to #Cardinal"
+    "^set #Target+ #Property+ and? #Property+? to #Cardinal",
   );
   const cardinal = parseInt(
-    actionMatch
-      .match("#Cardinal+")
-      .values()
-      .toNumber()
-      .out("normal")
+    actionMatch.match("#Cardinal+").values().toNumber().out("normal"),
   );
 
   const trigger = {
     action: "CARD_PLAYED",
-    effects: []
+    effects: [],
   };
 
   const target = actionMatch.match("#Target+");
   if (target.has("#TargetCreatures")) {
     trigger.target = {
       type: "creature",
-      location: "board"
+      location: "board",
     };
   } else {
     return null;
@@ -78,14 +74,14 @@ export const setPhrase = doc => {
     trigger.effects.push({
       type: "SET_PROPERTY",
       property: "health",
-      value: cardinal
+      value: cardinal,
     });
   }
   if (actionMatch.has("#PropertyAttack")) {
     trigger.effects.push({
       type: "SET_PROPERTY",
       property: "attack",
-      value: cardinal
+      value: cardinal,
     });
   }
   if (trigger.effects.length === 0) {
@@ -95,15 +91,15 @@ export const setPhrase = doc => {
   window.actionMatch = actionMatch;
 
   return {
-    triggers: [trigger]
+    triggers: [trigger],
   };
 };
 
-export const parseCard = str => {
+export const parseCard = (str) => {
   const lines = str
     .trim()
     .split("\n")
-    .filter(x => x);
+    .filter((x) => x);
 
   let ret = {};
   const errors = [];
@@ -132,7 +128,7 @@ export const parseCard = str => {
     if (result) {
       ret = {
         ...ret,
-        ...result
+        ...result,
       };
       continue;
     }
@@ -140,6 +136,6 @@ export const parseCard = str => {
   }
   return {
     data: ret,
-    errors
+    errors,
   };
 };

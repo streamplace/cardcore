@@ -61,9 +61,9 @@ export default class CreateCard extends React.Component {
         Battlecry: Set all other minions' Attack and Health to 3.
       `
         .split("\n")
-        .map(x => x.trim())
-        .filter(x => x)
-        .join("\n")
+        .map((x) => x.trim())
+        .filter((x) => x)
+        .join("\n"),
     };
   }
 
@@ -76,7 +76,7 @@ export default class CreateCard extends React.Component {
     return (
       <Container>
         <Input
-          onChangeText={text => this.handleChange(text)}
+          onChangeText={(text) => this.handleChange(text)}
           multiline={true}
           value={this.state.text}
         />

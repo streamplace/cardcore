@@ -10,7 +10,7 @@ const VERT_PADDING = 10;
 const SidebarVert = styled(View)`
   display: flex;
   flex-direction: column;
-  height: ${props => props.height}px;
+  height: ${(props) => props.height}px;
   overflow: hidden;
 `;
 
@@ -46,7 +46,7 @@ export class Sidebar extends React.Component {
 
 const mapStateToProps = (state, props) => {
   return {
-    player: state.game.players[props.playerId]
+    player: state.game.players[props.playerId],
   };
 };
 

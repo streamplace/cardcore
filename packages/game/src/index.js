@@ -22,8 +22,8 @@ export const gameReducer = (state, action) => {
       ...state,
       game: {
         ...state.game,
-        prev: action.prev
-      }
+        prev: action.prev,
+      },
     };
   }
 

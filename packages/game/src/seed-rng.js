@@ -3,7 +3,7 @@ import { rando, Box, makeSchema } from "@cardcore/util";
 import { BOX_OPEN } from "./box";
 
 export const SEED_RNG = "SEED_RNG";
-export const seedRng = action => {
+export const seedRng = (action) => {
   return action;
 };
 
@@ -16,7 +16,7 @@ export const seedRngEncrypt = () => async (dispatch, getState) => {
   return dispatch({
     type: SEED_RNG_ENCRYPT,
     boxId,
-    box
+    box,
   });
 };
 
@@ -33,13 +33,13 @@ export const seedRngReducer = (state, action) => {
         queue: [
           makeSchema({
             type: {
-              enum: [SEED_RNG_ENCRYPT]
+              enum: [SEED_RNG_ENCRYPT],
             },
             agent: {
-              enum: [orderedPlayers[0]]
+              enum: [orderedPlayers[0]],
             },
             boxId: {
-              type: "string"
+              type: "string",
             },
             box: {
               type: "object",
@@ -47,42 +47,42 @@ export const seedRngReducer = (state, action) => {
               required: ["contents", "keys"],
               properties: {
                 contents: {
-                  type: "string"
+                  type: "string",
                 },
                 keys: {
                   [orderedPlayers[0]]: {
-                    type: "string"
-                  }
-                }
-              }
-            }
+                    type: "string",
+                  },
+                },
+              },
+            },
           }),
           makeSchema({
             type: {
-              enum: [SEED_RNG_COMBINE]
+              enum: [SEED_RNG_COMBINE],
             },
             agent: {
-              enum: [action.agent]
-            }
+              enum: [action.agent],
+            },
           }),
-          ...state.game.queue
+          ...state.game.queue,
         ],
         nextActions: [
           {
             playerId: orderedPlayers[0],
             action: {
-              type: SEED_RNG_ENCRYPT
-            }
+              type: SEED_RNG_ENCRYPT,
+            },
           },
           {
             playerId: action.agent,
             action: {
-              type: SEED_RNG_COMBINE
-            }
+              type: SEED_RNG_COMBINE,
+            },
           },
-          ...state.game.nextActions
-        ]
-      }
+          ...state.game.nextActions,
+        ],
+      },
     };
   }
 
@@ -94,13 +94,13 @@ export const seedRngReducer = (state, action) => {
         ...state.game,
         boxes: {
           ...state.game.boxes,
-          [action.boxId]: action.box
+          [action.boxId]: action.box,
         },
         randoSeeds: {
           ...state.game.randoSeeds,
-          [action.agent]: action.boxId
-        }
-      }
+          [action.agent]: action.boxId,
+        },
+      },
     };
     // if we're done, do all the decrypts
     const seedCount = Object.keys(state.game.randoSeeds).length;
@@ -110,35 +110,35 @@ export const seedRngReducer = (state, action) => {
         game: {
           ...state.game,
           nextActions: [
-            ...orderedPlayers.map(playerId => ({
+            ...orderedPlayers.map((playerId) => ({
               playerId: playerId,
               action: {
                 type: BOX_OPEN,
-                boxId: state.game.randoSeeds[playerId]
-              }
+                boxId: state.game.randoSeeds[playerId],
+              },
             })),
-            ...state.game.nextActions
+            ...state.game.nextActions,
           ],
           queue: [
-            ...orderedPlayers.map(playerId =>
+            ...orderedPlayers.map((playerId) =>
               makeSchema({
                 type: {
-                  enum: [BOX_OPEN]
+                  enum: [BOX_OPEN],
                 },
                 agent: {
-                  enum: [playerId]
+                  enum: [playerId],
                 },
                 boxId: {
-                  enum: [state.game.randoSeeds[playerId]]
+                  enum: [state.game.randoSeeds[playerId]],
                 },
                 privateKey: {
-                  type: "string"
-                }
-              })
+                  type: "string",
+                },
+              }),
             ),
-            ...state.game.queue
-          ]
-        }
+            ...state.game.queue,
+          ],
+        },
       };
     }
     // otherwise do the next encrypt
@@ -151,22 +151,22 @@ export const seedRngReducer = (state, action) => {
             {
               playerId: orderedPlayers[seedCount],
               action: {
-                type: SEED_RNG_ENCRYPT
-              }
+                type: SEED_RNG_ENCRYPT,
+              },
             },
 
-            ...state.game.nextActions
+            ...state.game.nextActions,
           ],
           queue: [
             makeSchema({
               type: {
-                enum: [SEED_RNG_ENCRYPT]
+                enum: [SEED_RNG_ENCRYPT],
               },
               agent: {
-                enum: [orderedPlayers[seedCount]]
+                enum: [orderedPlayers[seedCount]],
               },
               boxId: {
-                type: "string"
+                type: "string",
               },
               box: {
                 type: "object",
@@ -174,19 +174,19 @@ export const seedRngReducer = (state, action) => {
                 required: ["contents", "keys"],
                 properties: {
                   contents: {
-                    type: "string"
+                    type: "string",
                   },
                   keys: {
                     [orderedPlayers[seedCount]]: {
-                      type: "string"
-                    }
-                  }
-                }
-              }
+                      type: "string",
+                    },
+                  },
+                },
+              },
             }),
-            ...state.game.queue
-          ]
-        }
+            ...state.game.queue,
+          ],
+        },
       };
     }
   }
@@ -194,7 +194,7 @@ export const seedRngReducer = (state, action) => {
   if (action.type === SEED_RNG_COMBINE) {
     let finalSeed = Object.keys(state.game.players)
       .sort()
-      .map(playerId => {
+      .map((playerId) => {
         return Box.traverse(state, state.game.randoSeeds[playerId]);
       })
       .join("");
@@ -205,8 +205,8 @@ export const seedRngReducer = (state, action) => {
       game: {
         ...state.game,
         randoSeeds: {},
-        randoSeed: finalSeed
-      }
+        randoSeed: finalSeed,
+      },
     };
   }
 

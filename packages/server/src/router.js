@@ -180,7 +180,7 @@ app.post(hashRegex, async (req, res) => {
       curve: "ed25519",
       public: req.body.agent.slice(1),
     },
-    action
+    action,
   );
   if (!verified) {
     return res.sendStatus(403);

@@ -9,14 +9,14 @@
 
 export default function createGameActionMiddleware(actions) {
   const actionMap = {};
-  Object.keys(actions).forEach(key => {
+  Object.keys(actions).forEach((key) => {
     const value = actions[key];
     if (typeof value !== "string" || key !== value) {
       return;
     }
     const camelCase = value
       .split("_")
-      .map(word => word[0].toUpperCase() + word.slice(1).toLowerCase())
+      .map((word) => word[0].toUpperCase() + word.slice(1).toLowerCase())
       .join("");
     const actionCreator = camelCase[0].toLowerCase() + camelCase.slice(1);
     if (actions[actionCreator]) {
@@ -41,25 +41,25 @@ export default function createGameActionMiddleware(actions) {
       const queueUser = state.game.nextActions[0].playerId;
       if (sender !== queueUser) {
         throw new Error(
-          `queue wants user ${queueUser} but user ${sender} acted`
+          `queue wants user ${queueUser} but user ${sender} acted`,
         );
       }
     }
     // no queue, check if it's an allowed action
     else if (state.game.allowedActions[action.type] !== true) {
       throw new Error(
-        `${sender} attempted to do non-allowed action ${action.type}`
+        `${sender} attempted to do non-allowed action ${action.type}`,
       );
     } else if (state.game.turn !== sender) {
       throw new Error(
-        `${sender} acted out of turn; it's ${state.game.turn}'s turn`
+        `${sender} acted out of turn; it's ${state.game.turn}'s turn`,
       );
     }
   }
 
   return function gameActionMiddleware(store) {
-    return next => {
-      return action => {
+    return (next) => {
+      return (action) => {
         const state = store.getState();
         let { dispatch, getState } = store;
         checkActionAllowed(state, action);
@@ -70,11 +70,11 @@ export default function createGameActionMiddleware(actions) {
           !action._dispatchedFromQueue
         ) {
           action = actionMap[action.type](action);
-          dispatch = action =>
+          dispatch = (action) =>
             store.dispatch({
               ...action,
               _fromQueue: true,
-              _dispatchedFromQueue: true
+              _dispatchedFromQueue: true,
             });
         }
         // implement thunk

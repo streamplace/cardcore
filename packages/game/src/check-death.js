@@ -2,15 +2,15 @@ import { Box, makeSchema } from "@cardcore/util";
 import { DEFEAT } from "./defeat";
 
 export const CHECK_DEATH = "CHECK_DEATH";
-export const checkDeath = () => async dispatch => {
+export const checkDeath = () => async (dispatch) => {
   await dispatch({
-    type: CHECK_DEATH
+    type: CHECK_DEATH,
   });
 };
 
 export const checkDeathReducer = (state, action) => {
   if (action.type === CHECK_DEATH) {
-    const traverse = boxId => Box.traverse(state, boxId);
+    const traverse = (boxId) => Box.traverse(state, boxId);
     const newPlayers = {};
     const defeats = [];
     Object.entries(state.game.players).forEach(([playerId, player]) => {
@@ -21,13 +21,13 @@ export const checkDeathReducer = (state, action) => {
       newPlayers[playerId] = {
         ...player,
         field: player.field.filter(
-          boxId => state.game.units[traverse(boxId)].health > 0
+          (boxId) => state.game.units[traverse(boxId)].health > 0,
         ),
         graveyard: player.field.concat(
           player.field.filter(
-            boxId => state.game.units[traverse(boxId)].health <= 0
-          )
-        )
+            (boxId) => state.game.units[traverse(boxId)].health <= 0,
+          ),
+        ),
       };
       const playerUnit = state.game.units[player.unitId];
       if (playerUnit.health <= 0) {
@@ -42,20 +42,20 @@ export const checkDeathReducer = (state, action) => {
         game: {
           ...state.game,
           players: newPlayers,
-          nextActions: defeats.map(pid => ({
+          nextActions: defeats.map((pid) => ({
             playerId: pid,
             action: {
               type: DEFEAT,
-              agent: pid
-            }
+              agent: pid,
+            },
           })),
           queue: defeats
-            .map(agent => ({
+            .map((agent) => ({
               type: DEFEAT,
-              agent
+              agent,
             }))
-            .map(makeSchema)
-        }
+            .map(makeSchema),
+        },
       };
     }
 
@@ -63,8 +63,8 @@ export const checkDeathReducer = (state, action) => {
       ...state,
       game: {
         ...state.game,
-        players: newPlayers
-      }
+        players: newPlayers,
+      },
     };
   }
 

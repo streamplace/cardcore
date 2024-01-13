@@ -8,7 +8,7 @@ export const attack = (attackingUnitId, defendingUnitId) => {
   return {
     type: ATTACK,
     attackingUnitId,
-    defendingUnitId
+    defendingUnitId,
   };
 };
 
@@ -20,9 +20,9 @@ export const attackReducer = (state, action) => {
         ...state.game,
         allowedActions: {
           ...state.game.allowedActions,
-          [ATTACK]: true
-        }
-      }
+          [ATTACK]: true,
+        },
+      },
     };
   }
 
@@ -39,40 +39,40 @@ export const attackReducer = (state, action) => {
           [attackingUnitId]: {
             ...attackingUnit,
             health: attackingUnit.health - defendingUnit.attack,
-            canAttack: false
+            canAttack: false,
           },
           [defendingUnitId]: {
             ...defendingUnit,
-            health: defendingUnit.health - attackingUnit.attack
-          }
+            health: defendingUnit.health - attackingUnit.attack,
+          },
         },
         nextActions: [
           {
             playerId: action.agent,
             action: {
-              type: CHECK_DEATH
-            }
+              type: CHECK_DEATH,
+            },
           },
           {
             playerId: action.agent,
             action: {
-              type: STANDARD_ACTION
-            }
+              type: STANDARD_ACTION,
+            },
           },
-          ...state.game.nextActions
+          ...state.game.nextActions,
         ],
         queue: [
           makeSchema({
             type: CHECK_DEATH,
-            agent: action.agent
+            agent: action.agent,
           }),
           makeSchema({
             type: STANDARD_ACTION,
-            agent: action.agent
+            agent: action.agent,
           }),
-          ...state.game.queue
-        ]
-      }
+          ...state.game.queue,
+        ],
+      },
     };
   }
   return state;

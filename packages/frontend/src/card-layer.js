@@ -9,8 +9,8 @@ import { Box } from "@cardcore/util";
 
 const CardLayerBox = styled(View)`
   position: absolute;
-  height: ${props => props.height}px;
-  width: ${props => props.width}px;
+  height: ${(props) => props.height}px;
+  width: ${(props) => props.width}px;
   top: 0px;
   left: 0px;
   z-index: 100;
@@ -22,7 +22,7 @@ export class Sidebar extends React.Component {
     const { height, width } = this.props;
     return (
       <CardLayerBox pointerEvents="box-none" height={height} width={width}>
-        {this.props.cards.map(layout => {
+        {this.props.cards.map((layout) => {
           const cardId = this.props.boxTraverse(layout.boxId);
           const player = this.props.players[layout.playerId];
           let active = false;
@@ -61,7 +61,7 @@ export class Sidebar extends React.Component {
             />
           );
         })}
-        {this.props.faces.map(layout => {
+        {this.props.faces.map((layout) => {
           return (
             <Card
               key={layout.boxId}
@@ -88,11 +88,11 @@ const mapStateToProps = (state, props) => {
     currentPlayer: state.client.keys.id,
     turn: state.game.turn,
     units: state.game.units,
-    cards: state.frontend.layout.filter(elem => elem.type === "card"),
-    faces: state.frontend.layout.filter(elem => elem.type === "face"),
+    cards: state.frontend.layout.filter((elem) => elem.type === "card"),
+    faces: state.frontend.layout.filter((elem) => elem.type === "face"),
     boxTraverse: Box.traverse.bind(Box, state),
     state: state,
-    availableTargets: state.client.availableTargets
+    availableTargets: state.client.availableTargets,
   };
 };
 

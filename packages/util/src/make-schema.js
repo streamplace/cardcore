@@ -7,7 +7,7 @@ export default function makeSchema(fields) {
   for (const field of Object.keys(fields)) {
     if (typeof fields[field] === "string") {
       fields[field] = {
-        enum: [fields[field]]
+        enum: [fields[field]],
       };
     }
   }
@@ -17,19 +17,19 @@ export default function makeSchema(fields) {
     required: Object.keys(fields).sort(),
     properties: {
       type: {
-        enum: [fields.type.enum[0]]
+        enum: [fields.type.enum[0]],
       },
       prev: {
-        type: "string"
+        type: "string",
       },
       next: {
-        type: "string"
+        type: "string",
       },
       signature: {
-        type: "string"
+        type: "string",
       },
-      ...fields
-    }
+      ...fields,
+    },
   };
 
   // Shallow, first-pass validation to see if we have invalid enums

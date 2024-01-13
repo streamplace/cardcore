@@ -6,13 +6,13 @@ const validator = new ZSchema();
 export default function queueReducer(state, action) {
   // hack
   action = {
-    ...action
+    ...action,
   };
   delete action.__REMOTE_ACTION;
   const schema = state.game.queue[0];
   if (!schema) {
     throw new Error(
-      JSON.stringify({ errorType: "EMPTY_QUEUE", action }, null, 2)
+      JSON.stringify({ errorType: "EMPTY_QUEUE", action }, null, 2),
     );
   }
   // const validate = ajv.compile(schema);
@@ -28,11 +28,11 @@ export default function queueReducer(state, action) {
             errorType: "INVALID_SCHEMA",
             message: `json-schemas may not contain undefined values — found undefined at ${path}`,
             action,
-            schema
+            schema,
           },
           null,
-          2
-        )
+          2,
+        ),
       );
     }
     if (typeof node === "object" && node !== null) {
@@ -61,8 +61,8 @@ export default function queueReducer(state, action) {
       JSON.stringify(
         { errors: validator.getLastErrors(), action, schema },
         null,
-        2
-      )
+        2,
+      ),
     );
   }
 
@@ -71,7 +71,7 @@ export default function queueReducer(state, action) {
     ...state,
     game: {
       ...state.game,
-      queue: state.game.queue.slice(1)
-    }
+      queue: state.game.queue.slice(1),
+    },
   };
 }

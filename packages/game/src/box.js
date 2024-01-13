@@ -1,13 +1,15 @@
 import { Box } from "@cardcore/util";
 
 export const BOX_OPEN = "BOX_OPEN";
-export const boxOpen = ({ boxId }) => (dispatch, getState) => {
-  return dispatch({
-    type: "BOX_OPEN",
-    boxId,
-    privateKey: Box.getPrivate(getState(), boxId)
-  });
-};
+export const boxOpen =
+  ({ boxId }) =>
+  (dispatch, getState) => {
+    return dispatch({
+      type: "BOX_OPEN",
+      boxId,
+      privateKey: Box.getPrivate(getState(), boxId),
+    });
+  };
 
 export const boxOpenReducer = (state, action) => {
   if (action.type === BOX_OPEN) {
@@ -20,10 +22,10 @@ export const boxOpenReducer = (state, action) => {
           ...state.game.boxes,
           [action.boxId]: {
             ...state.game.boxes[action.boxId],
-            privateKey: action.privateKey
-          }
-        }
-      }
+            privateKey: action.privateKey,
+          },
+        },
+      },
     };
     const value = Box.open(newState, action.boxId);
     if (!value) {

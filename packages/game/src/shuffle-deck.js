@@ -8,40 +8,38 @@ export const SHUFFLE_DECK = "SHUFFLE_DECK";
 // };
 
 export const SHUFFLE_DECK_ENCRYPT = "SHUFFLE_DECK_ENCRYPT";
-export const shuffleDeckEncrypt = ({ playerId }) => async (
-  dispatch,
-  getState
-) => {
-  const state = getState();
-  const seed = ssbKeys.generate().public;
-  const boxes = {};
-  for (const card of state.game.players[playerId].deck) {
-    const { boxId, box } = Box.new(card, state.client.keys.id);
-    boxes[boxId] = box;
-  }
-  return dispatch({
-    type: SHUFFLE_DECK_ENCRYPT,
-    seed,
-    boxes,
-    playerId
-  });
-};
+export const shuffleDeckEncrypt =
+  ({ playerId }) =>
+  async (dispatch, getState) => {
+    const state = getState();
+    const seed = ssbKeys.generate().public;
+    const boxes = {};
+    for (const card of state.game.players[playerId].deck) {
+      const { boxId, box } = Box.new(card, state.client.keys.id);
+      boxes[boxId] = box;
+    }
+    return dispatch({
+      type: SHUFFLE_DECK_ENCRYPT,
+      seed,
+      boxes,
+      playerId,
+    });
+  };
 
 // for now this operates on the first card in someone's hand... maybe that's okay.
 export const SHUFFLE_DECK_DECRYPT = "SHUFFLE_DECK_DECRYPT";
-export const shuffleDeckDecrypt = ({ playerId, boxId }) => (
-  dispatch,
-  getState
-) => {
-  const state = getState();
-  const key = Box.addKey(state, boxId, playerId);
-  return dispatch({
-    type: SHUFFLE_DECK_DECRYPT,
-    boxId,
-    playerId,
-    key
-  });
-};
+export const shuffleDeckDecrypt =
+  ({ playerId, boxId }) =>
+  (dispatch, getState) => {
+    const state = getState();
+    const key = Box.addKey(state, boxId, playerId);
+    return dispatch({
+      type: SHUFFLE_DECK_DECRYPT,
+      boxId,
+      playerId,
+      key,
+    });
+  };
 
 export const shuffleDeckReducer = (state, action) => {
   if (action.type === SHUFFLE_DECK) {
@@ -51,25 +49,25 @@ export const shuffleDeckReducer = (state, action) => {
       game: {
         ...state.game,
         nextActions: [
-          ...encryptOrder.map(playerId => {
+          ...encryptOrder.map((playerId) => {
             return {
               playerId,
               action: {
                 type: SHUFFLE_DECK_ENCRYPT,
-                playerId: action.playerId
-              }
+                playerId: action.playerId,
+              },
             };
           }),
-          ...state.game.nextActions
+          ...state.game.nextActions,
         ],
         queue: [
-          ...encryptOrder.map(playerId =>
+          ...encryptOrder.map((playerId) =>
             makeSchema({
               type: SHUFFLE_DECK_ENCRYPT,
               agent: playerId,
               playerId: action.playerId,
               seed: {
-                type: "string"
+                type: "string",
               },
               boxes: {
                 type: "object",
@@ -79,21 +77,21 @@ export const shuffleDeckReducer = (state, action) => {
                   type: "object",
                   properties: {
                     contents: {
-                      type: "string"
+                      type: "string",
                     },
                     keys: {
                       [playerId]: {
-                        type: "string"
-                      }
-                    }
-                  }
-                }
-              }
-            })
+                        type: "string",
+                      },
+                    },
+                  },
+                },
+              },
+            }),
           ),
-          ...state.game.queue
-        ]
-      }
+          ...state.game.queue,
+        ],
+      },
     };
   }
 
@@ -107,8 +105,8 @@ export const shuffleDeckReducer = (state, action) => {
           ...state.game.players,
           [action.playerId]: {
             ...state.game.players[action.playerId],
-            deck: localRando.shuffle(Object.keys(action.boxes))
-          }
+            deck: localRando.shuffle(Object.keys(action.boxes)),
+          },
         },
         boxes: Object.keys(action.boxes).reduce(
           (boxes, boxId) => ({
@@ -116,13 +114,13 @@ export const shuffleDeckReducer = (state, action) => {
             [boxId]: {
               contents: action.boxes[boxId].contents,
               keys: {
-                [action.agent]: action.boxes[boxId].keys[action.agent]
-              }
-            }
+                [action.agent]: action.boxes[boxId].keys[action.agent],
+              },
+            },
           }),
-          state.game.boxes
-        )
-      }
+          state.game.boxes,
+        ),
+      },
     };
   }
 
@@ -138,11 +136,11 @@ export const shuffleDeckReducer = (state, action) => {
             ...box,
             keys: {
               ...box.keys,
-              [action.playerId]: action.key
-            }
-          }
-        }
-      }
+              [action.playerId]: action.key,
+            },
+          },
+        },
+      },
     };
   }
 

@@ -30,7 +30,7 @@ export class FieldSide extends React.Component {
   render() {
     return (
       <FieldSideBox
-        onClick={e => this.handleClick(e)}
+        onClick={(e) => this.handleClick(e)}
         // innerRef={registerDropTarget(e => this.handleDrop(e))}
       >
         {/* {this.props.player.field.map((card, i) => {
@@ -52,7 +52,7 @@ const mapStateToProps = (state, props) => {
   return {
     player: state.game.players[props.playerId],
     turn: state.game.turn,
-    units: state.game.units
+    units: state.game.units,
   };
 };
 

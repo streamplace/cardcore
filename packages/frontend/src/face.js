@@ -43,7 +43,7 @@ export class Face extends React.Component {
 
   render() {
     return (
-      <FaceVert innerRef={registerDropTarget(e => this.handleDrop(e))}>
+      <FaceVert innerRef={registerDropTarget((e) => this.handleDrop(e))}>
         <FaceBox>
           <Emoji>{this.props.unit.emoji}</Emoji>
           <Health>
@@ -68,7 +68,7 @@ const mapStateToProps = (state, props) => {
   return {
     player: state.game.players[props.playerId],
     unitId: state.game.players[props.playerId].unitId,
-    unit: state.game.units[state.game.players[props.playerId].unitId]
+    unit: state.game.units[state.game.players[props.playerId].unitId],
   };
 };
 

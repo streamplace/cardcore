@@ -9,12 +9,12 @@ describe("queueReducer", () => {
             type: "object",
             properties: {
               type: {
-                enum: ["TEST_ACTION"]
-              }
-            }
-          }
-        ]
-      }
+                enum: ["TEST_ACTION"],
+              },
+            },
+          },
+        ],
+      },
     };
     queueReducer(state, { type: "TEST_ACTION" });
     expect(() => {

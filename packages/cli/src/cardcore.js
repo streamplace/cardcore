@@ -9,86 +9,86 @@ yargs
   .command(
     "server",
     "start a cardcore server",
-    yargs => {
+    (yargs) => {
       yargs.option("port", {
         describe: `port to bind on`,
-        default: 5000
+        default: 5000,
       });
       yargs.option("data-dir", {
         describe: `data storage directory`,
         type: "string",
-        default: null
+        default: null,
       });
     },
-    async argv => {
+    async (argv) => {
       await runServer({
         port: argv.port,
-        dataDir: argv.dataDir
+        dataDir: argv.dataDir,
       });
-    }
+    },
   )
 
   .command(
     "simulate",
     "run a simulation of a cardcore game",
-    yargs => {
+    (yargs) => {
       yargs.option("count", {
         describe: "how many simulations to run",
         type: "number",
-        default: 1
+        default: 1,
       });
 
       yargs.option("concurrency", {
         describe: "when count >= 1, how many simulations should I run at once?",
         type: "number",
-        default: 16
+        default: 16,
       });
 
       yargs.command(
         "create",
         "start up a cardcore client creating a game",
-        yargs => {
+        (yargs) => {
           yargs.option("server", {
             describe: `server to which I should connect`,
             type: "string",
-            demandOption: true
+            demandOption: true,
           });
         },
-        async argv => {
+        async (argv) => {
           await simulateCreate(argv.server);
-        }
+        },
       );
 
       yargs.command(
         "join",
         "start up a cardcore client creating a game",
-        yargs => {
+        (yargs) => {
           yargs.option("server", {
             describe: `server to which I should connect`,
             type: "string",
-            demandOption: true
+            demandOption: true,
           });
           yargs.option("game-id", {
             describe: "id of the simulated game",
             type: "string",
-            demandOption: true
+            demandOption: true,
           });
         },
-        async argv => {
+        async (argv) => {
           await simulateJoin(argv.server, argv.gameId);
-        }
+        },
       );
     },
-    async argv => {
+    async (argv) => {
       await simulateServer({
         count: argv.count,
-        concurrency: argv.concurrency
+        concurrency: argv.concurrency,
       });
-    }
+    },
   )
 
   .demandCommand()
   .option("verbose", {
     alias: "v",
-    default: false
+    default: false,
   }).argv;

@@ -16,14 +16,14 @@ export const summonCreatureReducer = (state, action) => {
           ...state.game.players,
           [state.game.turn]: {
             ...player,
-            field: [...player.field, playerUnitId]
-          }
+            field: [...player.field, playerUnitId],
+          },
         },
         units: {
           ...state.game.units,
-          ...newUnit
-        }
-      }
+          ...newUnit,
+        },
+      },
     };
   }
   return state;

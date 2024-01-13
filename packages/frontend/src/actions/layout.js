@@ -2,28 +2,28 @@ export const TOP_SIDEBOARD = {
   x: 0,
   y: 0,
   width: 1,
-  height: 0.25
+  height: 0.25,
 };
 
 export const TOP_FIELD = {
   x: 0,
   y: 0.25,
   width: 1,
-  height: 0.25
+  height: 0.25,
 };
 
 export const BOTTOM_FIELD = {
   x: 0,
   y: 0.5,
   width: 1,
-  height: 0.25
+  height: 0.25,
 };
 
 export const BOTTOM_SIDEBOARD = {
   x: 0,
   y: 0.75,
   width: 1,
-  height: 0.25
+  height: 0.25,
 };
 
 export const CARD_PADDING = 5;
@@ -46,7 +46,7 @@ export function layoutReducer(state) {
   let [topPlayerId, bottomPlayerId] = state.game.playerOrder;
   if (state.game.playerOrder.includes(state.client.keys.id)) {
     topPlayerId = state.game.playerOrder.find(
-      id => id !== state.client.keys.id
+      (id) => id !== state.client.keys.id,
     );
     bottomPlayerId = state.client.keys.id;
   }
@@ -62,23 +62,23 @@ export function layoutReducer(state) {
     {
       playerId: topPlayerId,
       location: "hand",
-      region: TOP_SIDEBOARD
+      region: TOP_SIDEBOARD,
     },
     {
       playerId: topPlayerId,
       location: "field",
-      region: TOP_FIELD
+      region: TOP_FIELD,
     },
     {
       playerId: bottomPlayerId,
       location: "field",
-      region: BOTTOM_FIELD
+      region: BOTTOM_FIELD,
     },
     {
       playerId: bottomPlayerId,
       location: "hand",
-      region: BOTTOM_SIDEBOARD
-    }
+      region: BOTTOM_SIDEBOARD,
+    },
   ].forEach(({ playerId, location, region }) => {
     layout.push({
       type: "region",
@@ -87,7 +87,7 @@ export function layoutReducer(state) {
       y: height * region.y,
       width: width * region.width,
       height: height * region.height,
-      zIndex: REGION_Z_INDEX
+      zIndex: REGION_Z_INDEX,
     });
     const player = state.game.players[playerId];
     const boxIds = player[location];
@@ -107,7 +107,7 @@ export function layoutReducer(state) {
         y: y,
         playerId,
         location,
-        zIndex: CARD_Z_INDEX
+        zIndex: CARD_Z_INDEX,
       });
     });
   });
@@ -116,12 +116,12 @@ export function layoutReducer(state) {
   [
     {
       region: TOP_SIDEBOARD,
-      playerId: topPlayerId
+      playerId: topPlayerId,
     },
     {
       region: BOTTOM_SIDEBOARD,
-      playerId: bottomPlayerId
-    }
+      playerId: bottomPlayerId,
+    },
   ].forEach(({ region, playerId }) => {
     const cardHeight = height * region.height - CARD_PADDING * 2;
     const cardWidth = (cardHeight * 3) / 4;
@@ -135,7 +135,7 @@ export function layoutReducer(state) {
       width: cardWidth,
       height: cardHeight,
       zIndex: CARD_Z_INDEX,
-      availableMana: player.availableMana
+      availableMana: player.availableMana,
     });
   });
 

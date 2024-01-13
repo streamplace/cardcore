@@ -11,14 +11,14 @@ const INITIAL_STATE = {
   started: false,
   loadingState: true,
   closed: false,
-  actionLog: []
+  actionLog: [],
 };
 
 export default function clientReducer(state, action) {
   if (state.client === undefined) {
     state = {
       ...state,
-      client: INITIAL_STATE
+      client: INITIAL_STATE,
     };
   }
 
@@ -27,8 +27,8 @@ export default function clientReducer(state, action) {
       ...state,
       client: {
         ...state.client,
-        actionLog: [...state.client.actionLog, action]
-      }
+        actionLog: [...state.client.actionLog, action],
+      },
     };
   }
 
@@ -37,8 +37,8 @@ export default function clientReducer(state, action) {
       ...state,
       client: {
         ...state.client,
-        started: true
-      }
+        started: true,
+      },
     };
   }
   if (action.type === clientActions.CLIENT_GENERATE_IDENTITY) {
@@ -47,8 +47,8 @@ export default function clientReducer(state, action) {
       client: {
         ...state.client,
         keys: action.keys,
-        shortName: action.keys.id.slice(0, 13)
-      }
+        shortName: action.keys.id.slice(0, 13),
+      },
     };
   }
 
@@ -57,9 +57,9 @@ export default function clientReducer(state, action) {
       ...state,
       client: {
         ...state.client,
-        targetQueue: action.unit.onSummon.map(onSummon => onSummon.target),
-        playingBoxId: action.boxId
-      }
+        targetQueue: action.unit.onSummon.map((onSummon) => onSummon.target),
+        playingBoxId: action.boxId,
+      },
     };
   }
 
@@ -71,8 +71,8 @@ export default function clientReducer(state, action) {
         targetQueue: [],
         targets: [],
         availableTargets: null,
-        playingBoxId: null
-      }
+        playingBoxId: null,
+      },
     };
   }
 
@@ -84,9 +84,9 @@ export default function clientReducer(state, action) {
         sync: false,
         desyncStates: {
           ...state.client.desyncStates,
-          [action.user]: action.state
-        }
-      }
+          [action.user]: action.state,
+        },
+      },
     };
   }
   if (action.type === clientActions.CLIENT_START_TARGET) {
@@ -94,8 +94,8 @@ export default function clientReducer(state, action) {
       ...state,
       client: {
         ...state.client,
-        availableTargets: action.availableTargets
-      }
+        availableTargets: action.availableTargets,
+      },
     };
   }
 
@@ -105,8 +105,8 @@ export default function clientReducer(state, action) {
       client: {
         ...state.client,
         targetQueue: state.client.targetQueue.slice(1),
-        targets: [...state.client.targets, action.unitId]
-      }
+        targets: [...state.client.targets, action.unitId],
+      },
     };
   }
 
@@ -115,8 +115,8 @@ export default function clientReducer(state, action) {
       ...state,
       client: {
         ...state.client,
-        loadingState: true
-      }
+        loadingState: true,
+      },
     };
   }
 
@@ -128,8 +128,8 @@ export default function clientReducer(state, action) {
       ...state,
       client: {
         ...state.client,
-        loadingState: false
-      }
+        loadingState: false,
+      },
     };
   }
 
@@ -139,8 +139,8 @@ export default function clientReducer(state, action) {
       client: {
         ...state.client,
         availableTargets: null,
-        targets: []
-      }
+        targets: [],
+      },
     };
   }
 
@@ -148,8 +148,8 @@ export default function clientReducer(state, action) {
     return {
       ...state,
       client: {
-        actionMap: action.actionMap
-      }
+        actionMap: action.actionMap,
+      },
     };
   }
 
@@ -158,8 +158,8 @@ export default function clientReducer(state, action) {
       ...state,
       client: {
         ...state.client,
-        polling: action.polling
-      }
+        polling: action.polling,
+      },
     };
   }
 
@@ -168,8 +168,8 @@ export default function clientReducer(state, action) {
       ...state,
       client: {
         ...state.client,
-        closed: true
-      }
+        closed: true,
+      },
     };
   }
 

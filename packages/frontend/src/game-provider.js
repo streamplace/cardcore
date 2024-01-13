@@ -10,7 +10,7 @@ export default class GameProvider extends React.Component {
   constructor() {
     super();
     this.state = {
-      ready: false
+      ready: false,
     };
     this.handleResize = this.handleResize.bind(this);
   }
@@ -24,7 +24,7 @@ export default class GameProvider extends React.Component {
     this.store = createStore(gameModules, {
       ...clientModules,
       ...frontendModules,
-      ...additionalModules
+      ...additionalModules,
     });
     await this.handleResize();
     this.setState({ ready: true });

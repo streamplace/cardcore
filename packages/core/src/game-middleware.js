@@ -4,8 +4,8 @@ export default function createGameMiddleware(gameActions, clientActions) {
   const { clientFetch, clientHandleNext } = clientActions;
 
   return function gameMiddleware(store) {
-    return next => {
-      return async action => {
+    return (next) => {
+      return async (action) => {
         // Hacky, but we need this in the store before anything.
 
         // First thing first... implement thunk.
@@ -32,7 +32,7 @@ export default function createGameMiddleware(gameActions, clientActions) {
           action = {
             ...action,
             agent: me,
-            prev: prevHash
+            prev: prevHash,
           };
         } else {
           if (action.prev !== prevHash) {
@@ -50,7 +50,7 @@ export default function createGameMiddleware(gameActions, clientActions) {
         } else {
           action = {
             ...action,
-            next: nextHash
+            next: nextHash,
           };
         }
 
@@ -64,13 +64,13 @@ export default function createGameMiddleware(gameActions, clientActions) {
                 method: "POST",
                 body: signedAction,
                 headers: {
-                  "content-type": "application/json"
-                }
-              })
+                  "content-type": "application/json",
+                },
+              }),
             );
           } catch (e) {
             console.error(
-              "Failed to create an action. We should probably handle this error."
+              "Failed to create an action. We should probably handle this error.",
             );
             console.log(e);
             throw e;
@@ -82,8 +82,8 @@ export default function createGameMiddleware(gameActions, clientActions) {
                 JSON.stringify({
                   errorType: "DESYNC",
                   clientState: store.getState().game,
-                  serverState: JSON.parse(text)
-                })
+                  serverState: JSON.parse(text),
+                }),
               );
             }
             throw new Error(text);
@@ -94,7 +94,7 @@ export default function createGameMiddleware(gameActions, clientActions) {
         else {
           if (!Keys.verifyAction(prevState, action)) {
             throw new Error(
-              `Remote action failed to verify: ${JSON.stringify(action)}`
+              `Remote action failed to verify: ${JSON.stringify(action)}`,
             );
           }
         }

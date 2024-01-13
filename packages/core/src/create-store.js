@@ -3,10 +3,10 @@ import createGameMiddleware from "./game-middleware";
 // import invariant from "redux-immutable-state-invariant";
 import { createReducer } from "./reducer";
 
-export default function(gameModules, clientModules) {
+export default function (gameModules, clientModules) {
   const middlewares = Object.entries({
     ...gameModules,
-    ...clientModules
+    ...clientModules,
   })
     .filter(([name]) => {
       return name.endsWith("Middleware");
@@ -21,8 +21,8 @@ export default function(gameModules, clientModules) {
     composeEnhancers(
       applyMiddleware(
         createGameMiddleware(gameModules, clientModules),
-        ...middlewares.map(creator => creator(gameModules, clientModules))
-      )
-    )
+        ...middlewares.map((creator) => creator(gameModules, clientModules)),
+      ),
+    ),
   );
 }

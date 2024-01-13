@@ -9,7 +9,7 @@ export function drawCardReducer(state, action) {
     if (action.target.player === "self") {
       players = [state.game.turn];
     } else if (action.target.player === "enemy") {
-      players = state.game.playerOrder.filter(x => x !== state.game.turn);
+      players = state.game.playerOrder.filter((x) => x !== state.game.turn);
     } else if (action.target.player) {
       players = [action.target.player];
     } else if (action.target.playerId) {
@@ -28,33 +28,33 @@ export function drawCardReducer(state, action) {
               ...state.game.units,
               [player.unitId]: {
                 ...state.game.units[player.unitId],
-                health: state.game.units[player.unitId].health - player.fatigue
-              }
+                health: state.game.units[player.unitId].health - player.fatigue,
+              },
             },
             players: {
               ...state.game.players,
               [playerId]: {
                 ...player,
-                fatigue: player.fatigue + 1
-              }
+                fatigue: player.fatigue + 1,
+              },
             },
             nextActions: [
               {
                 playerId: playerId,
                 action: {
-                  type: CHECK_DEATH
-                }
+                  type: CHECK_DEATH,
+                },
               },
-              ...state.game.nextActions
+              ...state.game.nextActions,
             ],
             queue: [
               makeSchema({
                 type: CHECK_DEATH,
-                agent: playerId
+                agent: playerId,
               }),
-              ...state.game.queue
-            ]
-          }
+              ...state.game.queue,
+            ],
+          },
         };
       }
       return {
@@ -66,8 +66,8 @@ export function drawCardReducer(state, action) {
             [playerId]: {
               ...player,
               hand: [boxId, ...player.hand],
-              deck: player.deck.slice(1)
-            }
+              deck: player.deck.slice(1),
+            },
           },
           nextActions: [
             {
@@ -75,10 +75,10 @@ export function drawCardReducer(state, action) {
               action: {
                 type: SHUFFLE_DECK_DECRYPT,
                 playerId: playerId,
-                boxId: boxId
-              }
+                boxId: boxId,
+              },
             },
-            ...state.game.nextActions
+            ...state.game.nextActions,
           ],
           queue: [
             makeSchema({
@@ -87,12 +87,12 @@ export function drawCardReducer(state, action) {
               boxId: boxId,
               playerId,
               key: {
-                type: "string"
-              }
+                type: "string",
+              },
             }),
-            ...state.game.queue
-          ]
-        }
+            ...state.game.queue,
+          ],
+        },
       };
     }
     return state;

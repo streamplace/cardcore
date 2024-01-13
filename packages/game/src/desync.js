@@ -7,6 +7,6 @@ export const desync = (user, state) => {
   return {
     type: DESYNC,
     user: user,
-    state: state
+    state: state,
   };
 };

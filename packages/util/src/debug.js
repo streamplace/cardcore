@@ -2,8 +2,8 @@ import debugModule from "debug";
 
 const funcs = {};
 
-export const debug = moduleName => {
-  return logStr => (dispatch, getState) => {
+export const debug = (moduleName) => {
+  return (logStr) => (dispatch, getState) => {
     const state = getState();
     let shortName;
     if (state.client && state.client.shortName) {

@@ -16,40 +16,40 @@ export const standardActionReducer = (state, action) => {
             anyOf: [
               makeSchema({
                 type: END_TURN,
-                agent: state.game.turn
+                agent: state.game.turn,
               }),
               makeSchema({
                 type: PLAY_CARD,
                 agent: state.game.turn,
                 boxId: {
-                  enum: [...state.game.players[state.game.turn].hand]
-                }
+                  enum: [...state.game.players[state.game.turn].hand],
+                },
               }),
               makeSchema({
                 type: ATTACK,
                 agent: state.game.turn,
                 attackingUnitId: {
                   enum: state.game.players[state.game.turn].field
-                    .map(bid => Box.traverse(state, bid))
-                    .filter(uid => state.game.units[uid].canAttack)
+                    .map((bid) => Box.traverse(state, bid))
+                    .filter((uid) => state.game.units[uid].canAttack),
                 },
                 defendingUnitId: {
                   enum: Object.keys(state.game.players)
-                    .filter(pId => pId !== state.game.turn)
-                    .map(pId => [
-                      ...state.game.players[pId].field.map(bid =>
-                        Box.traverse(state, bid)
+                    .filter((pId) => pId !== state.game.turn)
+                    .map((pId) => [
+                      ...state.game.players[pId].field.map((bid) =>
+                        Box.traverse(state, bid),
                       ),
-                      state.game.players[pId].unitId
+                      state.game.players[pId].unitId,
                     ])
-                    .reduce((all, arr) => [...all, ...arr], [])
-                }
-              })
-            ].filter(x => !!x)
+                    .reduce((all, arr) => [...all, ...arr], []),
+                },
+              }),
+            ].filter((x) => !!x),
           },
-          ...state.game.queue
-        ]
-      }
+          ...state.game.queue,
+        ],
+      },
     };
   }
 

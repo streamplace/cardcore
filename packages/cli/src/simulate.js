@@ -12,7 +12,7 @@ import uploadError from "./upload-error";
 export const mockStorage = () => {
   const storage = {};
 
-  Storage.getItem = key => {
+  Storage.getItem = (key) => {
     const item = storage[key] || null;
     return Promise.resolve(item);
   };
@@ -22,7 +22,7 @@ export const mockStorage = () => {
     return Promise.resolve();
   };
 
-  Storage.removeItem = key => {
+  Storage.removeItem = (key) => {
     delete storage[key];
     return Promise.resolve();
   };
@@ -35,9 +35,9 @@ export const simulateServerMany = async (count, concurrency) => {
   const startTime = Date.now();
   const report = () => {
     let str = `Started ${started}/${count} (${Math.floor(
-      (started / count) * 100
+      (started / count) * 100,
     )}%) Completed ${completed}/${count} (${Math.floor(
-      (completed / count) * 100
+      (completed / count) * 100,
     )}%)`;
     if (completed > 0) {
       const duration = Date.now() - startTime;
@@ -53,18 +53,18 @@ export const simulateServerMany = async (count, concurrency) => {
     const proc = fork(process.argv[1], ["simulate"], { silent: true });
     active.push(proc);
     /* eslint-disable no-loop-func */
-    proc.prom = new Promise(resolve => {
-      proc.on("close", code => {
+    proc.prom = new Promise((resolve) => {
+      proc.on("close", (code) => {
         if (code !== 0) {
           process.exit(1);
         }
-        active = active.filter(p => p !== proc);
+        active = active.filter((p) => p !== proc);
         resolve();
       });
     });
 
     if (active.length >= concurrency) {
-      await Promise.race(active.map(p => p.prom));
+      await Promise.race(active.map((p) => p.prom));
     }
     proc.prom.then(() => (completed += 1));
   }
@@ -87,10 +87,10 @@ export const simulateServer = async ({ count, concurrency }) => {
     "simulate",
     "create",
     "--server",
-    serverString
+    serverString,
   ]);
   const p1Prom = new Promise((resolve, reject) => {
-    p1.on("close", code => {
+    p1.on("close", (code) => {
       if (code !== 0) {
         return reject(new Error(`P1 exited with code ${code}`));
       }
@@ -99,7 +99,7 @@ export const simulateServer = async ({ count, concurrency }) => {
   });
 
   const gameId = await new Promise((resolve, reject) => {
-    p1.once("message", message => {
+    p1.once("message", (message) => {
       resolve(message);
     });
   });
@@ -113,11 +113,11 @@ export const simulateServer = async ({ count, concurrency }) => {
     "join",
     "--server",
     serverString,
-    `--game-id=${gameId}`
+    `--game-id=${gameId}`,
   ]);
 
   const p2Prom = new Promise((resolve, reject) => {
-    p2.on("close", code => {
+    p2.on("close", (code) => {
       if (code !== 0) {
         return reject(new Error(`P2 exited with code ${code}`));
       }
@@ -128,18 +128,18 @@ export const simulateServer = async ({ count, concurrency }) => {
   let states = new Map();
 
   const stateDumpProm = Promise.all(
-    [p1, p2].map(player => {
+    [p1, p2].map((player) => {
       return new Promise((resolve, reject) => {
-        player.on("message", state => {
+        player.on("message", (state) => {
           states.set(player, state);
           resolve(state);
         });
       });
-    })
+    }),
   );
 
-  const handleError = async err => {
-    process.on("uncaughtException", ex => {
+  const handleError = async (err) => {
+    process.on("uncaughtException", (ex) => {
       console.log(ex);
     });
     console.log("handling error ", err);
@@ -150,7 +150,10 @@ export const simulateServer = async ({ count, concurrency }) => {
         player.send("dumpState");
       }
     }
-    await Promise.race([stateDumpProm, new Promise(r => setTimeout(r, 5000))]);
+    await Promise.race([
+      stateDumpProm,
+      new Promise((r) => setTimeout(r, 5000)),
+    ]);
     const bothStates = states.values();
     if (process.env.DRONE_COMMIT) {
       try {
@@ -163,7 +166,7 @@ export const simulateServer = async ({ count, concurrency }) => {
         await uploadError({
           error: err.message,
           stack: stack,
-          states: [...states.values()]
+          states: [...states.values()],
         });
       } catch (e) {
         console.log("error uploading", e);
@@ -184,11 +187,11 @@ export const simulateServer = async ({ count, concurrency }) => {
   process.exit(1);
 };
 
-export const createPlayer = async server => {
+export const createPlayer = async (server) => {
   const store = createStore(game, { ...client, ...ai });
   await store.dispatch(client.clientGenerateIdentity({ store: false }));
   await store.dispatch(client.clientSetServer({ server }));
-  process.on("message", msg => {
+  process.on("message", (msg) => {
     if (msg === "dumpState") {
       process.send({ state: store.getState() });
     }
@@ -204,21 +207,21 @@ const exitOrDump = async (player, prom) => {
     process.send({
       error: e.message,
       stack: e.stack,
-      state: player.getState()
+      state: player.getState(),
     });
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 1000));
     process.exit(1);
   }
 };
 
-export const simulateCreate = async server => {
+export const simulateCreate = async (server) => {
   mockStorage();
   const player = await createPlayer(server);
   const playerProm = (async () => {
     await player.dispatch(game.createGame());
     await player.dispatch(ai.aiAutoplay());
   })();
-  await new Promise(r => setTimeout(r, 1000)); // Fixes race where hash runs before game created
+  await new Promise((r) => setTimeout(r, 1000)); // Fixes race where hash runs before game created
   const gameId = await player.dispatch(client.clientGetGameHash());
   process.send(gameId);
   return exitOrDump(player, playerProm);

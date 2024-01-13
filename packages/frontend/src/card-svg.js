@@ -7,7 +7,7 @@ import {
   isWeb,
   Animated,
   Easing,
-  PanResponder
+  PanResponder,
 } from "@cardcore/elements";
 import { Box } from "@cardcore/util";
 import mouseSquare from "./mouse_square.png";
@@ -50,10 +50,10 @@ const TEMP_DEFAULT_CARD = {
   cost: 1,
   attack: 2,
   health: 3,
-  text: ["Sneaky", "ON ENTER: Deal 1 damage to all other creatures."]
+  text: ["Sneaky", "ON ENTER: Deal 1 damage to all other creatures."],
 };
 
-const NumberBox = props => (
+const NumberBox = (props) => (
   <Svg.G
     transform={`translate(${props.x} ${props.y}) scale(${props.size / 1000}) `}
     width={1000}
@@ -79,41 +79,41 @@ const NumberBox = props => (
 
 const ViewWrapper = styled(Animated.View)`
   ${isWeb() && "user-select: none"};
-  ${props => isWeb() && props.targetable && "cursor: pointer"};
+  ${(props) => isWeb() && props.targetable && "cursor: pointer"};
   margin: 0 10px;
-  z-index: ${props => (props.dragging ? 101 : 100)};
+  z-index: ${(props) => (props.dragging ? 101 : 100)};
   position: absolute;
-  left: ${props => props.x}px;
-  top: ${props => props.y}px;
+  left: ${(props) => props.x}px;
+  top: ${(props) => props.y}px;
 `;
 
 const CardTitle = styled(Text)`
-  width: ${props => OVERHANG_WIDTH * props.scale}px;
-  font-size: ${props => props.fontSize * props.scale}px;
+  width: ${(props) => OVERHANG_WIDTH * props.scale}px;
+  font-size: ${(props) => props.fontSize * props.scale}px;
   color: white;
   position: absolute;
   z-index: 1;
-  font-family: ${props => props.fontFamily};
-  left: ${props => props.x * props.scale}px;
-  top: ${props => props.y * props.scale}px;
-  text-align: ${props => (props.textAnchor === "middle" ? "center" : "left")};
+  font-family: ${(props) => props.fontFamily};
+  left: ${(props) => props.x * props.scale}px;
+  top: ${(props) => props.y * props.scale}px;
+  text-align: ${(props) => (props.textAnchor === "middle" ? "center" : "left")};
 `;
 
 const CardTextWrapper = styled(View)`
   position: absolute;
   flex: 1;
-  width: ${props => (OVERHANG_WIDTH - TEXT_MARGIN * 2) * props.scale}px;
-  top: ${props => TEXT_BOX_START * props.scale}px;
-  height: ${props =>
+  width: ${(props) => (OVERHANG_WIDTH - TEXT_MARGIN * 2) * props.scale}px;
+  top: ${(props) => TEXT_BOX_START * props.scale}px;
+  height: ${(props) =>
     (HEIGHT - TEXT_BOX_START - OVERHANG_TRANSLATE_Y - TEXT_MARGIN - 175) *
     props.scale}px;
-  left: ${props => (OVERHANG_TRANSLATE_X + TEXT_MARGIN) * props.scale}px;
+  left: ${(props) => (OVERHANG_TRANSLATE_X + TEXT_MARGIN) * props.scale}px;
   z-index: 1;
   justify-content: space-around;
 `;
 
 const CardText = styled(Text)`
-  font-size: ${props => props.fontSize * props.scale}px;
+  font-size: ${(props) => props.fontSize * props.scale}px;
   text-align: center;
   font-family: ${fonts.title};
   color: white;
@@ -145,16 +145,16 @@ export class CardSVG extends React.Component {
       onPanResponderGrant: (e, gesture) => {
         this.panOffset.setValue({
           x: -e.nativeEvent.locationX,
-          y: -e.nativeEvent.locationY
+          y: -e.nativeEvent.locationY,
         });
         this.pan.setValue({
           x: this.props.x + e.nativeEvent.locationX,
-          y: this.props.y + e.nativeEvent.locationY
+          y: this.props.y + e.nativeEvent.locationY,
         });
         this.setState({
           dragging: true,
           anchorX: this.props.x,
-          anchorY: this.props.y
+          anchorY: this.props.y,
         });
       },
       onPanResponderMove: Animated.event(
@@ -162,19 +162,19 @@ export class CardSVG extends React.Component {
           null,
           {
             moveX: this.pan.x,
-            moveY: this.pan.y
-          }
+            moveY: this.pan.y,
+          },
         ],
-        true
+        true,
       ),
       onPanResponderRelease: (e, { moveX, moveY }) => {
         this.props.dispatch(
-          frontendCardDrop({ boxId: this.props.boxId, x: moveX, y: moveY })
+          frontendCardDrop({ boxId: this.props.boxId, x: moveX, y: moveY }),
         );
         this.setState({ dragging: false });
         this.pan.setValue({ x: this.props.x, y: this.props.y });
         this.panOffset.setValue({ x: 0, y: 0 });
-      }
+      },
     });
     this.pan.setValue({ x: props.x, y: props.y });
     this.panOffset.setValue({ x: 0, y: 0 });
@@ -204,7 +204,7 @@ export class CardSVG extends React.Component {
       toValue: { x: this.props.x, y: this.props.y },
       duration: 500,
       easing: Easing.ease,
-      useNativeDriver: true
+      useNativeDriver: true,
     });
     this.moveAnim.start(({ finished }) => {
       if (finished) {
@@ -218,7 +218,7 @@ export class CardSVG extends React.Component {
       toValue: 0,
       duration: 500,
       easing: Easing.ease,
-      useNativeDriver: true
+      useNativeDriver: true,
     }).start(() => {});
   }
 
@@ -247,11 +247,11 @@ export class CardSVG extends React.Component {
     }
     const spin = this.spinValue.interpolate({
       inputRange: [0, 1],
-      outputRange: ["0deg", "180deg"]
+      outputRange: ["0deg", "180deg"],
     });
     const backSpin = this.spinValue.interpolate({
       inputRange: [0, 1],
-      outputRange: ["180deg", "0deg"]
+      outputRange: ["180deg", "0deg"],
     });
     return (
       // can't use custom fonts in SVG yet, so we're forced to overlay <Text>
@@ -266,12 +266,12 @@ export class CardSVG extends React.Component {
           height: height,
           transform: [
             {
-              translateX: Animated.add(this.pan.x, this.panOffset.x)
+              translateX: Animated.add(this.pan.x, this.panOffset.x),
             },
             {
-              translateY: Animated.add(this.pan.y, this.panOffset.y)
-            }
-          ]
+              translateY: Animated.add(this.pan.y, this.panOffset.y),
+            },
+          ],
         }}
         x={0}
         y={0}
@@ -281,7 +281,7 @@ export class CardSVG extends React.Component {
           style={{
             width: width,
             height: height,
-            transform: [{ rotateY: spin }]
+            transform: [{ rotateY: spin }],
           }}
         >
           {/* name */}
@@ -341,7 +341,7 @@ export class CardSVG extends React.Component {
                 draggable={false}
                 style={{ userDrag: "none" }}
                 // needed to avoid image ghost dragging in firefox:
-                onDragStart={e => e.preventDefault()}
+                onDragStart={(e) => e.preventDefault()}
               />
               <Svg.Rect
                 width="1024"
@@ -384,7 +384,7 @@ export class CardSVG extends React.Component {
             width: width,
             height: height,
             backgroundColor: "rgb(32, 32, 32)",
-            transform: [{ rotateY: backSpin }]
+            transform: [{ rotateY: backSpin }],
           }}
         />
       </ViewWrapper>
@@ -408,7 +408,7 @@ const mapStateToProps = (state, props) => {
     myTurn: state.client.keys.id === state.game.turn,
     myUnit: state.client.keys.id === props.playerId,
     availableTargets: state.client.availableTargets,
-    cardOverride: props.cardOverride || {}
+    cardOverride: props.cardOverride || {},
   };
 };
 

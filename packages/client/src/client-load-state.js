@@ -8,7 +8,7 @@ import { clientGetGameHash } from "./client-poll";
  */
 export const CLIENT_LOAD_STATE_START = "CLIENT_LOAD_STATE_START";
 export const CLIENT_LOAD_STATE_DONE = "CLIENT_LOAD_STATE_DONE";
-export const clientLoadState = gameId => async (dispatch, getState) => {
+export const clientLoadState = (gameId) => async (dispatch, getState) => {
   const res = await dispatch(clientFetch(`/${gameId}`));
   if (res.status !== 200) {
     throw new Error(`${res.status} /${gameId}`);
@@ -18,14 +18,14 @@ export const clientLoadState = gameId => async (dispatch, getState) => {
     type: CLIENT_LOAD_STATE_START,
     gameState: startState,
     [REMOTE_ACTION]: true,
-    next: gameId
+    next: gameId,
   });
   while (true) {
     const hash = await dispatch(clientGetGameHash());
     const headRes = await dispatch(
       clientFetch(`/${hash}/next`, {
-        method: "HEAD"
-      })
+        method: "HEAD",
+      }),
     );
     if (headRes.status !== 204) {
       break;
@@ -36,13 +36,13 @@ export const clientLoadState = gameId => async (dispatch, getState) => {
     const newAct = { ...action };
     Object.defineProperty(newAct, REMOTE_ACTION, {
       value: true,
-      enumerable: false
+      enumerable: false,
     });
     await dispatch(newAct);
-    await new Promise(r => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
   }
   await dispatch({
-    type: "CLIENT_LOAD_STATE_DONE"
+    type: "CLIENT_LOAD_STATE_DONE",
   });
   await dispatch(clientHandleNext());
 };

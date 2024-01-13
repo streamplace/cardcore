@@ -24,5 +24,5 @@ ReactDOM.render(
     <GlobalStyle />
     <Router />
   </GlobalWrapper>,
-  document.getElementById("root")
+  document.getElementById("root"),
 );

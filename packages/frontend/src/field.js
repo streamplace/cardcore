@@ -6,7 +6,7 @@ import { endTurn } from "@cardcore/game";
 import { View, TouchableOpacity, Text } from "@cardcore/elements";
 
 const FieldBox = styled(View)`
-  height: ${props => props.height}px;
+  height: ${(props) => props.height}px;
 `;
 
 const Middle = styled(View)`
@@ -15,7 +15,7 @@ const Middle = styled(View)`
   border-bottom-width: 1px;
   border-bottom-color: black;
   position: absolute;
-  top: ${props => props.top}px;
+  top: ${(props) => props.top}px;
   z-index: 2;
 `;
 
@@ -29,7 +29,7 @@ const EndTurn = styled(TouchableOpacity)`
 `;
 
 const EndTurnText = styled(Text)`
-  color: ${props => (props.myTurn ? "black" : "#555")};
+  color: ${(props) => (props.myTurn ? "black" : "#555")};
   font-size: 24px;
 `;
 
@@ -40,7 +40,7 @@ export class Field extends React.Component {
     let [topPlayerId, bottomPlayerId] = this.props.playerOrder;
     if (this.props.playerOrder.includes(this.props.currentPlayer)) {
       topPlayerId = this.props.playerOrder.find(
-        id => id !== this.props.currentPlayer
+        (id) => id !== this.props.currentPlayer,
       );
       bottomPlayerId = this.props.currentPlayer;
     }
@@ -71,7 +71,7 @@ const mapStateToProps = (state, props) => {
     myTurn: state.client.keys.id === state.game.turn,
     playerOrder: state.game.playerOrder,
     currentPlayer: state.client.keys.id,
-    loading: state.game.nextActions.length !== 0 || state.client.loadingState
+    loading: state.game.nextActions.length !== 0 || state.client.loadingState,
   };
 };
 

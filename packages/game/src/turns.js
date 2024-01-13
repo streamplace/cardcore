@@ -7,7 +7,7 @@ export const START_TURN = "START_TURN";
 export const END_TURN = "END_TURN";
 
 export const endTurn = () => ({
-  type: END_TURN
+  type: END_TURN,
 });
 
 export function turnReducer(state, action) {
@@ -18,9 +18,9 @@ export function turnReducer(state, action) {
         ...state.game,
         allowedActions: {
           ...state.game.allowedActions,
-          [END_TURN]: true
-        }
-      }
+          [END_TURN]: true,
+        },
+      },
     };
   }
 
@@ -32,11 +32,11 @@ export function turnReducer(state, action) {
       newMana = 10;
     }
     const newUnits = {};
-    player.field.forEach(boxId => {
+    player.field.forEach((boxId) => {
       const unitId = Box.traverse(state, boxId);
       newUnits[unitId] = {
         ...state.game.units[unitId],
-        canAttack: true
+        canAttack: true,
       };
     });
     return {
@@ -45,26 +45,26 @@ export function turnReducer(state, action) {
         ...state.game,
         units: {
           ...state.game.units,
-          ...newUnits
+          ...newUnits,
         },
         players: {
           ...state.game.players,
           [state.game.turn]: {
             ...player,
             mana: newMana,
-            availableMana: newMana
-          }
+            availableMana: newMana,
+          },
         },
         nextActions: [
           {
             playerId: state.game.turn,
-            action: { type: DRAW_CARD, target: { player: state.game.turn } }
+            action: { type: DRAW_CARD, target: { player: state.game.turn } },
           },
           {
             playerId: state.game.turn,
-            action: { type: STANDARD_ACTION }
+            action: { type: STANDARD_ACTION },
           },
-          ...state.game.nextActions
+          ...state.game.nextActions,
         ],
         queue: [
           makeSchema({
@@ -76,18 +76,18 @@ export function turnReducer(state, action) {
               required: ["player"],
               properties: {
                 player: {
-                  enum: [state.game.turn]
-                }
-              }
-            }
+                  enum: [state.game.turn],
+                },
+              },
+            },
           }),
           makeSchema({
             type: STANDARD_ACTION,
-            agent: state.game.turn
+            agent: state.game.turn,
           }),
-          ...state.game.queue
-        ]
-      }
+          ...state.game.queue,
+        ],
+      },
     };
   }
 
@@ -105,17 +105,17 @@ export function turnReducer(state, action) {
           {
             playerId,
             action: {
-              type: START_TURN
-            }
-          }
+              type: START_TURN,
+            },
+          },
         ],
         queue: [
           makeSchema({
             type: START_TURN,
-            agent: playerId
-          })
-        ]
-      }
+            agent: playerId,
+          }),
+        ],
+      },
     };
   }
 

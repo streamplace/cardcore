@@ -4,12 +4,12 @@ import {
   TYPE_FACE,
   ALL_TYPES,
   PLAYER_SELF,
-  PLAYER_ENEMY
+  PLAYER_ENEMY,
 } from "./constants";
 import { rando } from "./random-util";
 import Box from "./box";
 
-const noop = x => x;
+const noop = (x) => x;
 
 /**
  * Returns an object of {unitId: unit}
@@ -30,9 +30,9 @@ export function target(state, target, func = noop) {
   const owners = {};
   if (target.unitId) {
     units[target.unitId] = game.units[target.unitId];
-    owners[target.unitId] = Object.keys(game.players).find(playerId => {
+    owners[target.unitId] = Object.keys(game.players).find((playerId) => {
       return game.players[playerId].field
-        .map(boxId => Box.traverse(state, boxId))
+        .map((boxId) => Box.traverse(state, boxId))
         .includes(target.unitId);
     });
     if (!owners[target.unitId]) {
@@ -45,7 +45,7 @@ export function target(state, target, func = noop) {
     } else if (target.player === PLAYER_SELF) {
       players = [game.turn];
     } else if (target.player === PLAYER_ENEMY) {
-      players = game.playerOrder.filter(p => p !== game.turn);
+      players = game.playerOrder.filter((p) => p !== game.turn);
     } else {
       players = [target.player];
     }
@@ -110,6 +110,6 @@ export function targetArray(game, action) {
   return Object.values(
     target(game, action, (unit, details) => {
       return { ...details, unit };
-    })
+    }),
   );
 }

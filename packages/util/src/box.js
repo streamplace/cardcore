@@ -21,7 +21,7 @@ const Box = {
     return ssbKeys.unbox(box.contents, {
       id: boxId,
       public: boxId.slice(1),
-      private: privateKey
+      private: privateKey,
     });
   },
 
@@ -68,15 +68,15 @@ const Box = {
     const keys = ssbKeys.generate();
     const box = {
       contents: ssbKeys.box(contents, [keys]),
-      keys: {}
+      keys: {},
     };
     for (const ownerId of ownerIds) {
       box.keys[ownerId] = ssbKeys.box(keys.private, [
         {
           id: ownerId,
           public: ownerId.slice(1),
-          curve: "ed25519"
-        }
+          curve: "ed25519",
+        },
       ]);
     }
     return { boxId: keys.id, box };
@@ -88,10 +88,10 @@ const Box = {
       {
         id: ownerId,
         public: ownerId.slice(1),
-        curve: "ed25519"
-      }
+        curve: "ed25519",
+      },
     ]);
-  }
+  },
 };
 
 export default Box;

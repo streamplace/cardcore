@@ -6,12 +6,14 @@ export const bounce = ({ target }) => {
 };
 
 export const BOUNCE_ENCRYPT = "BOUNCE_ENCRYPT";
-export const bounceEncrypt = ({ unitId }) => async (dispatch, getState) => {
-  return dispatch({
-    type: "BOUNCE_ENCRYPT",
-    unitId
-  });
-};
+export const bounceEncrypt =
+  ({ unitId }) =>
+  async (dispatch, getState) => {
+    return dispatch({
+      type: "BOUNCE_ENCRYPT",
+      unitId,
+    });
+  };
 
 export const bounceReducer = (state, action) => {
   if (action.type === BOUNCE) {
@@ -21,32 +23,32 @@ export const bounceReducer = (state, action) => {
       game: {
         ...state.game,
         nextActions: [
-          ...targets.map(target => {
+          ...targets.map((target) => {
             return {
               playerId: target.playerId,
               action: {
                 type: BOUNCE_ENCRYPT,
-                unitId: target.unitId
-              }
+                unitId: target.unitId,
+              },
             };
           }),
-          ...state.game.nextActions
+          ...state.game.nextActions,
         ],
         queue: [
-          ...targets.map(target => ({
+          ...targets.map((target) => ({
             action: BOUNCE_ENCRYPT,
             agent: target.playerId,
-            unitId: target.unitId
+            unitId: target.unitId,
           })),
-          ...state.game.queue
-        ]
-      }
+          ...state.game.queue,
+        ],
+      },
     };
   }
   if (action.type === BOUNCE_ENCRYPT) {
     const player = state.game.players[action.agent];
     const boxId = player.field.find(
-      boxId => Box.traverse(state, boxId) === action.unitId
+      (boxId) => Box.traverse(state, boxId) === action.unitId,
     );
     return {
       ...state,
@@ -57,10 +59,10 @@ export const bounceReducer = (state, action) => {
           [action.agent]: {
             ...player,
             hand: [...player.hand, boxId],
-            field: player.field.filter(bid => bid !== boxId)
-          }
-        }
-      }
+            field: player.field.filter((bid) => bid !== boxId),
+          },
+        },
+      },
     };
   }
   return state;

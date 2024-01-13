@@ -10,11 +10,11 @@ function createElement(name, type) {
   CreateElement.displayName = name;
 
   CreateElement.propTypes = {
-    children: PropTypes.node
+    children: PropTypes.node,
   };
 
   CreateElement.defaultProps = {
-    children: undefined
+    children: undefined,
   };
 
   return CreateElement;

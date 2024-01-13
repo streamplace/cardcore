@@ -1,20 +1,20 @@
 import * as gameActions from "@cardcore/game";
 import {
   CLIENT_LOAD_STATE_DONE,
-  CLIENT_LOAD_STATE_START
+  CLIENT_LOAD_STATE_START,
 } from "./client-load-state";
 import { clientPoll } from "./client-poll";
 
 // Build a mapping of action type strings to cooresponding action creators
 const actionMap = {};
-Object.keys(gameActions).forEach(key => {
+Object.keys(gameActions).forEach((key) => {
   const value = gameActions[key];
   if (typeof value !== "string" || key !== value) {
     return;
   }
   const camelCase = value
     .split("_")
-    .map(word => word[0].toUpperCase() + word.slice(1).toLowerCase())
+    .map((word) => word[0].toUpperCase() + word.slice(1).toLowerCase())
     .join("");
   const actionCreator = camelCase[0].toLowerCase() + camelCase.slice(1);
   if (gameActions[actionCreator]) {
@@ -22,7 +22,7 @@ Object.keys(gameActions).forEach(key => {
   }
 });
 
-const clientNextHelper = state => {
+const clientNextHelper = (state) => {
   const me = state.client.keys.id;
   if (state.game.nextActions.length === 0) {
     return null;
@@ -30,7 +30,7 @@ const clientNextHelper = state => {
   let { playerId, notPlayerId, action: nextAction } = state.game.nextActions[0];
   if (!gameActions[nextAction.type]) {
     throw new Error(
-      `${nextAction.type} is queued but we don't have a definition`
+      `${nextAction.type} is queued but we don't have a definition`,
     );
   }
   if (playerId && playerId !== me) {
@@ -99,8 +99,8 @@ export const clientNextReducer = (state, action) => {
     client: {
       ...state.client,
       nextAction,
-      nextAgent
-    }
+      nextAgent,
+    },
   };
 };
 
@@ -135,8 +135,8 @@ export const clientHandleNext = () => (dispatch, getState) => {
       `${
         getState().client.shortName
       } has a queued action but is not autonomous, error ${JSON.stringify(
-        state.game.queue
-      )}`
+        state.game.queue,
+      )}`,
     );
   }
 

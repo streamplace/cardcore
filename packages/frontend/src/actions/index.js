@@ -6,7 +6,7 @@ export function frontendReducer(state, action) {
   if (!state.frontend) {
     return {
       ...state,
-      frontend: {}
+      frontend: {},
     };
   }
   return state;

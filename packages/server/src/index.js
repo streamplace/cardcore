@@ -19,7 +19,7 @@ export default async function runServer({ port, dataDir, log = true }) {
 
   let listener;
   await new Promise((resolve, reject) => {
-    listener = app.listen(port, err => {
+    listener = app.listen(port, (err) => {
       if (err) {
         reject(err);
       }
@@ -31,7 +31,7 @@ export default async function runServer({ port, dataDir, log = true }) {
 }
 
 if (!module.parent) {
-  runServer({ port: process.env.PORT || 3003 }).catch(err => {
+  runServer({ port: process.env.PORT || 3003 }).catch((err) => {
     console.log(err);
     process.exit(1);
   });

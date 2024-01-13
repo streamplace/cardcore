@@ -6,7 +6,7 @@ export function aiReducer(state, action) {
   if (!state.ai) {
     state.ai = {
       fakeActions: [],
-      allActions: []
+      allActions: [],
     };
   }
 
@@ -14,8 +14,8 @@ export function aiReducer(state, action) {
     ...state,
     ai: {
       ...state.ai,
-      allActions: [...state.ai.allActions, action]
-    }
+      allActions: [...state.ai.allActions, action],
+    },
   };
 
   if (action.type === AI_FAKE_ACTION) {
@@ -23,8 +23,8 @@ export function aiReducer(state, action) {
       ...state,
       ai: {
         ...state.ai,
-        fakeActions: [...state.ai.fakeActions, action.action]
-      }
+        fakeActions: [...state.ai.fakeActions, action.action],
+      },
     };
   }
 
@@ -32,7 +32,7 @@ export function aiReducer(state, action) {
   if (action.type === PLAY_CARD && action.agent === state.client.keys.id) {
     const cardId = Box.traverse(state, action.boxId);
     const card = state.game.units[cardId];
-    const targets = card.onSummon.map(onSummon => {
+    const targets = card.onSummon.map((onSummon) => {
       if (onSummon.target.count === undefined || onSummon.target.random) {
         return null;
       }
@@ -43,8 +43,8 @@ export function aiReducer(state, action) {
       ...state,
       client: {
         ...state.client,
-        targets
-      }
+        targets,
+      },
     };
   }
 

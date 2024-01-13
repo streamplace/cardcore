@@ -13,7 +13,7 @@ export const CREATE_GAME = "CREATE_GAME";
 export const createGame = () => {
   return {
     type: CREATE_GAME,
-    startTime: Date.now()
+    startTime: Date.now(),
   };
 };
 
@@ -23,11 +23,11 @@ const INITIAL_PLAYER = {
   hand: [],
   field: [],
   graveyard: [],
-  fatigue: 1
+  fatigue: 1,
 };
 
 export const joinGame = () => ({
-  type: JOIN_GAME
+  type: JOIN_GAME,
 });
 
 export function startGameReducer(state, action) {
@@ -47,44 +47,44 @@ export function startGameReducer(state, action) {
         queue: [
           makeSchema({
             type: {
-              enum: [JOIN_GAME]
+              enum: [JOIN_GAME],
             },
             agent: {
               type: "string",
               not: {
-                enum: [action.agent]
-              }
-            }
-          })
+                enum: [action.agent],
+              },
+            },
+          }),
         ],
         nextActions: [
           {
             action: { type: JOIN_GAME },
             // lol lol lol hack hack hack
-            notPlayerId: action.agent
-          }
+            notPlayerId: action.agent,
+          },
         ],
         allowedActions: {},
         playerOrder: [],
         params: {
-          startDraw: 3
+          startDraw: 3,
         },
         started: false,
         players: {
-          [action.agent]: {}
+          [action.agent]: {},
         },
         units: {},
         randoSeeds: {},
         prev: null,
-        boxes: {}
-      }
+        boxes: {},
+      },
     };
   }
 
   if (action.type === JOIN_GAME) {
     let lexicalPlayers = [
       ...Object.keys(state.game.players),
-      action.agent
+      action.agent,
     ].sort();
     return {
       ...state,
@@ -92,42 +92,42 @@ export function startGameReducer(state, action) {
         ...state.game,
         players: {
           ...state.game.players,
-          [action.agent]: {}
+          [action.agent]: {},
         },
         queue: [
           ...state.game.queue,
           makeSchema({
             type: {
-              enum: [SEED_RNG]
+              enum: [SEED_RNG],
             },
             agent: {
-              enum: [lexicalPlayers[0]]
-            }
+              enum: [lexicalPlayers[0]],
+            },
           }),
           makeSchema({
             type: {
-              enum: [ORDER_PLAYERS]
+              enum: [ORDER_PLAYERS],
             },
             agent: {
-              enum: [lexicalPlayers[0]]
-            }
-          })
+              enum: [lexicalPlayers[0]],
+            },
+          }),
         ],
         nextActions: [
           {
             playerId: lexicalPlayers[0],
             action: {
-              type: SEED_RNG
-            }
+              type: SEED_RNG,
+            },
           },
           {
             playerId: lexicalPlayers[0],
             action: {
-              type: ORDER_PLAYERS
-            }
-          }
-        ]
-      }
+              type: ORDER_PLAYERS,
+            },
+          },
+        ],
+      },
     };
   }
 
@@ -140,40 +140,40 @@ export function startGameReducer(state, action) {
         playerOrder: playerOrder,
         turn: playerOrder[0],
         nextActions: [
-          ...playerOrder.map(playerId => ({
+          ...playerOrder.map((playerId) => ({
             playerId,
-            action: { type: START_GAME }
+            action: { type: START_GAME },
           })),
           {
             playerId: playerOrder[0],
             action: {
-              type: START_TURN
-            }
+              type: START_TURN,
+            },
           },
-          ...state.game.nextActions
+          ...state.game.nextActions,
         ],
         queue: [
-          ...playerOrder.map(playerId =>
+          ...playerOrder.map((playerId) =>
             makeSchema({
               type: {
-                enum: [START_GAME]
+                enum: [START_GAME],
               },
               agent: {
-                enum: [playerId]
-              }
-            })
+                enum: [playerId],
+              },
+            }),
           ),
           makeSchema({
             type: {
-              enum: [START_TURN]
+              enum: [START_TURN],
             },
             agent: {
-              enum: [playerOrder[0]]
-            }
+              enum: [playerOrder[0]],
+            },
           }),
-          ...state.game.queue
-        ]
-      }
+          ...state.game.queue,
+        ],
+      },
     };
   }
 
@@ -186,7 +186,7 @@ export function startGameReducer(state, action) {
       emoji: getStandardEmoji()[playerOrder.indexOf(action.agent)],
       health: 30,
       attack: 0,
-      mana: 0
+      mana: 0,
     };
     for (const card of getStandardDeck()) {
       const id = uid();
@@ -199,40 +199,40 @@ export function startGameReducer(state, action) {
         ...state.game,
         units: {
           ...state.game.units,
-          ...newUnits
+          ...newUnits,
         },
         players: {
           ...state.game.players,
           [action.agent]: {
             ...INITIAL_PLAYER,
             unitId: playerUnitId,
-            deck
-          }
+            deck,
+          },
         },
         nextActions: [
           {
             playerId: action.agent,
             action: {
               type: SHUFFLE_DECK,
-              playerId: action.agent
-            }
+              playerId: action.agent,
+            },
           },
           ...range(state.game.params.startDraw).map(() => ({
             playerId: action.agent,
             action: {
               type: DRAW_CARD,
               target: {
-                player: action.agent
-              }
-            }
+                player: action.agent,
+              },
+            },
           })),
-          ...state.game.nextActions
+          ...state.game.nextActions,
         ],
         queue: [
           makeSchema({
             type: SHUFFLE_DECK,
             agent: action.agent,
-            playerId: action.agent
+            playerId: action.agent,
           }),
           ...range(state.game.params.startDraw).map(() =>
             makeSchema({
@@ -244,15 +244,15 @@ export function startGameReducer(state, action) {
                 required: ["player"],
                 properties: {
                   player: {
-                    enum: [action.agent]
-                  }
-                }
-              }
-            })
+                    enum: [action.agent],
+                  },
+                },
+              },
+            }),
           ),
-          ...state.game.queue
-        ]
-      }
+          ...state.game.queue,
+        ],
+      },
     };
   }
 

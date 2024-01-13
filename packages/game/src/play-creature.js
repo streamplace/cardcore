@@ -4,14 +4,16 @@ import { target, Box, makeSchema } from "@cardcore/util";
 import { START_GAME } from "./start-game";
 
 export const PLAY_CREATURE = "PLAY_CREATURE";
-export const playCreature = ({ boxId }) => async (dispatch, getState) => {
-  const { targets } = getState().client;
-  return dispatch({
-    type: PLAY_CREATURE,
-    boxId,
-    targets
-  });
-};
+export const playCreature =
+  ({ boxId }) =>
+  async (dispatch, getState) => {
+    const { targets } = getState().client;
+    return dispatch({
+      type: PLAY_CREATURE,
+      boxId,
+      targets,
+    });
+  };
 
 export const playCreatureReducer = (state, action) => {
   if (action.type === PLAY_CREATURE) {
@@ -28,17 +30,17 @@ export const playCreatureReducer = (state, action) => {
           [action.agent]: {
             ...player,
             availableMana: player.availableMana - unit.cost,
-            hand: player.hand.filter(c => c !== boxId),
-            field: [boxId, ...player.field]
-          }
+            hand: player.hand.filter((c) => c !== boxId),
+            field: [boxId, ...player.field],
+          },
         },
         units: { ...state.game.units, [unitId]: { ...unit, canAttack: false } },
         nextActions: [
           {
             playerId: action.agent,
             action: {
-              type: SEED_RNG
-            }
+              type: SEED_RNG,
+            },
           },
           ...unit.onSummon
             .filter((onSummon, i) => {
@@ -57,25 +59,25 @@ export const playCreatureReducer = (state, action) => {
                       ...onSummon.target,
                       unitId: onSummon.target.random
                         ? undefined
-                        : action.targets[i]
-                    })
-                  )
+                        : action.targets[i],
+                    }),
+                  ),
                   // unitId: unitId
-                }
+                },
               };
             }),
           { playerId: action.agent, action: { type: CHECK_DEATH } },
-          ...state.game.nextActions
+          ...state.game.nextActions,
         ],
         queue: [
           makeSchema({
             type: SEED_RNG,
-            agent: action.agent
+            agent: action.agent,
           }),
           ...unit.onSummon
             .filter(
               (onSummon, i) =>
-                Object.keys(target(state, onSummon.target)).length !== 0
+                Object.keys(target(state, onSummon.target)).length !== 0,
             )
             .map((onSummon, i) => {
               return makeSchema(
@@ -87,8 +89,8 @@ export const playCreatureReducer = (state, action) => {
                     return {
                       ...schema,
                       [fieldName]: {
-                        enum: [onSummon[fieldName]]
-                      }
+                        enum: [onSummon[fieldName]],
+                      },
                     };
                   },
                   {
@@ -101,30 +103,30 @@ export const playCreatureReducer = (state, action) => {
                         (props, field) => ({
                           ...props,
                           [field]: {
-                            enum: [onSummon.target[field]]
-                          }
+                            enum: [onSummon.target[field]],
+                          },
                         }),
                         // it's late, leave me alone
                         JSON.parse(
                           JSON.stringify({
                             unitId: onSummon.target.random
                               ? undefined
-                              : { enum: [action.targets[i]] }
-                          })
-                        )
-                      )
-                    }
-                  }
-                )
+                              : { enum: [action.targets[i]] },
+                          }),
+                        ),
+                      ),
+                    },
+                  },
+                ),
               );
             }),
           makeSchema({
             type: CHECK_DEATH,
-            agent: action.agent
+            agent: action.agent,
           }),
-          ...state.game.queue
-        ]
-      }
+          ...state.game.queue,
+        ],
+      },
     };
   }
 

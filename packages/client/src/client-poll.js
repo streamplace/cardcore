@@ -20,14 +20,14 @@ export const clientPoll = () => async (dispatch, getState) => {
   let backoffIdx = 0;
   await dispatch({
     type: CLIENT_POLL,
-    polling: true
+    polling: true,
   });
   const backoff = async () => {
     const backoffDuration = BACKOFF_INTERVALS[backoffIdx];
     if (BACKOFF_INTERVALS[backoffIdx + 1]) {
       backoffIdx += 1;
     }
-    await new Promise(r => setTimeout(r, backoffDuration));
+    await new Promise((r) => setTimeout(r, backoffDuration));
     return poll();
   };
   const poll = async () => {
@@ -46,7 +46,7 @@ export const clientPoll = () => async (dispatch, getState) => {
     }
     await dispatch({
       type: CLIENT_POLL,
-      polling: false
+      polling: false,
     });
     return dispatch({ ...action, [REMOTE_ACTION]: true });
   };

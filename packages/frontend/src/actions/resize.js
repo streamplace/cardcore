@@ -3,7 +3,7 @@ export const frontendResize = ({ width, height }) => {
   return {
     type: FRONTEND_RESIZE,
     width,
-    height
+    height,
   };
 };
 
@@ -14,8 +14,8 @@ export const frontendResizeReducer = (state, action) => {
       frontend: {
         ...state.frontend,
         width: action.width,
-        height: action.height
-      }
+        height: action.height,
+      },
     };
   }
 

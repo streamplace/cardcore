@@ -12,11 +12,11 @@ export const verifyAction = (state, action) => {
     {
       id: action.agent,
       curve: "ed25519",
-      public: action.agent.slice(1)
+      public: action.agent.slice(1),
     },
     {
       ...action,
-      [REMOTE_ACTION]: undefined
-    }
+      [REMOTE_ACTION]: undefined,
+    },
   );
 };

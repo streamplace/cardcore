@@ -10,7 +10,7 @@ import { createGame } from "@cardcore/game";
 import {
   clientGenerateIdentity,
   clientGetGameHash,
-  clientFetch
+  clientFetch,
 } from "@cardcore/client";
 import { connect } from "react-redux";
 
@@ -18,7 +18,7 @@ export class Development extends React.Component {
   constructor() {
     super();
     this.state = {
-      gameId: null
+      gameId: null,
     };
   }
 
@@ -35,17 +35,17 @@ export class Development extends React.Component {
         clientFetch(`/development/${codeHash}`, {
           method: "POST",
           headers: {
-            "content-type": "application/json"
+            "content-type": "application/json",
           },
-          body: JSON.stringify({ gameHash })
-        })
+          body: JSON.stringify({ gameHash }),
+        }),
       );
       this.setState({ gameId: gameHash });
     } else {
-      let data = await new Promise(resolve => {
+      let data = await new Promise((resolve) => {
         const poll = async () => {
           const res = await this.props.dispatch(
-            clientFetch(`/development/${codeHash}`)
+            clientFetch(`/development/${codeHash}`),
           );
           if (!res.ok) {
             return setTimeout(poll, 1000);

@@ -3,10 +3,10 @@ import debug from "debug";
 import { clientHandleNext } from "@cardcore/client";
 
 export const AI_FAKE_ACTION = "AI_FAKE_ACTION";
-export const aiFakeAction = action => async dispatch => {
+export const aiFakeAction = (action) => async (dispatch) => {
   await dispatch({
     type: AI_FAKE_ACTION,
-    action: action
+    action: action,
   });
   return await dispatch(action);
 };

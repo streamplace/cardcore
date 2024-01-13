@@ -10,7 +10,7 @@ export function standard(cost) {
     type: "creature",
     name: `Standard ${cost}-${cost}`,
     text: [],
-    onSummon: []
+    onSummon: [],
   };
 }
 
@@ -23,9 +23,9 @@ export const onSummonSummon = {
     {
       type: "SUMMON_CREATURE",
       unit: standard(1),
-      target: { playerId: "SELF" }
-    }
-  ]
+      target: { playerId: "SELF" },
+    },
+  ],
 };
 
 export const onSummonBounce = {
@@ -36,9 +36,9 @@ export const onSummonBounce = {
   onSummon: [
     {
       type: "BOUNCE",
-      target: { type: "creature", count: 1, location: "field", player: "self" }
-    }
-  ]
+      target: { type: "creature", count: 1, location: "field", player: "self" },
+    },
+  ],
 };
 export function threeMaster(cost) {
   return {
@@ -53,14 +53,14 @@ export function threeMaster(cost) {
       {
         type: "CHANGE_ATTACK",
         value: 3,
-        target: { type: "creature", location: "field" }
+        target: { type: "creature", location: "field" },
       },
       {
         type: "CHANGE_HEALTH",
         value: 3,
-        target: { type: "creature", location: "field" }
-      }
-    ]
+        target: { type: "creature", location: "field" },
+      },
+    ],
   };
 }
 
@@ -77,9 +77,9 @@ export function cardDraw(cost) {
       {
         type: "DRAW_CARD",
         value: 1,
-        target: { player: "self" }
-      }
-    ]
+        target: { player: "self" },
+      },
+    ],
   };
 }
 
@@ -94,9 +94,9 @@ export const onSummonDamageOwnHero = {
     {
       type: "DAMAGE",
       value: 3,
-      target: { type: "face", player: "self" }
-    }
-  ]
+      target: { type: "face", player: "self" },
+    },
+  ],
 };
 
 export function damageCreature(cost) {
@@ -112,19 +112,19 @@ export function damageCreature(cost) {
       {
         type: "DAMAGE",
         value: 1,
-        target: { type: "creature", count: 1, location: "field" }
+        target: { type: "creature", count: 1, location: "field" },
       },
       {
         type: "DAMAGE",
         value: 1,
-        target: { type: "creature", count: 1, location: "field" }
+        target: { type: "creature", count: 1, location: "field" },
       },
       {
         type: "DAMAGE",
         value: 1,
-        target: { type: "creature", count: 1, location: "field" }
-      }
-    ]
+        target: { type: "creature", count: 1, location: "field" },
+      },
+    ],
   };
 }
 
@@ -136,19 +136,19 @@ export const onSummonRandomDamage = {
     {
       type: "DAMAGE",
       value: 1,
-      target: { type: "creature", count: 1, location: "field", random: true }
+      target: { type: "creature", count: 1, location: "field", random: true },
     },
     {
       type: "DAMAGE",
       value: 1,
-      target: { type: "creature", count: 1, location: "field", random: true }
+      target: { type: "creature", count: 1, location: "field", random: true },
     },
     {
       type: "DAMAGE",
       value: 1,
-      target: { type: "creature", count: 1, location: "field", random: true }
-    }
-  ]
+      target: { type: "creature", count: 1, location: "field", random: true },
+    },
+  ],
 };
 
 export function getStandardDeck() {
@@ -162,7 +162,7 @@ export function getStandardDeck() {
     onSummonSummon,
     onSummonBounce,
     onSummonRandomDamage,
-    onSummonDamageOwnHero
+    onSummonDamageOwnHero,
   ];
 }
 

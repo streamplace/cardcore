@@ -3,7 +3,7 @@ import styled from "styled-components";
 import {
   registerDropTarget,
   clientPickTarget,
-  cardDrop
+  cardDrop,
 } from "@cardcore/client";
 import { attack } from "@cardcore/game";
 import { connect } from "react-redux";
@@ -21,13 +21,13 @@ export const CardBox = styled.div`
   position: relative;
   transition: transform 500ms ease;
   transform: rotateY(0deg);
-  width: ${props => props.scaleWidth}px;
+  width: ${(props) => props.scaleWidth}px;
   transform-style: preserve-3d;
   z-index: 0;
 
-  ${props => props.canPlay && cardGlow("5px", "blue")};
-  ${props => props.flipped && "transform: rotateY(180deg)"};
-  ${props => props.canPlay && "cursor: pointer"};
+  ${(props) => props.canPlay && cardGlow("5px", "blue")};
+  ${(props) => props.flipped && "transform: rotateY(180deg)"};
+  ${(props) => props.canPlay && "cursor: pointer"};
 `;
 
 export const CardFace = styled.div`
@@ -42,12 +42,8 @@ export const CardFace = styled.div`
 
 export const CardBack = styled(CardFace)`
   background: #36c;
-  background: linear-gradient(
-        115deg,
-        transparent 75%,
-        rgba(255, 255, 255, 0.8) 75%
-      )
-      0 0,
+  background:
+    linear-gradient(115deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%) 0 0,
     linear-gradient(245deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%) 0 0,
     linear-gradient(115deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%) 7px -15px,
     linear-gradient(245deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%) 7px -15px,
@@ -55,14 +51,14 @@ export const CardBack = styled(CardFace)`
   background-size: 15px 30px;
   backface-visibility: hidden;
   z-index: 1;
-  transform: rotateY(180deg) scale(${props => props.ratio}) translateX(-100%);
+  transform: rotateY(180deg) scale(${(props) => props.ratio}) translateX(-100%);
   border-radius: 10px;
 `;
 
 export const CardContents = styled(CardFace)`
   backface-visibility: hidden;
   background-color: white;
-  transform: rotateY(0deg) scale(${props => props.ratio});
+  transform: rotateY(0deg) scale(${(props) => props.ratio});
   z-index: 1;
   border-radius: 10px;
 `;
@@ -127,7 +123,7 @@ export class Card extends React.Component {
     this.state = {
       forceFlip: props.location === "hand",
       width: 0,
-      ratio: 1
+      ratio: 1,
     };
   }
 
@@ -192,7 +188,7 @@ export class Card extends React.Component {
   }
 
   ref(elem) {
-    registerDropTarget(e => this.handleDrop(e))(elem);
+    registerDropTarget((e) => this.handleDrop(e))(elem);
     if (!elem) {
       return;
     }
@@ -209,7 +205,7 @@ export class Card extends React.Component {
     if (scaleWidth !== this.state.width) {
       this.setState({
         width: height * (WIDTH / HEIGHT),
-        ratio: height / HEIGHT
+        ratio: height / HEIGHT,
       });
     }
   }
@@ -231,18 +227,18 @@ export class Card extends React.Component {
         emoji: "",
         attack: "",
         health: "",
-        cost: ""
+        cost: "",
       };
     }
 
     return (
       <CardBox
-        innerRef={elem => this.ref(elem)}
+        innerRef={(elem) => this.ref(elem)}
         scaleWidth={this.state.width}
         canPlay={shouldLightUp}
         draggable={draggable}
-        onClick={e => this.handleClick(e)}
-        onDragEnd={e => this.onDragEnd(e)}
+        onClick={(e) => this.handleClick(e)}
+        onDragEnd={(e) => this.onDragEnd(e)}
         flipped={this.state.forceFlip || flipped}
       >
         <CardBack ratio={this.state.ratio} />
@@ -300,7 +296,7 @@ const mapStateToProps = (state, props) => {
     player: state.game.players[props.playerId],
     myTurn: state.client.keys.id === state.game.turn,
     myUnit: state.client.keys.id === props.playerId,
-    availableTargets: state.client.availableTargets
+    availableTargets: state.client.availableTargets,
   };
 };
 
